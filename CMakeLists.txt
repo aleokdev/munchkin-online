@@ -11,6 +11,6 @@ add_subdirectory("lib")
 
 add_executable (${PROJECT_NAME} ${MUNCHKIN_SOURCES})
 
-target_compile_options(${PROJECT_NAME} PUBLIC -std=c++17 -Wall)
+target_compile_options(${PROJECT_NAME} PUBLIC "-std=c++17" "-Wall")
 target_include_directories(${PROJECT_NAME} PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
