@@ -5,6 +5,7 @@ project("munchkin-online" VERSION 0.0.0
 
 set(MUNCHKIN_SOURCES "main.cpp")
 set(MUNCHKIN_INCLUDE_DIRECTORIES "")
+set(MUNCHKIN_LINK_LIBRARIES "")
 
 add_subdirectory("lib")
 
