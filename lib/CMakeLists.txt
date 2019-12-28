@@ -12,16 +12,16 @@ add_library(glad STATIC ${GLAD_SOURCES})
 target_compile_options(glad PUBLIC -w)
 target_include_directories(glad PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/glad/include")
 
-add_subdirectory(lua)
+add_subdirectory(lualib)
 
-set(SDL_STATIC, TRUE)
+set(SDL_SHARED, TRUE)
 
 add_subdirectory(sdl)
 add_subdirectory(sol2)
 
 set(MUNCHKIN_LINK_LIBRARIES
     ${MUNCHKIN_LINK_LIBRARIES}
-    SDL2-static
+    SDL2
     glad
 	liblua
 	sol2
