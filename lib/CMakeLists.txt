@@ -53,12 +53,14 @@ set(LUA_SOURCES
 
 add_library(lua STATIC ${LUA_SOURCES})
 
+set(SDL_STATIC, TRUE)
+
 add_subdirectory(sdl)
 add_subdirectory(sol2)
 
 set(MUNCHKIN_LINK_LIBRARIES
     ${MUNCHKIN_LINK_LIBRARIES}
-    SDL2main
+    SDL2-static
     glad
 	lua
 	sol2
