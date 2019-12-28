@@ -12,6 +12,7 @@ target_compile_options(glad PUBLIC -w)
 target_include_directories(glad PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/glad/include/glad" "${CMAKE_CURRENT_SOURCE_DIR}/glad")
 
 add_subdirectory(sdl)
+add_subdirectory(sol2)
 
 set(MUNCHKIN_LINK_LIBRARIES
     ${MUNCHKIN_LINK_LIBRARIES}
@@ -24,5 +25,6 @@ set(MUNCHKIN_INCLUDE_DIRECTORIES
     ${MUNCHKIN_INCLUDE_DIRECTORIES}
     "${CMAKE_CURRENT_SOURCE_DIR}/sdl/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/glad/include"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sol2/include"
 	PARENT_SCOPE
 )
