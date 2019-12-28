@@ -1,7 +1,5 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY, "${CMAKE_BINARY_DIR}/bin")
-
 project("munchkin-online" VERSION 0.0.0
 						  DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 

@@ -21,7 +21,7 @@ add_subdirectory(sol2)
 
 set(MUNCHKIN_LINK_LIBRARIES
     ${MUNCHKIN_LINK_LIBRARIES}
-    SDL2
+	SDL2
     glad
 	liblua
 	sol2
