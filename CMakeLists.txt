@@ -16,7 +16,7 @@ project("munchkin-online" VERSION 0.0.0
 						  DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
 set(MUNCHKIN_SOURCES "src/main.cpp")
-set(MUNCHKIN_INCLUDE_DIRECTORIES "")
+set(MUNCHKIN_INCLUDE_DIRECTORIES "include")
 set(MUNCHKIN_LINK_LIBRARIES "")
 set(MUNCHKIN_LINK_DIRECTORIES "")
 

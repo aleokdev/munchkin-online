@@ -14,14 +14,16 @@ target_include_directories(glad PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/glad/include
 
 set(MUNCHKIN_LINK_LIBRARIES
 	"${CMAKE_CURRENT_SOURCE_DIR}/SDL2.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/liblua53.lib"
 	PARENT_SCOPE)
 
-#add_subdirectory(sol2)
+add_subdirectory(sol2)
 
 set(MUNCHKIN_INCLUDE_DIRECTORIES
     ${MUNCHKIN_INCLUDE_DIRECTORIES}
     "${CMAKE_CURRENT_SOURCE_DIR}/sdl/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/glad/include"
 	"${CMAKE_CURRENT_SOURCE_DIR}/sol2/include"
+	"${CMAKE_CURRENT_SOURCE_DIR}/lua/include"
 	PARENT_SCOPE
 )

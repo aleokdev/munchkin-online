@@ -1,9 +1,14 @@
 ﻿#include <iostream>
 #define SDL_MAIN_HANDLED
 #include <sdl/SDL.h>
+#include <game/game.hpp>
+
+using namespace MnO;
 
 int main()
 {
+	Game::Game game;
+
 	std::cout << "insert game here" << std::endl;
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
