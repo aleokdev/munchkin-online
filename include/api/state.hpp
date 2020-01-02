@@ -22,10 +22,6 @@ public:
 
     size_t get_player_count() const;
 
-    // card loading utils
-    void load_json(std::string_view path);
-    void load_card_script(std::string_view path, std::string name, std::string description);
-
     // data
 
     sol::state lua;
