@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.8.2)
 
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_C_COMPILER_TARGET ${triple})
@@ -7,7 +7,7 @@ set(CMAKE_CXX_COMPILER_TARGET ${triple})
 
 foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${CONFIG} CONFIG)
-    set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${CONFIG} "bin/")
+    set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${CONFIG} "build/")
 endforeach()
 
 set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
@@ -23,6 +23,8 @@ set(MUNCHKIN_LINK_DIRECTORIES "")
 add_subdirectory("lib")
 
 add_executable (${PROJECT_NAME} ${MUNCHKIN_SOURCES})
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
 target_compile_features(${PROJECT_NAME} PUBLIC "cxx_std_17")
 

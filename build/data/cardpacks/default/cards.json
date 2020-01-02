@@ -1,0 +1,7 @@
+[
+  {
+    "script": "scripts/add_level.lua",
+    "name": "Test Card",
+    "description": "This is a test card!"
+  }
+]
