@@ -12,6 +12,9 @@ public:
     void turn();
 
     bool ended() const;
+
+    State const& get_state() const { return state; }
+
 private:
     State state;
 };

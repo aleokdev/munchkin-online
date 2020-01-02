@@ -6,22 +6,19 @@
 
 int main()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-	{
-		std::cout << "Error initializing SDL: " << SDL_GetError() << std::endl;
-		std::cin.get();
-		return -1;
+	munchkin::Game game(4);
+
+	std::cout << std::boolalpha;
+	std::cout << "Game over: " << game.ended() << std::endl;
+
+	game.turn();
+
+	std::cout << "Game over: " << game.ended() << std::endl;
+
+	std::cout << "Levels: " << std::endl;
+	for (int i = 0; i < 4; ++i) {
+		std::cout << i << ": " << game.get_state().players[i].level << "\n";
 	}
-
-	SDL_Window* window = SDL_CreateWindow("Munchkin Online", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 900, 600, NULL);
-
-	SDL_Event event;
-	bool close = false;
-	do
-	{
-		SDL_PollEvent(&event);
-		close = event.type == SDL_QUIT;
-	} while (!close);
 
 	return 0;
 }

@@ -4,11 +4,10 @@
 namespace munchkin {
 
 class Player {
-public:
-    
 private:
-    int level;
-
+public:
+    int level = 1;
+    size_t id = 0;
 };
 
 }

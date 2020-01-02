@@ -3,13 +3,23 @@
 
 #include <sol/sol.hpp>
 
+#include "player.hpp"
+
 namespace munchkin {
 
 class State {
 public:
+    State(size_t player_count);
 
-private:
-    sol::state lua_state;
+    // api functions
+
+    Player& get_player(size_t id);
+
+    // data
+
+    sol::state lua;
+    bool game_ended = false;
+    std::vector<Player> players;
 };
 
 }
