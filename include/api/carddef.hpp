@@ -10,6 +10,8 @@ namespace munchkin
 	{
 		CardDef(sol::state& state, std::string_view script_path);
 
+		sol::object execute_function(std::string_view name);
+
 	private:
 		std::string name;
 		std::string description;
