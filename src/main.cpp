@@ -1,26 +1,29 @@
 ﻿#include <iostream>
 #define SDL_MAIN_HANDLED
 #include <sdl/SDL.h>
+#include <game/game.hpp>
 
-#include "api/munchkin.hpp"
+using namespace MnO;
 
 int main()
 {
-	munchkin::Game game(4);
+	Game::AIGame game(3);
 
-	std::cout << std::boolalpha;
-	std::cout << "Game over: " << game.ended() << std::endl;
-
-	while(!game.ended()) {
-		game.turn();
+	std::cout << "insert game here" << std::endl;
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+	{
+		std::cout << "Error initializing SDL: " << SDL_GetError() << std::endl;
+		std::cin.get();
 	}
+	SDL_Window* window = SDL_CreateWindow("Munchkin Online", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 900, 600, NULL);
 
-	std::cout << "Game over: " << game.ended() << std::endl;
-
-	std::cout << "Levels: " << std::endl;
-	for (int i = 0; i < 4; ++i) {
-		std::cout << i << ": " << game.get_state().players[i].level << "\n";
-	}
+	SDL_Event event;
+	bool close = false;
+	do
+	{
+		SDL_PollEvent(&event);
+		close = event.type == SDL_QUIT;
+	} while (!close);
 
 	return 0;
 }
