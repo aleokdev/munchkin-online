@@ -263,3 +263,5 @@ __pycache__/
 
 # VS Code
 .vscode/
+
+CMakeSettings.json
