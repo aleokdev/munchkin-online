@@ -18,7 +18,7 @@ State::State(size_t player_count) : player_count(player_count) {
         );
     lua.new_usertype<Player>("munchkin_player", "level", &Player::level, "id", &Player::id);
 
-    lua.script_file("data/scripts/game.lua");
+    sol::table game_api = lua.script_file("data/scripts/game.lua");
 }
 
 

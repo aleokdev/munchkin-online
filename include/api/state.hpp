@@ -21,6 +21,7 @@ public:
     // data
 
     sol::state lua;
+    sol::table game_api;
     bool game_ended = false;
     size_t current_player_id = 0;
     size_t player_count;
