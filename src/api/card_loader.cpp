@@ -13,8 +13,8 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
     std::vector<CardDef> result;
 
     for (auto const& card : j) {
-       std::string script = j["script"];
-       result.emplace_back(lua, script);
+       std::string script_path = j["script"];
+       result.emplace_back(lua, script_path);
        result.back().name = j["name"];
        result.back().description = j["description"];
     }
