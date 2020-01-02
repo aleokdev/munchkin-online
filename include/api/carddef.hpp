@@ -8,7 +8,7 @@ namespace munchkin
 {
 	struct CardDef
 	{
-		CardDef(sol::state& state, std::string const& script_path);
+		CardDef(sol::state& state, std::string const& script_path, std::string _name, std::string _description);
 
 		template<typename... Args>
 		sol::object execute_function(std::string_view name, Args&&... args) {
