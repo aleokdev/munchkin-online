@@ -2,6 +2,7 @@
 #define MUNCHKIN_STATE_HPP_
 
 #include <sol/sol.hpp>
+#include <string_view>
 
 #include "player.hpp"
 #include "carddef.hpp"
@@ -18,6 +19,10 @@ public:
     Player& get_current_player();
 
     size_t get_player_count() const;
+
+    // card loading utils
+    void load_json(std::string_view path);
+    void load_card_script(std::string_view path, std::string name, std::string description);
 
     // data
 

@@ -34,4 +34,14 @@ size_t State::get_player_count() const {
     return player_count;
 }
 
+void State::load_json(std::string_view path)
+{
+    // TODO: this
+}
+
+void State::load_card_script(std::string_view path, std::string name, std::string description)
+{
+    cards.emplace_back(lua, path, name, description);
+}
+
 }
