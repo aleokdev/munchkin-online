@@ -14,6 +14,7 @@ namespace MnO
 
 		protected:
 			sol::state _lua;
+			
 			std::vector<std::unique_ptr<Player::Player>> _players;
 		};
 

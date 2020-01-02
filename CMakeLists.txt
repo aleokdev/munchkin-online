@@ -25,5 +25,12 @@ add_subdirectory("lib")
 add_executable (${PROJECT_NAME} ${MUNCHKIN_SOURCES})
 
 target_compile_features(${PROJECT_NAME} PUBLIC "cxx_std_17")
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(${PROJECT_NAME} PUBLIC "-Wno-deprecated-declarations")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
+endif()
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
