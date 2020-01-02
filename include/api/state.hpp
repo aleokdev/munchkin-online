@@ -12,6 +12,8 @@ class State {
 public:
     State(size_t player_count);
 
+    void load_cards_from_json(std::string_view path);
+
     // api functions
 
     Player& get_player(size_t id);

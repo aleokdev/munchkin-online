@@ -5,4 +5,7 @@
 
 namespace munchkin {
 
+Card::Card(CardDef& def) : def(&def) {}
+
+
 }
