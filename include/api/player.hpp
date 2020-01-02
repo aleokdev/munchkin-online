@@ -6,9 +6,7 @@ namespace munchkin {
 class State;
 class Card;
 
-class Player {
-private:
-public:
+struct Player {
     int level = 1;
     size_t id = 0;
 };
