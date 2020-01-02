@@ -1,18 +1,20 @@
 #ifndef MUNCHKIN_CARDDEF_HPP_
 #define MUNCHKIN_CARDDEF_HPP_
 
-#include <string_view>
+#include <string>
 #include <sol/sol.hpp>
 
 namespace munchkin
 {
 	struct CardDef
 	{
-		CardDef(sol::state& state, std::string_view script_path);
+		CardDef(sol::state& state, std::string const& script_path);
 
-		sol::object execute_function(std::string_view name);
+		template<typename... Args>
+		sol::object execute_function(std::string_view name, Args&&... args) {
+			return function_defs[name](std::forward<Args>(args)...);
+		}
 
-	private:
 		std::string name;
 		std::string description;
 		sol::table function_defs;
