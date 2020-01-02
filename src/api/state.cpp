@@ -1,5 +1,7 @@
 #include "api/state.hpp"
 
+#include "api/card_loader.hpp"
+
 namespace munchkin  {
 
 State::State(size_t player_count) : player_count(player_count) {
@@ -21,6 +23,9 @@ State::State(size_t player_count) : player_count(player_count) {
     sol::table game_api = lua.script_file("data/scripts/game.lua");
 }
 
+void State::load_cards_from_json(std::string_view path) {
+    cards = load_cards(path, lua);
+}
 
 Player& State::get_player(size_t id) {
     return players[id];
@@ -34,14 +39,5 @@ size_t State::get_player_count() const {
     return player_count;
 }
 
-void State::load_json(std::string_view path)
-{
-    // TODO: this
-}
-
-void State::load_card_script(std::string_view path, std::string name, std::string description)
-{
-    cards.emplace_back(lua, path, name, description);
-}
 
 }
