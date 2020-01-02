@@ -14,11 +14,16 @@ public:
     // api functions
 
     Player& get_player(size_t id);
+    Player& get_current_player();
+
+    size_t get_player_count() const;
 
     // data
 
     sol::state lua;
     bool game_ended = false;
+    size_t current_player_id = 0;
+    size_t player_count;
     std::vector<Player> players;
 };
 

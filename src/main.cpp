@@ -11,7 +11,9 @@ int main()
 	std::cout << std::boolalpha;
 	std::cout << "Game over: " << game.ended() << std::endl;
 
-	game.turn();
+	while(!game.ended()) {
+		game.turn();
+	}
 
 	std::cout << "Game over: " << game.ended() << std::endl;
 

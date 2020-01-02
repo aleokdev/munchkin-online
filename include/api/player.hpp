@@ -3,6 +3,9 @@
 
 namespace munchkin {
 
+class State;
+class Card;
+
 class Player {
 private:
 public:

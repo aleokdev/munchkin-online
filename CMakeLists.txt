@@ -15,7 +15,7 @@ set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
 project("munchkin-online" VERSION 0.0.0
 						  DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
-set(MUNCHKIN_SOURCES "src/main.cpp" "src/api/game.cpp" "src/api/state.cpp")
+set(MUNCHKIN_SOURCES "src/main.cpp" "src/api/game.cpp" "src/api/state.cpp" "src/api/card.cpp")
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include")
 set(MUNCHKIN_LINK_LIBRARIES "")
 set(MUNCHKIN_LINK_DIRECTORIES "")
