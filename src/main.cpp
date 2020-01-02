@@ -1,6 +1,5 @@
 ﻿#include <iostream>
 #define SDL_MAIN_HANDLED
-#include <sdl/SDL.h>
 
 #include "api/munchkin.hpp"
 
