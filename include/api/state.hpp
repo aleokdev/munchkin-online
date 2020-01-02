@@ -4,6 +4,7 @@
 #include <sol/sol.hpp>
 
 #include "player.hpp"
+#include "carddef.hpp"
 
 namespace munchkin {
 
@@ -26,7 +27,7 @@ public:
     size_t current_player_id = 0;
     size_t player_count;
     std::vector<Player> players;
-    std::vector<CardDefinition> cards;
+    std::vector<CardDef> cards;
 };
 
 }

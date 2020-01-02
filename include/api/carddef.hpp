@@ -12,8 +12,8 @@ namespace munchkin
 
 	private:
 		std::string name;
-		std::string description
-		sol::table functionDefs;
+		std::string description;
+		sol::table function_defs;
 	};
 }
 
