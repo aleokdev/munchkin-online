@@ -19,8 +19,6 @@ x64/
 x86/
 bld/
 [Bb]in/
-build/
-!build/data/
 [Oo]bj/
 [Ll]og/
 
