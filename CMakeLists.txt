@@ -15,7 +15,7 @@ set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
 project("munchkin-online" VERSION 0.0.0
 						  DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
-set(MUNCHKIN_SOURCES "src/main.cpp" "src/game/aigame.cpp")
+set(MUNCHKIN_SOURCES "src/main.cpp" "src/api/game.cpp" "src/api/state.cpp" "src/api/card.cpp")
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include")
 set(MUNCHKIN_LINK_LIBRARIES "")
 set(MUNCHKIN_LINK_DIRECTORIES "")
@@ -25,5 +25,12 @@ add_subdirectory("lib")
 add_executable (${PROJECT_NAME} ${MUNCHKIN_SOURCES})
 
 target_compile_features(${PROJECT_NAME} PUBLIC "cxx_std_17")
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(${PROJECT_NAME} PUBLIC "-Wno-deprecated-declarations")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
+endif()
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
