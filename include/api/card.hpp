@@ -3,6 +3,7 @@
 
 #include <sol/sol.hpp>
 #include <string>
+#include "api/carddef.hpp"
 
 namespace munchkin {
 

@@ -1,13 +1,25 @@
 local game = {}
 
-function game.has_game_ended(state) 
-    for i = 1, state:get_player_count() do
-        player = state:get_player(i - 1)
-        if (player.level >=) 10 then
+function game.iter_players()
+    local i = -1
+    return function()
+        i = i + 1
+        if i == state:get_player_count() then return end
+        return state:get_player(i)
+    end
+end
+
+function game.winner() 
+    for player in game.iter_players() do
+        if player.level >= 10 then
             return player
         end
     end
     return nil
+end
+
+function game.has_ended()
+    return game.winner() ~= nil
 end
 
 return game

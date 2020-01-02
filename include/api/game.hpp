@@ -11,7 +11,7 @@ public:
 
     void turn();
 
-    bool ended() const;
+    bool ended();
 
     State const& get_state() const { return state; }
 
