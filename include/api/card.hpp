@@ -11,12 +11,9 @@ class Player;
 
 class Card {
 public:
-    // TODO: change this to load from json
-    Card(std::string internal_name, std::string const& script_path, sol::state& lua);
+    Card(std::string const& script_path, sol::state& lua);
 
     void play(State& state, Player& player);
-
-    std::string internal_name;
 };
 
 }
