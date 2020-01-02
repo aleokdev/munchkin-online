@@ -3,15 +3,20 @@
 #include <memory>
 #include "class.hpp"
 
-namespace MnO::Player
+namespace MnO
 {
-	struct Player
+	namespace Player
 	{
-		void get_CardMax() { return _cardMax; }
+		struct Player
+		{
+			virtual ~Player() {}
 
-	private:
-		int _level;
-		std::size_t _cardMax;
-		std::unique_ptr<PlayerClass> _class;
-	};
+			const std::size_t get_CardMax() { return _cardMax; }
+
+		protected:
+			int _level;
+			std::size_t _cardMax;
+			std::unique_ptr<PlayerClass> _class;
+		};
+	}
 }

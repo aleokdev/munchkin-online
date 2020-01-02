@@ -1,29 +1,14 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-project(glad)
-set(GLAD_SOURCES
-	"${CMAKE_CURRENT_SOURCE_DIR}/glad/include/glad/glad.h"
-	"${CMAKE_CURRENT_SOURCE_DIR}/glad/src/glad.c"
-	"${CMAKE_CURRENT_SOURCE_DIR}/glad/include/KHR/khrplatform.h"
-	)
-
-add_library(glad STATIC ${GLAD_SOURCES})
-	
-target_compile_options(glad PUBLIC -w)
-target_include_directories(glad PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/glad/include")
-
 set(MUNCHKIN_LINK_LIBRARIES
 	"${CMAKE_CURRENT_SOURCE_DIR}/SDL2.lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/liblua53.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/lua53.lib"
 	PARENT_SCOPE)
-
-add_subdirectory(sol2)
 
 set(MUNCHKIN_INCLUDE_DIRECTORIES
     ${MUNCHKIN_INCLUDE_DIRECTORIES}
     "${CMAKE_CURRENT_SOURCE_DIR}/sdl/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/glad/include"
-	"${CMAKE_CURRENT_SOURCE_DIR}/sol2/include"
+	"${CMAKE_CURRENT_SOURCE_DIR}/sol2/single/include"
 	"${CMAKE_CURRENT_SOURCE_DIR}/lua/include"
 	PARENT_SCOPE
 )

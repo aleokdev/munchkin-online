@@ -6,21 +6,23 @@
 #include <sol/sol.hpp>
 #include "../game/game.hpp"
 
-namespace MnO::Cards
+namespace MnO
 {
-	struct Card
+	namespace Cards
 	{
-		Card(Game::Game game, sol::load_result&& script) : _game(_game)
+		struct Card
 		{
-			_script = std::move(script);
-		}
+			Card(Game::Game game, sol::load_result&& script) : _game(_game), _script(script)
+			{
+			}
 
-		void OnPlay();
-		void OnDiscard();
-		void OnReveal();
+			void OnPlay();
+			void OnDiscard();
+			void OnReveal();
 
-	private:
-		Game::Game& _game;
-		std::unique_ptr<sol::load_result> _script;
-	};
+		private:
+			Game::Game& _game;
+			std::unique_ptr<sol::load_result> _script;
+		};
+	}
 }

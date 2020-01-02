@@ -7,7 +7,7 @@ using namespace MnO;
 
 int main()
 {
-	Game::Game game;
+	Game::AIGame game(3);
 
 	std::cout << "insert game here" << std::endl;
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)

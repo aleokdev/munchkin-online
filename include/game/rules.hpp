@@ -1,12 +1,15 @@
 #pragma once
 #include "../player/class.hpp"
 
-namespace MnO::Game
+namespace MnO
 {
-	struct GameRules
+	namespace Game
 	{
-		const int StartingLevel;
-		const int MaxLevel;
-		const PlayerClass DefaultClass;
-	};
+		struct GameRules
+		{
+			const int StartingLevel;
+			const int MaxLevel;
+			const PlayerClass DefaultClass;
+		};
+	}
 }
