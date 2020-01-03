@@ -15,6 +15,10 @@ namespace munchkin {
 
 	void GameRules::continue_flow()
 	{
-		game_flow();
+		sol::protected_function_result result = game_flow();
+		if (!result.valid())
+		{
+			std::cout << "There was an error in the game_flow script, and it has died." << std::endl;
+		}
 	}
 }
