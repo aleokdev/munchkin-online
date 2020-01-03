@@ -1,5 +1,5 @@
 ## Scripting API
-Stuff that `game` must define (Not official):
+### Stuff that `game` must define (Not official):
 - `game.last_event`: FlowEvent -> The last event recorded by the game (readonly)
 - `game.get_ticks()`: int -> The game_flow ticker (counts up after game_flow.lua is executed)
 - `game.stage`: string -> The game stage (read/write)
@@ -9,14 +9,17 @@ Stuff that `game` must define (Not official):
 - `game.open_dungeon()`: void -> Calls on_reveal for the first card of the deck and then discards it, or, if on_reveal is not defined for that card, gives the card to the current player.
 - `game.should_borrow_facing_up`: bool -> Should the next card be borrowed facing up or down? (read/write)
 
-- `game.start_battle()
+- `game.start_battle()`: void -> Starts a new battle.  Only possible if `game.get_current_battle()` is nil
 - `game.get_current_battle()`: Battle -> Returns the current battle happening, nil if there isn't any
 - `game.end_current_battle()`: void -> Ends the current battle (Or does nothing if the current battle is nil). Does NOT give treasure, use `game.give_treasure(player)` for that.
 
 - `game.get_current_player()`: Player -> Returns the user that is currently playing
 - `game.next_player_turn()`: void -> Makes current_player be the next player in the game
 
-Stuff that `Battle` must define (Not official):
+#### Examples
+Check out the default game flow (`build/data/gamerules/default/game_flow.lua`)
+
+### Stuff that `Battle` must define (Not official):
 - `treasures_to_draw`: int -> The number of treasures to draw from this battle, in total. (read/write)
 
 - `get_total_player_power()`: int -> Returns the calculated total power for the players in this battle
@@ -26,10 +29,33 @@ Stuff that `Battle` must define (Not official):
 - `remove_card(card)`: void -> Removes a card being played in the battle (Added via `add_card`) from the battle.
 - `get_cards_played()`: Card[] -> Returns the cards played in this battle (Added via `add_card`)
 
-- `modify_card(card)`: void -> Adds power to an specified card. That card must have been added to the battle via `add_card`. All cards with power over 0 are considered monsters, so don't modify the power of cards that aren't monsters.
+- `modify_card(card, power)`: void -> Adds power to an specified card. That card must have been added to the battle via `add_card`. All cards with power over 0 are considered monsters, so don't modify the power of cards that aren't monsters.
 - `get_card_power(card)`: int -> Returns the power of an specified card present in this battle. Returns nil if the card inputted hasn't been added to the battle via `add_card`.
 
-Stuff that `FlowEvent` must define:
+#### Examples
+Adding a simple monster card
+```lua
+local card = {}
+
+function card.on_reveal(self) 
+	-- The monster has been revealed from the deck, start a new battle
+	game.start_battle()
+
+	-- Add this card to the current battle...
+	game.get_current_battle().add_card(self)
+
+	-- And add the power of the monster to the card added (In this case, 12)
+	game.get_current_battle().modify_card(self, 12)
+
+	-- Done!
+end
+
+return card
+```
+
+For more examples, check out `build/data/cardpacks/default/scripts/modify_monster.lua`.
+
+### Stuff that `FlowEvent` must define:
 - `name`: string -> The name of the event. Can be:
 ```
 dungeon_opened: Called in game.open_dungeon().
@@ -40,7 +66,7 @@ dungeon_card_drawn: Called when a dungeon card is drawn.
 card_discarded: Called when a card is discarded or given to a player of lower level (Charity)
 ```
 
-Stuff that `Player` must define:
+### Stuff that `Player` must define:
 - `id`: int -> The internal ID of the player. Avoid using it, as it causes confusion.
 - `level`: int -> The level of the player.
 - `get_hand()`: Card[] -> The cards that the player has in their hand.
