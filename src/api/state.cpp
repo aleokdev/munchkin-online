@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <filesystem>
 
 namespace munchkin  {
 
@@ -23,12 +24,16 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         );
     lua.new_usertype<Player>("munchkin_player", "level", &Player::level, "id", &Player::id);
     
-    // Load the gamerule's API
+    // Load the generic API wrapper
     lua["state"] = this;
-    lua.script_file(gamerule_path);
+    lua.script_file(STATE_API_WRAPPER_FILE_PATH);
+
+    // Load the gamerule's API
+    std::filesystem::path fspath(gamerule_path);
+    fspath /= "rules.lua";
+    lua.script_file(fspath.string());
+
     game_api = lua["game"];
-    if (lua["game"] == sol::lua_nil)
-        std::cout << "Warning: Variable 'game' has not been defined in game.lua" << std::endl;
 }
 
 void State::load_cards_from_json(std::string_view path) {

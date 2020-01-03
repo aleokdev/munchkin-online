@@ -8,6 +8,8 @@
 #include "player.hpp"
 #include "carddef.hpp"
 
+#define STATE_API_WRAPPER_FILE_PATH "data/generic/api_wrapper.lua"
+
 namespace munchkin {
 
 class State {
