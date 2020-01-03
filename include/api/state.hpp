@@ -12,6 +12,9 @@
 #define STATE_API_RULES_FILE_NAME "rules.lua"
 
 namespace munchkin {
+struct FlowEvent {
+    std::string name;
+};
 
 class State {
 public:
@@ -30,6 +33,7 @@ public:
 
     sol::state lua;
     sol::table game_api;
+    FlowEvent last_event;
     std::vector<Player>::iterator current_player;
     size_t player_count;
     size_t turn_number = 1;

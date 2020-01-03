@@ -8,8 +8,7 @@ namespace munchkin {
 
 Game::Game(size_t player_count, std::string gamerules_path) : state(player_count), gamerules(state.lua, gamerules_path) {
     // Get the first game stage
-    gamerules.continue_flow();
-    game_stage = state.lua["game"]["stage"];
+    tick("game_start");
 }
 
 void Game::turn() {
@@ -23,12 +22,11 @@ void Game::turn() {
         std::cout << "The winner is: " << player.id << "\n";
     }
 
-    // Calculate game stage
-    gamerules.continue_flow();
-    game_stage = state.lua["game"]["stage"];
-
-    // (debug) wait for user input so we don't get infinite "next turn"s
-    std::cin.get();
+    // Push an event, and in return, calculate the game stage
+    std::cout << "Input event: ";
+    std::string event_to_push;
+    std::cin >> event_to_push;
+    tick(event_to_push);
 
     std::cout << "Next turn...!" << std::endl;
     // advance to next player's turn
@@ -37,6 +35,13 @@ void Game::turn() {
         state.current_player = state.players.begin();
     else
         state.current_player++;
+}
+
+void Game::tick(std::string event_name)
+{
+    state.last_event.name = event_name;
+    gamerules.continue_flow();
+    game_stage = state.lua["game"]["stage"];
 }
 
 bool Game::ended() {

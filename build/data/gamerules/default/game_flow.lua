@@ -1,7 +1,7 @@
 local function wait_for_event(ev)
 	repeat
 		coroutine.yield()
-	until game.last_event == ev
+	until game.last_event.name == ev
 end
 
 local function wait_for_ticks(ticks)
@@ -17,7 +17,7 @@ local function wait_for_ticks_or_event(ev, ticks)
 	local ticks_before = game.ticks
 	repeat
 		coroutine.yield()
-	until game.ticks >= (game.ticks + ticks) or game.last_event == ev
+	until game.ticks >= (game.ticks + ticks) or game.last_event.name == ev
 	return game.ticks >= (game.ticks + ticks)
 end
 

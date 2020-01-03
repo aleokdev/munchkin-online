@@ -12,6 +12,8 @@ public:
 
     void turn();
 
+    void tick(std::string event_name);
+
     bool ended();
 
     State const& get_state() const { return state; }

@@ -17,12 +17,16 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     current_player = players.begin();
 
     // register types in lua api
+    lua.new_usertype<FlowEvent>("flow_event",
+        "name", &FlowEvent::name);
     lua.new_usertype<State>("munchkin_state", 
         "get_player", &State::get_player,
         "get_current_player", &State::get_current_player,
-        "get_player_count", &State::get_player_count
+        "get_player_count", &State::get_player_count,
+        "last_event", &State::last_event
         );
     lua.new_usertype<Player>("munchkin_player", "level", &Player::level, "id", &Player::id);
+    lua.open_libraries(sol::lib::coroutine);
     
     // Load the generic API wrapper
     lua["state"] = this;

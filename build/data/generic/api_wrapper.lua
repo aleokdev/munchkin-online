@@ -15,3 +15,6 @@ function game.iter_players()
         return state:get_player(i)
     end
 end
+
+-- Creates a reference to state.last_event since it is a table, and tables are passed by reference.
+game.last_event = state.last_event
