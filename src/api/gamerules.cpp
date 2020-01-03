@@ -1,6 +1,7 @@
 #include <filesystem>
 
 #include "api/gamerules.hpp"
+#include <stdexcept>
 
 namespace munchkin {
 
@@ -8,8 +9,8 @@ namespace munchkin {
 	{
 		std::filesystem::path fspath(path);
 		fspath /= GAMERULES_GAMEFLOW_FILENAME;
-		game_flow_script = state.load_file(fspath.string());
-		game_flow = game_flow_script;
+		sol::protected_function_result result = state.script_file(fspath.string());
+		game_flow = result;
 	}
 
 	void GameRules::continue_flow()

@@ -30,6 +30,7 @@ public:
     sol::table game_api;
     std::vector<Player>::iterator current_player;
     size_t player_count;
+    size_t turn_number = 1;
     std::vector<Player> players;
     std::vector<CardDef> cards;
 };

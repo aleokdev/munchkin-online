@@ -1,4 +1,4 @@
-local game = {}
+game = {}
 
 function game.iter_players()
     local i = -1
@@ -21,5 +21,3 @@ end
 function game.has_ended()
     return game.winner() ~= nil
 end
-
-return game

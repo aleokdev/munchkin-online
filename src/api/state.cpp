@@ -3,6 +3,7 @@
 #include "api/card_loader.hpp"
 
 #include <stdexcept>
+#include <iostream>
 
 namespace munchkin  {
 
@@ -24,9 +25,10 @@ State::State(size_t player_count) : player_count(player_count) {
     
     // Load the gamerule's API
     lua["state"] = this;
-    game_api = lua.script_file("data/gamerules/default/game.lua");
-    if (!game_api.is<sol::table>())
-        throw std::runtime_error("Type returned from game.lua is NOT a table!");
+    lua.script_file("data/gamerules/default/game.lua");
+    game_api = lua["game"];
+    if (lua["game"] == sol::lua_nil)
+        std::cout << "Warning: Variable 'game' has not been defined in game.lua" << std::endl;
 }
 
 void State::load_cards_from_json(std::string_view path) {
@@ -47,10 +49,7 @@ size_t State::get_player_count() const {
 
 void State::next_player_turn()
 {
-    if (current_player == players.end())
-        current_player = players.begin();
-    else
-        current_player++;
+    
 }
 
 }

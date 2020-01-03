@@ -2,12 +2,13 @@
 #define MUNCHKIN_GAME_HPP_
 
 #include "state.hpp"
+#include "gamerules.hpp"
 
 namespace munchkin {
 
 class Game {
 public:
-    Game(size_t player_count);
+    Game(size_t player_count, std::string gamerules_path = DEFAULT_GAMERULES_PATH);
 
     void turn();
 
@@ -17,6 +18,8 @@ public:
 
 private:
     State state;
+    std::string game_stage;
+    GameRules gamerules;
 };
 
 }

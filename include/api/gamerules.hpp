@@ -19,7 +19,6 @@ namespace munchkin {
 		void continue_flow();
 
 	private:
-		sol::load_result game_flow_script;
 		sol::coroutine game_flow;
 	};
 }
