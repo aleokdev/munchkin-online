@@ -3,20 +3,40 @@
 
 #include <sol/sol.hpp>
 #include <string>
+#include "api/carddef.hpp"
 
 namespace munchkin {
 
 class State;
 class Player;
 
+// Cards refer to CardDefs
 class Card {
 public:
-    // TODO: change this to load from json
-    Card(std::string internal_name, std::string const& script_path, sol::state& lua);
+    Card(CardDef& def);
+    Card(Card const&) = default;
+    Card(Card&&) = default;
 
-    void play(State& state, Player& player);
+    Card& operator=(Card const&) = default;
+    Card& operator=(Card&&) = default;
 
-    std::string internal_name;
+    ~Card() = default;
+
+    CardDef& get_def() { return *def; }
+    CardDef const& get_def() const { return *def; }
+
+    template<typename... Args>
+    sol::object execute_function(std::string_view name, Args&&... args) {
+        return data[name](data, std::forward<Args>(args)...);
+    }
+
+    sol::object get_data_variable(std::string_view name) {
+        return data[name];
+    }
+
+private:
+    CardDef* def;
+    sol::table data;
 };
 
 }

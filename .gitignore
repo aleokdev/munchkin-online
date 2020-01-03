@@ -19,7 +19,6 @@ x64/
 x86/
 bld/
 [Bb]in/
-build/
 [Oo]bj/
 [Ll]og/
 
@@ -263,3 +262,5 @@ __pycache__/
 
 # VS Code
 .vscode/
+
+CMakeSettings.json

@@ -5,13 +5,7 @@
 
 namespace munchkin {
 
-Card::Card(std::string internal_name, std::string const& script_path, sol::state& lua) 
-    : internal_name(std::move(internal_name)) {
-    lua.script_file(script_path);
-}
+Card::Card(CardDef& def) : def(&def), data(sol::metatable(def.metatable)) {}
 
-void Card::play(State& state, Player& player) {
-    state.lua[internal_name]["on_play"](state, player);
-}
 
 }
