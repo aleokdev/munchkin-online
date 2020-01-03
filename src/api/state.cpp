@@ -30,7 +30,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
     // Load the gamerule's API
     std::filesystem::path fspath(gamerule_path);
-    fspath /= "rules.lua";
+    fspath /= STATE_API_RULES_FILE_NAME;
     lua.script_file(fspath.string());
 
     game_api = lua["game"];

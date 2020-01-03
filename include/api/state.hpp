@@ -9,6 +9,7 @@
 #include "carddef.hpp"
 
 #define STATE_API_WRAPPER_FILE_PATH "data/generic/api_wrapper.lua"
+#define STATE_API_RULES_FILE_NAME "rules.lua"
 
 namespace munchkin {
 
