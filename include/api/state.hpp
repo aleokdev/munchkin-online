@@ -3,6 +3,7 @@
 
 #include <sol/sol.hpp>
 #include <string_view>
+#include "gamerules.hpp"
 
 #include "player.hpp"
 #include "carddef.hpp"
@@ -11,7 +12,7 @@ namespace munchkin {
 
 class State {
 public:
-    State(size_t player_count);
+    State(size_t player_count, std::string gamerule_path = DEFAULT_GAMERULES_PATH);
 
     void load_cards_from_json(std::string_view path);
 

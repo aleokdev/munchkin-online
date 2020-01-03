@@ -7,7 +7,7 @@
 
 namespace munchkin  {
 
-State::State(size_t player_count) : player_count(player_count) {
+State::State(size_t player_count, std::string gamerule_path) : player_count(player_count) {
     // create players
     players.resize(player_count);
     for (int i = 1; i < player_count; ++i) {
@@ -25,7 +25,7 @@ State::State(size_t player_count) : player_count(player_count) {
     
     // Load the gamerule's API
     lua["state"] = this;
-    lua.script_file("data/gamerules/default/game.lua");
+    lua.script_file(gamerule_path);
     game_api = lua["game"];
     if (lua["game"] == sol::lua_nil)
         std::cout << "Warning: Variable 'game' has not been defined in game.lua" << std::endl;
