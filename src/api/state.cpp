@@ -47,9 +47,4 @@ size_t State::get_player_count() const {
     return player_count;
 }
 
-void State::next_player_turn()
-{
-    
-}
-
 }

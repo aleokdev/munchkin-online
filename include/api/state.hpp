@@ -21,7 +21,6 @@ public:
     // TODO: Try to stay away from IDs! They cause confusion! (Should they start at 0 or 1?)
     Player& get_player(size_t id);
     Player& get_current_player();
-    void next_player_turn();
 
     size_t get_player_count() const;
 
