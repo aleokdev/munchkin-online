@@ -23,7 +23,8 @@ end
 
 local function stage_equip_stuff()
 	wait_for_event("dungeon_card_drawn")
-	if game.last_card_drawn.script_name == "monster.lua" then
+	-- if game.last_card_drawn.script_name == "monster.lua" then -- use later, no support in the api for last_card_drawn yet
+	if true then
 		game.stage = "FIGHT_MONSTER"
 	else
 		game.stage = "DECIDE_NOMONSTER"
