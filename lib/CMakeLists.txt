@@ -11,5 +11,6 @@ set(MUNCHKIN_INCLUDE_DIRECTORIES
 	"${CMAKE_CURRENT_SOURCE_DIR}/sol2/single/include"
 	"${CMAKE_CURRENT_SOURCE_DIR}/lua/include"
 	"${CMAKE_CURRENT_SOURCE_DIR}/nlohmann/include"
+	"${CMAKE_CURRENT_SOURCE_DIR}/doctest/include"
 	PARENT_SCOPE
 )

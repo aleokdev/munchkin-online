@@ -16,7 +16,7 @@ project("munchkin-online" VERSION 0.0.0
 						  DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
 set(MUNCHKIN_SOURCES 
-    "src/main.cpp" "src/api/game.cpp" "src/api/state.cpp" "src/api/card.cpp" "src/api/carddef.cpp"
+    "src/api/game.cpp" "src/api/state.cpp" "src/api/card.cpp" "src/api/carddef.cpp"
     "src/api/card_loader.cpp" "src/api/gamerules.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include")
@@ -25,7 +25,7 @@ set(MUNCHKIN_LINK_DIRECTORIES "")
 
 add_subdirectory("lib")
 
-add_executable (${PROJECT_NAME} ${MUNCHKIN_SOURCES})
+add_executable (${PROJECT_NAME} "src/main.cpp" ${MUNCHKIN_SOURCES})
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
@@ -39,3 +39,10 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
+
+# Tests
+
+add_executable ("carddata-test" "tests/carddata.cpp" ${MUNCHKIN_SOURCES})
+target_compile_features("carddata-test" PUBLIC "cxx_std_17")
+target_include_directories("carddata-test" PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
+target_link_libraries("carddata-test" PUBLIC ${MUNCHKIN_LINK_LIBRARIES})

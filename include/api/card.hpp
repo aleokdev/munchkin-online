@@ -27,7 +27,11 @@ public:
 
     template<typename... Args>
     sol::object execute_function(std::string_view name, Args&&... args) {
-        return data[name](std::forward<Args>(args)...);
+        return data[name](data, std::forward<Args>(args)...);
+    }
+
+    sol::object get_data_variable(std::string_view name) {
+        return data[name];
     }
 
 private:
