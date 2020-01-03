@@ -16,5 +16,10 @@ function game.iter_players()
     end
 end
 
+function game.next_player_turn()
+    state:set_current_player((state:get_current_player() + 1) % state:get_player_count())
+    state.current_turn = state.current_turn + 1
+end
+
 -- Creates a reference to state.last_event since it is a table, and tables are passed by reference.
 game.last_event = state.last_event

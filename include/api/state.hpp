@@ -26,6 +26,7 @@ public:
 
     Player& get_player(size_t id);
     Player& get_current_player();
+    void set_current_player(size_t id);
 
     size_t get_player_count() const;
 
@@ -34,7 +35,7 @@ public:
     sol::state lua;
     sol::table game_api;
     FlowEvent last_event;
-    std::vector<Player>::iterator current_player;
+    size_t current_player_id;
     size_t player_count;
     size_t turn_number = 1;
     std::vector<Player> players;

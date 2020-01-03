@@ -12,8 +12,10 @@ Game::Game(size_t player_count, std::string gamerules_path) : state(player_count
 }
 
 void Game::turn() {
-    std::cout << "Turn " << state.turn_number << std::endl;
-    std::cout << "Stage: " << game_stage << std::endl;
+    std::cout << "Turn " << state.turn_number << std::endl
+              << "Player " << state.get_current_player().id << "'s turn" << std::endl
+              << "Stage: " << game_stage << std::endl;
+
     // check if the game is over
     sol::object result = state.game_api["winner"]();
     if (result != sol::lua_nil) {
@@ -27,14 +29,6 @@ void Game::turn() {
     std::string event_to_push;
     std::cin >> event_to_push;
     tick(event_to_push);
-
-    std::cout << "Next turn...!" << std::endl;
-    // advance to next player's turn
-    state.turn_number++;
-    if (state.current_player == state.players.end())
-        state.current_player = state.players.begin();
-    else
-        state.current_player++;
 }
 
 void Game::tick(std::string event_name)

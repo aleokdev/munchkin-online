@@ -11,19 +11,21 @@ namespace munchkin  {
 State::State(size_t player_count, std::string gamerule_path) : player_count(player_count) {
     // create players
     players.resize(player_count);
-    for (int i = 1; i < player_count; ++i) {
+    for (int i = 0; i < player_count; ++i) {
         players[i].id = i;
     }
-    current_player = players.begin();
+    current_player_id = 0;
 
     // register types in lua api
     lua.new_usertype<FlowEvent>("flow_event",
         "name", &FlowEvent::name);
-    lua.new_usertype<State>("munchkin_state", 
+    lua.new_usertype<State>("munchkin_state",
         "get_player", &State::get_player,
         "get_current_player", &State::get_current_player,
+        "set_current_player", &State::set_current_player,
         "get_player_count", &State::get_player_count,
-        "last_event", &State::last_event
+        "last_event", &State::last_event,
+        "turn_number", &State::turn_number
         );
     lua.new_usertype<Player>("munchkin_player", "level", &Player::level, "id", &Player::id);
     lua.open_libraries(sol::lib::coroutine);
@@ -49,7 +51,12 @@ Player& State::get_player(size_t id) {
 }
 
 Player& State::get_current_player() {
-    return *current_player;
+    return players[current_player_id];
+}
+
+void State::set_current_player(size_t id)
+{
+    current_player_id = id;
 }
 
 size_t State::get_player_count() const {
