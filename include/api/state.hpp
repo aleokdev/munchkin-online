@@ -18,7 +18,6 @@ public:
 
     // api functions
 
-    // TODO: Try to stay away from IDs! They cause confusion! (Should they start at 0 or 1?)
     Player& get_player(size_t id);
     Player& get_current_player();
 

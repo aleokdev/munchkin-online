@@ -1,5 +1,10 @@
 game = {}
 
+-- Game API --
+
+-- Try to stay away from IDs! They cause confusion, since they start at 0!
+-- Use game.iter_players() and other wrappers instead!
+
 function game.iter_players()
     local i = -1
     return function()
@@ -8,6 +13,8 @@ function game.iter_players()
         return state:get_player(i)
     end
 end
+
+-- Actual Game Rules --
 
 function game.winner() 
     for player in game.iter_players() do
