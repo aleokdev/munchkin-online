@@ -5,7 +5,7 @@
 
 namespace munchkin {
 
-Card::Card(CardDef& def) : def(&def) {}
+Card::Card(CardDef& def) : def(&def), data(sol::metatable(def.metatable)) {}
 
 
 }

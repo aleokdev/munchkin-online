@@ -25,8 +25,14 @@ public:
     CardDef& get_def() { return *def; }
     CardDef const& get_def() const { return *def; }
 
+    template<typename... Args>
+    sol::object execute_function(std::string_view name, Args&&... args) {
+        return data[name](std::forward<Args>(args)...);
+    }
+
 private:
     CardDef* def;
+    sol::table data;
 };
 
 }

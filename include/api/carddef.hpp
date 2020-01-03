@@ -10,14 +10,9 @@ namespace munchkin
 	{
 		CardDef(sol::state& state, std::string const& script_path, std::string _name, std::string _description);
 
-		template<typename... Args>
-		sol::object execute_function(std::string_view name, Args&&... args) {
-			return function_defs[name](std::forward<Args>(args)...);
-		}
-
 		std::string name;
 		std::string description;
-		sol::table function_defs;
+		sol::table metatable;
 	};
 }
 
