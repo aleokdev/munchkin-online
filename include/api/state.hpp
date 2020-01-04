@@ -3,6 +3,7 @@
 
 #include <sol/sol.hpp>
 #include <string_view>
+#include <queue>
 #include "gamerules.hpp"
 
 #include "player.hpp"
@@ -23,23 +24,45 @@ public:
     void load_cards_from_json(std::string_view path);
 
     // api functions
+    // More information in scripting_api.md
+
+    int get_ticks() const;
+
+    void give_treasure(Player& player);
+    void give_dungeon(Player& player);
+    void open_dungeon();
+
+    void start_battle();
+    void get_current_battle();
+    void end_current_battle();
 
     Player& get_player(size_t id);
+    size_t get_player_count() const;
     Player& get_current_player();
     void set_current_player(size_t id);
-
-    size_t get_player_count() const;
+    // next_player_turn() defined in api_wrapper.lua
 
     // data
 
     sol::state lua;
     sol::table game_api;
+    bool should_borrow_facing_up;
+    std::string game_stage;
+    std::queue<FlowEvent> event_queue;
     FlowEvent last_event;
+    size_t turn_number = 1;
+    size_t tick = 0;
+
+    std::vector<Player> players;
     size_t current_player_id;
     size_t player_count;
-    size_t turn_number = 1;
-    std::vector<Player> players;
-    std::vector<CardDef> cards;
+
+    std::vector<CardDef> carddefs;
+
+    std::queue<Card> dungeon_deck;
+    std::queue<Card> dungeon_discard_deck;
+    std::queue<Card> treasure_deck;
+    std::queue<Card> treasure_discard_deck;
 };
 
 }

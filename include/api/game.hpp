@@ -12,7 +12,7 @@ public:
 
     void turn();
 
-    void tick(std::string event_name);
+    void tick();
 
     bool ended();
 
@@ -20,7 +20,6 @@ public:
 
 private:
     State state;
-    std::string game_stage;
     GameRules gamerules;
 };
 

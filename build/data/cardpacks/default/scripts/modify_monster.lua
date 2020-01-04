@@ -5,7 +5,7 @@ function card.on_play(self)
         local is_present_in_battle = game.get_current_battle().get_cards_played()[card] ~= nil
         if not is_present_in_battle then return false end
 
-        local is_monster = game.get_current_battle().get_card_power(card) 
+        local is_monster = game.get_current_battle().get_card_power(card) > 0
         return is_monster
     end
 
