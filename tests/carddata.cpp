@@ -56,3 +56,32 @@ TEST_CASE("State::current_battle") {
 	CHECK(def_instance.execute_function("test_battle_2"));
 	CHECK(def_instance.execute_function("test_battle_3"));
 }
+
+#include "api/card_loader.hpp"
+
+TEST_CASE("json loader") {
+	// Player count shouldn't matter in this test
+	State state(5);
+
+	SUBCASE("load all carddefs") {
+		std::vector<CardDef> defs(load_cards("data/cardpacks/test/cards.json", state.lua));
+
+		CHECK(defs.size() == 3);
+
+		SUBCASE("load card properties") {
+			CardDef* def = nullptr;
+			for(auto & d : defs) {
+				if (d.name == "Property Test")
+					def = &d;
+			}
+			CHECK(def != nullptr);
+			
+			CHECK(((sol::table)def->metatable["properties"]).size() == 3);
+
+			Card test(*def);
+			CHECK(test.execute_function("test_text"));
+			CHECK(test.execute_function("test_number"));
+			CHECK(test.execute_function("test_boolean"));
+		}
+	}
+}
