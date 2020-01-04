@@ -43,6 +43,11 @@ void Game::tick()
     }
 }
 
+void Game::push_event(FlowEvent e)
+{
+    state.event_queue.push(e);
+}
+
 bool Game::ended() {
     return state.game_api["has_ended"](state.game_api);
 }

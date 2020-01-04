@@ -14,6 +14,8 @@ public:
 
     void tick();
 
+    void push_event(FlowEvent e);
+
     bool ended();
 
     State const& get_state() const { return state; }
