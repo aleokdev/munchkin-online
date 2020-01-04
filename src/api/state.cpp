@@ -20,6 +20,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     lua.new_usertype<FlowEvent>("flow_event",
         "name", &FlowEvent::name);
 
+    // TODO: Rename to munchkin_game OR rename game to state
     sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",
         "last_event", &State::last_event,
         "get_ticks", &State::get_ticks,
@@ -43,7 +44,9 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
     lua.new_usertype<Player>("munchkin_player",
         "level", &Player::level,
-        "id", &Player::id);
+        "id", &Player::id,
+        "hand", &Player::hand,
+        "hand_max_cards", &Player::hand_max_cards);
 
     lua.new_usertype<Battle>("munchkin_battle",
         "player_power_offset", &Battle::player_power_offset,
@@ -54,7 +57,6 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     lua.open_libraries(sol::lib::coroutine);
     
     // Load the generic API wrapper
-    // TODO: Rename to state?
     lua["game"] = this;
     lua.script_file(STATE_API_WRAPPER_FILE_PATH);
 
@@ -120,6 +122,24 @@ Player& State::get_current_player() {
 void State::set_current_player(size_t id)
 {
     current_player_id = id;
+}
+
+void State::add_cardpack(std::string path)
+{
+    std::vector<CardDef> new_carddefs = load_cards(lua, path);
+    carddefs.resize(carddefs.size() + new_carddefs.size());
+    all_cards.resize(all_cards.size() + new_carddefs.size());
+    for (auto& def : new_carddefs)
+    {
+        carddefs.emplace_back(def);
+        add_card(def);
+    }
+}
+
+Card& State::add_card(CardDef& def)
+{
+    Card card(*this, def, {});
+    all_cards.emplace_back(card);
 }
 
 size_t State::get_player_count() const {

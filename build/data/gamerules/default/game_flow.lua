@@ -71,7 +71,7 @@ end
 local function stage_charity()
 	repeat
 		wait_for_event("card_discarded")
-	until #game:get_current_player():get_hand() <= game:get_current_player().hand_max_cards
+	until #game:get_current_player().hand <= game:get_current_player().hand_max_cards
 	game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
 	game.next_player_turn()
 	coroutine.yield()

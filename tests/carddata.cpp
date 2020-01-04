@@ -85,3 +85,14 @@ TEST_CASE("json loader") {
 		}
 	}
 }
+
+TEST_CASE("card pointers") {
+	// Player count shouldn't matter in this test
+	State state(5);
+
+	CardDef def(state.lua, "data/cardpacks/test/scripts/metatable.lua", "CardPtr Test", "Tests the CardPtr struct");
+	Card card1(def);
+	Card card2(def);
+
+	CardPtr
+}

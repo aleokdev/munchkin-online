@@ -61,10 +61,14 @@ public:
 
     std::vector<CardDef> carddefs;
 
-    std::queue<Card> dungeon_deck;
-    std::queue<Card> dungeon_discard_deck;
-    std::queue<Card> treasure_deck;
-    std::queue<Card> treasure_discard_deck;
+    void add_cardpack(std::string path);
+    Card& add_card(CardDef& def);
+    std::vector<Card> all_cards;
+
+    std::queue<CardPtr> dungeon_deck;
+    std::queue<CardPtr> dungeon_discard_deck;
+    std::queue<CardPtr> treasure_deck;
+    std::queue<CardPtr> treasure_discard_deck;
 
     // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
     std::optional<Battle> current_battle;
