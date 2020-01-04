@@ -126,9 +126,7 @@ void State::set_current_player(size_t id)
 
 void State::add_cardpack(std::string path)
 {
-    std::vector<CardDef> new_carddefs = load_cards(lua, path);
-    carddefs.resize(carddefs.size() + new_carddefs.size());
-    all_cards.resize(all_cards.size() + new_carddefs.size());
+    std::vector<CardDef> new_carddefs = load_cards(path, lua);
     for (auto& def : new_carddefs)
     {
         carddefs.emplace_back(def);
@@ -139,7 +137,7 @@ void State::add_cardpack(std::string path)
 Card& State::add_card(CardDef& def)
 {
     Card card(*this, def, {});
-    all_cards.emplace_back(card);
+    return all_cards.emplace_back(std::move(card));
 }
 
 size_t State::get_player_count() const {

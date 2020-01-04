@@ -55,6 +55,11 @@ public:
     size_t turn_number = 1;
     size_t tick = 0;
 
+    size_t generate_id() {
+        return last_id++;
+    }
+    size_t last_id = 0;
+
     std::vector<Player> players;
     size_t current_player_id;
     size_t player_count;
