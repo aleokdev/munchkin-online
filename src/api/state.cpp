@@ -95,14 +95,18 @@ void State::open_dungeon()
 
 void State::start_battle()
 {
-    // TODO
-    throw std::runtime_error("start_battle: Not implemented");
+    if (current_battle)
+        return;
+
+    current_battle = Battle(get_current_player());
 }
 
 void State::end_current_battle()
 {
-    // TODO
-    throw std::runtime_error("end_current_battle: Not implemented");
+    if (!current_battle)
+        return;
+
+    current_battle.reset();
 }
 
 Player& State::get_player(size_t id) {
