@@ -17,7 +17,7 @@ project("munchkin-online" VERSION 0.0.0
 
 set(MUNCHKIN_SOURCES 
     "src/api/game.cpp" "src/api/state.cpp" "src/api/card.cpp" "src/api/carddef.cpp"
-    "src/api/card_loader.cpp" "src/api/gamerules.cpp"
+    "src/api/card_loader.cpp" "src/api/gamerules.cpp" "src/api/battle.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include")
 set(MUNCHKIN_LINK_LIBRARIES "")

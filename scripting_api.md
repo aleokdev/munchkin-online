@@ -10,7 +10,7 @@
 - `game.should_borrow_facing_up`: bool -> Should the next card be borrowed facing up or down? (read/write)
 
 - `game.start_battle()`: void -> Starts a new battle.  Only possible if `game.get_current_battle()` is nil
-- `game.get_current_battle()`: Battle -> Returns the current battle happening, nil if there isn't any
+- `game.current_battle`: Battle -> Returns the current battle happening, nil if there isn't any. DO NOT DIRECTLY MODIFY THIS VARIABLE (Although you can interact with its members freely)
 - `game.end_current_battle()`: void -> Ends the current battle (Or does nothing if the current battle is nil). Does NOT give treasure, use `game.give_treasure(player)` for that
 
 - `game.get_player(id)`: Player -> Returns the player with the given ID. Refrain from using, mostly only used in the internal API

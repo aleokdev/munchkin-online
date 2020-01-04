@@ -10,7 +10,7 @@ struct Player {
     int level = 1;
     size_t id = 0;
 
-
+    int get_power() { return level; }
 };
 
 }

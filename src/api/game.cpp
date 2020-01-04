@@ -8,7 +8,7 @@ namespace munchkin {
 
 Game::Game(size_t player_count, std::string gamerules_path) : state(player_count), gamerules(state.lua, gamerules_path) {
     // Get the first game stage
-    tick("game_start");
+    tick();
 }
 
 void Game::turn() {
@@ -17,7 +17,7 @@ void Game::turn() {
               << "Stage: " << state.game_stage << std::endl;
 
     // check if the game is over
-    sol::object result = state.game_api["winner"]();
+    sol::object result = state.game_api["get_winner"](state.game_api);
     if (result != sol::lua_nil) {
         // We have a winner!
         Player& player = result.as<Player>();
@@ -44,7 +44,7 @@ void Game::tick()
 }
 
 bool Game::ended() {
-    return state.game_api["has_ended"]();
+    return state.game_api["has_ended"](state.game_api);
 }
 
 }

@@ -4,10 +4,13 @@
 #include <sol/sol.hpp>
 #include <string_view>
 #include <queue>
+#include <optional>
 #include "gamerules.hpp"
 
 #include "player.hpp"
 #include "carddef.hpp"
+#include "card.hpp"
+#include "battle.hpp"
 
 #define STATE_API_WRAPPER_FILE_PATH "data/generic/api_wrapper.lua"
 #define STATE_API_RULES_FILE_NAME "rules.lua"
@@ -33,7 +36,6 @@ public:
     void open_dungeon();
 
     void start_battle();
-    void get_current_battle();
     void end_current_battle();
 
     Player& get_player(size_t id);
@@ -63,6 +65,9 @@ public:
     std::queue<Card> dungeon_discard_deck;
     std::queue<Card> treasure_deck;
     std::queue<Card> treasure_discard_deck;
+
+    // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
+    std::optional<Battle> current_battle;
 };
 
 }
