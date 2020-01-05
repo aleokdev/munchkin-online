@@ -1,5 +1,4 @@
 #include "api/carddef.hpp"
-#include "..\..\include\api\carddef.hpp"
 
 
 namespace munchkin
