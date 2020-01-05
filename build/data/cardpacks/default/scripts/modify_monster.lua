@@ -23,7 +23,7 @@ function card.on_battle_end(self)
     self.target_monster = nil
 end
 
-function card.on_anhilate(self)
+function card.on_annihilate(self)
     if self.target_monster ~= nil then
         self.target_monster.modify_card(selection, -card.properties.power_to_add)
     end
