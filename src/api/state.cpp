@@ -48,7 +48,8 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "level", &Player::level,
         "id", &Player::id,
         "hand", &Player::hand,
-        "hand_max_cards", &Player::hand_max_cards
+        "hand_max_cards", &Player::hand_max_cards,
+        "equipped", &Player::equipped
     );
 
     lua.new_usertype<Battle>("munchkin_battle",
