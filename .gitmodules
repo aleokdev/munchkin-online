@@ -4,3 +4,6 @@
 [submodule "lib/nlohmann"]
 	path = lib/nlohmann
 	url = https://github.com/nlohmann/json
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = https://github.com/ocornut/imgui
