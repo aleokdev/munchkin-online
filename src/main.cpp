@@ -88,7 +88,19 @@ int main()
 		ImGui::NewFrame();
 
 		{
-			ImGui::ShowDemoWindow();
+			static bool show_demo = false;
+			ImGui::Begin("Debug");
+			{
+				ImGui::Button("Open Lua State Viewer");
+				if (ImGui::Button("Open ImGui Demo window"))
+					show_demo = true;
+				if (show_demo)
+					ImGui::ShowDemoWindow(&show_demo);
+				ImGui::Separator();
+				ImGui::TextUnformatted("Players");
+				ImGui::Columns(2);
+			}
+			ImGui::End();
 		}
 
 		ImGui::Render();
