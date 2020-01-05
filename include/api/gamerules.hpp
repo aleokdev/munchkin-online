@@ -9,16 +9,11 @@
 #define GAMERULES_GAMEFLOW_FILENAME "game_flow.lua"
 
 namespace munchkin {
-	struct Game;
+	struct State;
 
 	struct GameRules {
-		GameRules(sol::state& state, std::string path);
+		GameRules(State& state, std::string path);
 
-		// Continues the game_flow script. This function does not need parameters because everything that is needed
-		// is already in the lua state as global variables.
-		void continue_flow();
-
-	private:
 		sol::coroutine game_flow;
 	};
 }

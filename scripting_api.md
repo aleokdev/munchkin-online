@@ -3,10 +3,11 @@
 - `game.last_event`: FlowEvent -> The last event recorded by the game (readonly)
 - `game.get_ticks()`: int -> The game_flow ticker (counts up after game_flow.lua is executed)
 - `game.stage`: string -> The game stage (read/write)
+- `game.turn_number`: int -> The current turn (Each time a player finishes their turn, this should increment)
 
 - `game.give_treasure(player)`: void -> Gives 1 card of treasure from the deck to the given player, directly, without calling on_reveal first
 - `game.give_dungeon(player)`: void -> Gives 1 card of dungeon from the deck to the given player, directly, without calling on_reveal first
-- `game.open_dungeon()`: void -> Calls on_reveal for the first card of the deck and then discards it, or, if on_reveal is not defined for that card, gives the card to the current player
+- `game.open_dungeon()`: void -> Creates a new coroutine for on_reveal for the first card of the deck and then does executes it once (Remember to discard or put the card somewhere in your script!), or, if on_reveal is not defined for that card, gives the card to the current player. Does nothing if the dungeon deck is empty.
 - `game.should_borrow_facing_up`: bool -> Should the next card be borrowed facing up or down? (read/write)
 
 - `game.start_battle()`: void -> Starts a new battle.  Only possible if `game.get_current_battle()` is nil
@@ -19,7 +20,7 @@
 - `game.set_current_player(id)`: Player -> Sets the user that is currently playing. If you want to change the player's turn, remember to also change the game stage
 - `game.next_player_turn()`: void -> Makes current_player be the next player in the game
 
-- `game.get_visible_cards()`: Card -> Returns all the cards visible on the table, which includes all the current battle cards, all the cards of other players, and the first card of each deck
+- `game.get_visible_cards()`: Card[] -> Returns all the cards visible on the table, which includes all the current battle cards, all the cards of other players, and the first card of each deck
 
 #### Examples
 Check out the default game flow (`build/data/gamerules/default/game_flow.lua`)
@@ -65,7 +66,11 @@ For more examples, check out `build/data/cardpacks/default/scripts/modify_monste
 ```
 dungeon_opened: Called in game.open_dungeon().
 tick: Called every tick.
-click_stop_battle_button: Called in battles, when the "Stop" button has been pressed (When the user wants to end the battle, basically)
+clicked_stop_battle_button: Called in battles, when the "Stop" button has been pressed (When the user wants to end the battle, basically)
+clicked_dungeon_deck: Self-explanatory
+clicked_treasure_deck: self-explanatory
+clicked_dungeon_discard_deck: Self-explanatory
+clicked_treasure_discard_deck: self-explanatory
 treasure_card_drawn: Called when a treasure card is drawn.
 dungeon_card_drawn: Called when a dungeon card is drawn.
 card_discarded: Called when a card is discarded or given to a player of lower level (Charity)
@@ -92,3 +97,7 @@ end
 
 selection = selection.choose_filtered(selection_filter)
 ```
+
+### Stuff that `card` must define:
+The `Card` usertype is actually based internally on `CardPtr`, NOT `Card`. The reason behind this choice is that cards are supposed to be unique types.
+- `id`: int -> The internal ID of the card (readonly)

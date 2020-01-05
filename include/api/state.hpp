@@ -44,14 +44,14 @@ public:
     void set_current_player(size_t id);
     // next_player_turn() defined in api_wrapper.lua
 
+    std::vector<CardPtr> get_visible_cards();
+
     // data
 
     sol::state lua;
     sol::table game_api;
     bool should_borrow_facing_up;
     std::string game_stage;
-    std::queue<FlowEvent> event_queue;
-    FlowEvent last_event;
     size_t turn_number = 1;
     size_t tick = 0;
 
@@ -74,6 +74,10 @@ public:
     std::queue<CardPtr> dungeon_discard_deck;
     std::queue<CardPtr> treasure_deck;
     std::queue<CardPtr> treasure_discard_deck;
+
+    std::queue<FlowEvent> event_queue;
+    FlowEvent last_event;
+    std::vector<sol::coroutine> active_coroutines;
 
     // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
     std::optional<Battle> current_battle;

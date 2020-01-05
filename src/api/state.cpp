@@ -37,22 +37,26 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "end_current_battle", &State::end_current_battle,
 
         "get_player", &State::get_player,
+        "get_player_count", &State::get_player_count,
         "get_current_player", &State::get_current_player,
         "set_current_player", &State::set_current_player,
-        "get_player_count", &State::get_player_count
-        );
+        // next_player_turn defined in api_wrapper
+        "get_visible_cards", &State::get_visible_cards
+    );
 
     lua.new_usertype<Player>("munchkin_player",
         "level", &Player::level,
         "id", &Player::id,
         "hand", &Player::hand,
-        "hand_max_cards", &Player::hand_max_cards);
+        "hand_max_cards", &Player::hand_max_cards
+    );
 
     lua.new_usertype<Battle>("munchkin_battle",
         "player_power_offset", &Battle::player_power_offset,
         "monster_power_offset", &Battle::monster_power_offset,
         "get_total_player_power", &Battle::get_total_player_power,
-        "get_total_monster_power", &Battle::get_total_monster_power);
+        "get_total_monster_power", &Battle::get_total_monster_power
+    );
 
     lua.open_libraries(sol::lib::coroutine);
     
@@ -79,20 +83,30 @@ int State::get_ticks() const
 
 void State::give_treasure(Player& player)
 {
-    // TODO
-    throw std::runtime_error("give_treasure: Not implemented");
+    player.hand.emplace_back(treasure_deck.front());
+    treasure_deck.pop();
 }
 
 void State::give_dungeon(Player& player)
 {
-    // TODO
-    throw std::runtime_error("give_dungeon: Not implemented");
+    player.hand.emplace_back(dungeon_deck.front());
+    dungeon_deck.pop();
 }
 
 void State::open_dungeon()
 {
-    // TODO
-    throw std::runtime_error("open_dungeon: Not implemented");
+    if (dungeon_deck.size() == 0) return;
+
+    sol::function on_reveal = dungeon_deck.front()->get_data_variable("on_reveal");
+
+    if (on_reveal == sol::lua_nil) {
+        give_dungeon(get_current_player());
+    }
+    else {
+        active_coroutines.emplace_back(on_reveal);
+        on_reveal();
+        dungeon_deck.pop();
+    }
 }
 
 void State::start_battle()
@@ -122,6 +136,30 @@ Player& State::get_current_player() {
 void State::set_current_player(size_t id)
 {
     current_player_id = id;
+}
+
+std::vector<CardPtr> State::get_visible_cards()
+{
+    std::vector<CardPtr> result;
+
+    if (dungeon_deck.size() > 0)
+        result.emplace_back(dungeon_deck.front());
+    if (treasure_deck.size() > 0)
+        result.emplace_back(treasure_deck.front());
+    if (dungeon_discard_deck.size() > 0)
+        result.emplace_back(dungeon_discard_deck.front());
+    if (treasure_discard_deck.size() > 0)
+        result.emplace_back(treasure_discard_deck.front());
+
+    for (auto& player : players)
+    {
+        for (auto& card : player.hand)
+            result.emplace_back(card);
+        for (auto& card : player.equipped)
+            result.emplace_back(card);
+    }
+
+    return result;
 }
 
 void State::add_cardpack(std::string path)

@@ -18,7 +18,7 @@ public:
 
     bool ended();
 
-    State const& get_state() const { return state; }
+    State& get_state() { return state; }
 
 private:
     State state;

@@ -22,9 +22,9 @@ local function wait_for_ticks_or_event(ev, ticks)
 end
 
 local function stage_equip_stuff()
-	game:open_dungeon()
-	wait_for_event("dungeon_opened")
-	-- if game.last_card_drawn.script_name == "monster.lua" then -- use later, no support in the api for last_card_drawn yet
+	wait_for_event("clicked_dungeon_deck")
+	game:open_dungeon() -- will call card.on_reveal if it exists, should start a battle if it is a monster
+
 	if game.current_battle ~= nil then
 		game.stage = "FIGHT_MONSTER"
 	else
@@ -33,11 +33,7 @@ local function stage_equip_stuff()
 end
 
 local function stage_fight_monster()
-	-- FOGGY TERRITORY: Still no idea how we're going to implement this. --
-
-	wait_for_event("click_stop_battle_button")
-
-	-- FOGGY TERRITORY END --
+	wait_for_event("clicked_stop_battle_button")
 		
 	local ticks_to_wait = 2.6 * 60 -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
 
@@ -55,6 +51,21 @@ local function stage_fight_monster()
 	else
 		-- Monsters have won, woo!
 		game.stage = "FLEE_MONSTER"
+	end
+end
+
+local function stage_decide_nomonster()
+	while true do
+		if game.current_battle ~= nil then
+			-- User decided to play a monster of their own
+			game.stage = "FIGHT_MONSTER"
+		end
+		if game.last_event.name == "clicked_dungeon_deck" then
+			-- User decided to loot the room
+			game.stage = "CHARITY"
+		end
+
+		coroutine.yield()
 	end
 end
 
@@ -78,9 +89,10 @@ local function stage_charity()
 end
 
 local function main()
-	local stages = { EQUIP_STUFF_AND_OPEN_DUNGEON = stage_equip_stuff, FIGHT_MONSTER = stage_fight_monster, GET_TREASURE = stage_get_treasure, CHARITY = stage_charity }
+	local stages = { EQUIP_STUFF_AND_OPEN_DUNGEON = stage_equip_stuff, FIGHT_MONSTER = stage_fight_monster, GET_TREASURE = stage_get_treasure, CHARITY = stage_charity, DECIDE_NOMONSTER = stage_decide_nomonster }
 	
 	game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
+	wait_for_event("tick") -- Wait for the game to load cardpacks in
 	while true do
 		stages[game.stage]()
 	end
