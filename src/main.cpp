@@ -98,7 +98,22 @@ int main()
 					ImGui::ShowDemoWindow(&show_demo);
 				ImGui::Separator();
 				ImGui::TextUnformatted("Players");
+				ImGui::SameLine();
+				char players_txt[16];
+				sprintf_s(players_txt, 16, "(%d)", game.get_state().players.size());
+				ImGui::TextDisabled(players_txt);
 				ImGui::Columns(2);
+				for (auto& player : game.get_state().players)
+				{
+					std::string id_txt = std::to_string(player.id);
+					char lvl_txt[16];
+					sprintf_s(lvl_txt, 16, "Level %d", player.level);
+					ImGui::TextUnformatted(id_txt.c_str());
+					ImGui::NextColumn();
+					ImGui::TextUnformatted(lvl_txt);
+					ImGui::NextColumn();
+				}
+				ImGui::Columns(1);
 			}
 			ImGui::End();
 		}
