@@ -11,6 +11,11 @@ GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) : game(&g)
     info.height = window_h;
 
     framebuf = std::move(renderer::RenderTarget(info));
+    background = renderer::create_background("data/generic/bg.png");
+}
+
+GameRenderer::~GameRenderer() {
+    renderer::free_background(background);
 }
 
 void GameRenderer::render_frame() {
@@ -19,10 +24,10 @@ void GameRenderer::render_frame() {
 
     renderer::RenderTarget::bind(framebuf);
     
-//    framebuf.clear(1, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuf.handle());
-    glClearColor(1, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    
+    framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Render the background
+    renderer::render_background(background);
 }
 
 void GameRenderer::blit(unsigned int target_framebuf) {
