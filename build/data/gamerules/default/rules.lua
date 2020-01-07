@@ -13,3 +13,7 @@ end
 function munchkin_state.has_ended(self)
     return self:get_winner() ~= nil
 end
+
+function munchkin_state.init_rules(self)
+    self.default_hand_max_cards = 5
+end

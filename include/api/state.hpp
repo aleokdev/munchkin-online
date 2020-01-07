@@ -79,6 +79,8 @@ public:
     FlowEvent last_event;
     std::vector<sol::coroutine> active_coroutines;
 
+    size_t default_hand_max_cards;
+
     // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
     std::optional<Battle> current_battle;
 };

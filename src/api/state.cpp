@@ -41,7 +41,9 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "get_current_player", &State::get_current_player,
         "set_current_player", &State::set_current_player,
         // next_player_turn defined in api_wrapper
-        "get_visible_cards", &State::get_visible_cards
+        "get_visible_cards", &State::get_visible_cards,
+
+        "default_hand_max_cards", &State::default_hand_max_cards
     );
 
     lua.new_usertype<Player>("munchkin_player",
@@ -65,12 +67,18 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     lua["game"] = this;
     lua.script_file(STATE_API_WRAPPER_FILE_PATH);
 
+    game_api = lua["game"];
+
     // Load the gamerule's API
     std::filesystem::path fspath(gamerule_path);
     fspath /= STATE_API_RULES_FILE_NAME;
     lua.script_file(fspath.string());
 
-    game_api = lua["game"];
+    game_api["init_rules"](this);
+    for (auto& player : players) {
+        player.hand_max_cards = default_hand_max_cards;
+    }
+
 }
 
 void State::load_cards_from_json(std::string_view path) {

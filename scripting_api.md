@@ -22,6 +22,9 @@
 
 - `game.get_visible_cards()`: Card[] -> Returns all the cards visible on the table, which includes all the current battle cards, all the cards of other players, and the first card of each deck
 
+- `game.init_rules()`: void -> Should be defined in `rules.lua`. Should initialize values such as `default_hand_max_cards`. 
+- `game.default_hand_max_cards`: int -> Should be set in `rules.lua`, in `init_rules`. The default value for `munchkin_player.hand_max_cards`.
+
 #### Examples
 Check out the default game flow (`build/data/gamerules/default/game_flow.lua`)
 
@@ -80,7 +83,7 @@ card_discarded: Called when a card is discarded or given to a player of lower le
 - `id`: int -> The internal ID of the player. Avoid using it, as it causes confusion.
 - `level`: int -> The level of the player.
 - `get_hand()`: Card[] -> The cards that the player has in their hand.
-- `hand_max_cards`: int -> The maximum number of cards that this player can have in their hand.
+- `hand_max_cards`: int -> The maximum number of cards that this player can have in their hand. Set to game.default_hand_max_cards at startup.
 
 ### Stuff that `selection` must define: (Not official)
 - `choose(allow_cancel = true)`: Card -> Waits until the player chooses any card from the table and returns it (nil if the player has cancelled).
