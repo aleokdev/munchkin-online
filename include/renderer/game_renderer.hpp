@@ -3,16 +3,17 @@
 
 namespace munchkin {
 
-	struct Game;
+struct Game;
 
-	struct GameRenderer {
-		GameRenderer(Game&);
+class GameRenderer {
+public:
+	GameRenderer(Game&);
 
+	void render_frame();
 
-
-	private:
-		Game* game;
-	};
+private:
+	Game* game;
+};
 
 }
 

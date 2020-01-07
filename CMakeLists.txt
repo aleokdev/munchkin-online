@@ -43,6 +43,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
 # Tests
 
 add_executable ("carddata-test" "tests/carddata.cpp" ${MUNCHKIN_SOURCES})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang") 
+    target_compile_options("carddata-test" PUBLIC "-w")
+endif()
 target_compile_features("carddata-test" PUBLIC "cxx_std_17")
 target_include_directories("carddata-test" PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
 target_link_libraries("carddata-test" PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
