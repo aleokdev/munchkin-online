@@ -10,6 +10,8 @@
 
 #include <glad/glad.h>
 
+#include "renderer/game_renderer.hpp"
+
 int main()
 {
 	munchkin::Game game(4);
@@ -23,6 +25,7 @@ int main()
 		std::cerr << "SDL Init error: " << SDL_GetError();
 		return -1;
 	}
+
 
 	// GL 4.3 + GLSL 430
 	const char* glsl_version = "#version 430";
@@ -64,6 +67,8 @@ int main()
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
+	munchkin::GameRenderer renderer(game, io.DisplaySize.x, io.DisplaySize.y);
+
 	bool done = false;
 	do {
 		// From imgui/examples/example_sdl_opengl3/main.cpp:
@@ -91,6 +96,10 @@ int main()
 		ImGui::NewFrame();
 
 		debugger.render();
+		renderer.render_frame();
+
+		// bind default framebuffer so Imgui is rendered directly to screen
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImGui::Render();
 		glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
