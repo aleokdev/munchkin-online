@@ -2,6 +2,7 @@
 #define SDL_MAIN_HANDLED
 
 #include "api/munchkin.hpp"
+#include "renderer/state_debugger.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_opengl3.h>
@@ -12,6 +13,7 @@
 int main()
 {
 	munchkin::Game game(4);
+	munchkin::StateDebugger debugger(game.get_state());
 	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
 
 	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
@@ -87,70 +89,7 @@ int main()
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
 
-		{
-			static bool show_demo = false;
-			ImGui::Begin("Debug");
-			{
-				ImGui::Button("Open Lua State Viewer");
-				if (ImGui::Button("Open ImGui Demo window"))
-					show_demo = true;
-				if (show_demo)
-					ImGui::ShowDemoWindow(&show_demo);
-				{
-					static char event_name[64] = "\0";
-					ImGui::InputTextWithHint("##ev", "Input event...", event_name, 64);
-					ImGui::SameLine();
-					if (ImGui::Button("Push Event"))
-					{
-						char cpy_str[64];
-						strcpy_s(cpy_str, 64, event_name);
-						game.push_event({ std::string(cpy_str) });
-					}
-				}
-
-				ImGui::Separator();
-
-				ImGui::TextUnformatted("Players");
-				ImGui::SameLine();
-				ImGui::TextDisabled("(%d)", game.get_state().players.size());
-				ImGui::Columns(4);
-				ImGui::TextUnformatted("ID");
-				ImGui::NextColumn();
-				ImGui::TextUnformatted("Level");
-				ImGui::NextColumn();
-				ImGui::TextUnformatted("Hand Cards");
-				ImGui::NextColumn();
-				ImGui::TextUnformatted("Hand Max Cards");
-				ImGui::NextColumn();
-
-				for (auto& player : game.get_state().players)
-				{
-					ImGui::Text("%d", player.id);
-					ImGui::NextColumn();
-					ImGui::Text("%d", player.level);
-					ImGui::NextColumn();
-					ImGui::Text("%d", player.hand.size());
-					ImGui::NextColumn();
-					ImGui::Text("%d", player.hand_max_cards);
-					ImGui::NextColumn();
-				}
-				ImGui::Columns(1);
-
-				ImGui::Separator();
-
-				ImGui::TextUnformatted("Game information");
-				ImGui::Indent();
-				{
-					ImGui::Text("Turn number: %d", game.get_state().turn_number);
-					ImGui::Text("Current user playing: %d", game.get_state().current_player_id);
-					ImGui::Text("Number of active coroutines: %d", game.get_state().active_coroutines.size());
-					ImGui::Text("Should borrow facing up: %s", game.get_state().should_borrow_facing_up ? "true" : "false");
-					ImGui::Text("Game stage: %s", game.get_state().game_stage.c_str());
-				}
-				ImGui::Unindent();
-			}
-			ImGui::End();
-		}
+		debugger.render();
 
 		ImGui::Render();
 		glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
