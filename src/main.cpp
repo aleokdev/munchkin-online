@@ -96,6 +96,18 @@ int main()
 					show_demo = true;
 				if (show_demo)
 					ImGui::ShowDemoWindow(&show_demo);
+				{
+					static char event_name[64] = "\0";
+					ImGui::InputTextWithHint("##ev", "Input event...", event_name, 64);
+					ImGui::SameLine();
+					if (ImGui::Button("Push Event"))
+					{
+						char cpy_str[64];
+						strcpy_s(cpy_str, 64, event_name);
+						game.push_event({ std::string(cpy_str) });
+					}
+				}
+
 				ImGui::Separator();
 				ImGui::TextUnformatted("Players");
 				ImGui::SameLine();
