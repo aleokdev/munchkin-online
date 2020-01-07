@@ -40,6 +40,8 @@ void Game::tick()
     state.tick++;
     while (state.event_queue.size() > 0) {
         state.last_event = state.event_queue.front();
+        if (state.last_event.name != "tick")
+            std::cout << "Processed event of name " << state.last_event.name << std::endl;
         for (auto& coroutine : state.active_coroutines) {
             if (!coroutine.runnable()) {
                 std::cout << "Encountered dead coroutine, need to discard it from active_coroutines." << std::endl;

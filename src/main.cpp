@@ -109,23 +109,45 @@ int main()
 				}
 
 				ImGui::Separator();
+
 				ImGui::TextUnformatted("Players");
 				ImGui::SameLine();
-				char players_txt[16];
-				sprintf_s(players_txt, 16, "(%d)", game.get_state().players.size());
-				ImGui::TextDisabled(players_txt);
-				ImGui::Columns(2);
+				ImGui::TextDisabled("(%d)", game.get_state().players.size());
+				ImGui::Columns(4);
+				ImGui::TextUnformatted("ID");
+				ImGui::NextColumn();
+				ImGui::TextUnformatted("Level");
+				ImGui::NextColumn();
+				ImGui::TextUnformatted("Hand Cards");
+				ImGui::NextColumn();
+				ImGui::TextUnformatted("Hand Max Cards");
+				ImGui::NextColumn();
+
 				for (auto& player : game.get_state().players)
 				{
-					std::string id_txt = std::to_string(player.id);
-					char lvl_txt[16];
-					sprintf_s(lvl_txt, 16, "Level %d", player.level);
-					ImGui::TextUnformatted(id_txt.c_str());
+					ImGui::Text("%d", player.id);
 					ImGui::NextColumn();
-					ImGui::TextUnformatted(lvl_txt);
+					ImGui::Text("%d", player.level);
+					ImGui::NextColumn();
+					ImGui::Text("%d", player.hand.size());
+					ImGui::NextColumn();
+					ImGui::Text("%d", player.hand_max_cards);
 					ImGui::NextColumn();
 				}
 				ImGui::Columns(1);
+
+				ImGui::Separator();
+
+				ImGui::TextUnformatted("Game information");
+				ImGui::Indent();
+				{
+					ImGui::Text("Turn number: %d", game.get_state().turn_number);
+					ImGui::Text("Current user playing: %d", game.get_state().current_player_id);
+					ImGui::Text("Number of active coroutines: %d", game.get_state().active_coroutines.size());
+					ImGui::Text("Should borrow facing up: %s", game.get_state().should_borrow_facing_up ? "true" : "false");
+					ImGui::Text("Game stage: %s", game.get_state().game_stage.c_str());
+				}
+				ImGui::Unindent();
 			}
 			ImGui::End();
 		}
