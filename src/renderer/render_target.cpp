@@ -4,6 +4,8 @@
 #include <cassert>
 #include <utility>
 
+#include <iostream>
+
 namespace munchkin::renderer {
 
 RenderTarget::RenderTarget(CreateInfo const& info) {
@@ -22,12 +24,14 @@ RenderTarget::RenderTarget(CreateInfo const& info) {
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // Fill texture with empty data
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, width, height);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
     // Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // assign texture to framebuffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
     // Create renderbuffer
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
@@ -78,9 +82,7 @@ bool RenderTarget::valid() const {
     return texture != 0 && fbo != 0 && rbo != 0 && width != 0 && height != 0;
 }
 
-void RenderTarget::clear(float r, float b, float g, float a, 
-                         unsigned int flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) {
-    bind(*this);
+void RenderTarget::clear(float r, float b, float g, float a, unsigned int flags) {
     glClearColor(r, g, b, a);
     glClear(flags);
 }

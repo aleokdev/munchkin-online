@@ -5,6 +5,10 @@ namespace munchkin {
 
 namespace renderer {
 
+/*
+    Note that all functions that modify this target directly, such as clear(), operate on the currently bound framebuffer.
+*/
+
 class RenderTarget {
 public:
     struct CreateInfo {
@@ -30,14 +34,14 @@ public:
     bool valid() const;
 
     // Clears the stored framebuffer
-    void clear(float r, float g, float b, float a, unsigned int flags /* = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT*/);
+    void clear(float r, float g, float b, float a, unsigned int flags);
 
     size_t get_width() const;
     size_t get_height() const;
 
     // Returns the handle to the OpenGL framebuffer object
     size_t handle();
-    
+
     // Returns the handle to the OpenGL texture object
     size_t texture_handle();
 
