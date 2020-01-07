@@ -67,7 +67,7 @@ int main()
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	munchkin::GameRenderer renderer(game, io.DisplaySize.x, io.DisplaySize.y);
+	munchkin::GameRenderer renderer(game, 1280, 720);
 
 	bool done = false;
 	do {
@@ -95,17 +95,20 @@ int main()
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
 
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		debugger.render();
 		renderer.render_frame();
 
-		// bind default framebuffer so Imgui is rendered directly to screen
+		renderer.blit(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImGui::Render();
 		glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-		glClearColor(0, 0, 0, 0);
-		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		SDL_GL_SwapWindow(window);
 
 		game.tick();

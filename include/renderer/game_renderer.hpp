@@ -12,6 +12,7 @@ public:
 	GameRenderer(Game&, size_t window_w, size_t window_h);
 
 	void render_frame();
+	void blit(unsigned int target_framebuf);
 
 private:
 	Game* game;
