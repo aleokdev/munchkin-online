@@ -9,9 +9,18 @@ struct Background {
     unsigned int vbo;
     unsigned int texcoords_buffer;
     unsigned int shader;
+
+    float scroll_speed = 0;
+private:
+    float scroll = 0;
+
+    friend void update_background_scroll(Background& bg, float delta_time);
+    friend void render_background(Background const& bg);
 };
 
 Background create_background(const char* bg_image_path);
+
+void update_background_scroll(Background& bg, float delta_time);
 
 void render_background(Background const& bg);
 

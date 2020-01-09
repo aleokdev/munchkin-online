@@ -54,6 +54,15 @@ Background create_background(const char* bg_image_path) {
     return bg;
 }
 
+void update_background_scroll(Background& bg, float delta_time) {
+    bg.scroll += bg.scroll_speed * delta_time;
+
+    // prevent eventual overflow. We only do this after scroll > 100 so we don't have to reset too often
+    if (bg.scroll > 100.0f) {
+        bg.scroll -= 100.0f;
+    }
+}
+
 void render_background(Background const& bg) {
     glUseProgram(bg.shader);
     glBindVertexArray(bg.vao);
@@ -61,6 +70,8 @@ void render_background(Background const& bg) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, bg.texture);
     glUniform1i(0, 0);
+
+    glUniform1f(1, bg.scroll);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
