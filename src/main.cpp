@@ -84,7 +84,10 @@ int main() try {
 				done = true;
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
 				done = true;
-
+			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED
+				&& event.window.windowID == SDL_GetWindowID(window)) {
+					glViewport(0, 0, event.window.data1, event.window.data2);
+				}
 			if (game.ended())
 				break;
 		}
@@ -98,7 +101,7 @@ int main() try {
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		debugger.render();
+//		debugger.render();
 		renderer.render_frame();
 
 		renderer.blit(0);

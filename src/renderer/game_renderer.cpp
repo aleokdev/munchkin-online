@@ -60,20 +60,25 @@ void GameRenderer::render_frame() {
     // Render the background
     renderer::render_background(background);
 
-    renderer::SpriteRenderer sprite_renderer;
-    // Bind a shader
-    glUseProgram(sprite_shader);
+    // Render sprites. Inside block for structure + limiting scope of sprite_renderer
+    {
+        renderer::SpriteRenderer sprite_renderer;
+        // Bind a shader
+        glUseProgram(sprite_shader);
 
-    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(projection));
 
-    // Set draw data    
-    sprite_renderer.set_camera_drag(true);
-    sprite_renderer.set_texture(table_texture);
-    sprite_renderer.set_position(glm::vec2(400, 200));
-    sprite_renderer.set_scale(glm::vec2(300, 300));
+        // Set draw data    
+        sprite_renderer.set_camera_drag(true);
+        sprite_renderer.set_texture(table_texture);
+        constexpr float table_size = 700;
+        // Calculate position for lower left corner for the table to be centered
+        sprite_renderer.set_position(glm::vec2(window_w / 2.0f, window_h / 2.0f));
+        sprite_renderer.set_scale(glm::vec2(table_size, table_size));
 
-    // Execute drawcall
-    sprite_renderer.do_draw();
+        // Execute drawcall
+        sprite_renderer.do_draw();
+    }
 
     // Swap current and last mouse
     last_mouse = cur_mouse;
