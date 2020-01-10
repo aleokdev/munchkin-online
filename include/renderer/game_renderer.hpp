@@ -7,7 +7,7 @@
 
 namespace munchkin {
 
-struct Game;
+class Game;
 
 class GameRenderer {
 public:

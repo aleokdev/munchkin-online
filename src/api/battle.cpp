@@ -18,7 +18,7 @@ namespace munchkin {
 
 	int Battle::get_total_monster_power()
 	{
-		int ret;
+		int ret = 0;
 		for (auto& [card, power] : played_cards)
 		{
 			ret += power;

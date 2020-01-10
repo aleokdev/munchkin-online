@@ -3,10 +3,11 @@
 
 namespace munchkin {
 
-struct State;
+class State;
 struct CardPtr;
 
-struct Player {
+class Player {
+public:
     int level = 1;
     size_t id = 0;
 

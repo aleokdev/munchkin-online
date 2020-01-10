@@ -3,9 +3,10 @@
 
 namespace munchkin {
 
-struct State;
+class State;
 
-struct StateDebugger {
+class StateDebugger {
+public:
 	StateDebugger(State&);
 
 	void render();
