@@ -12,8 +12,7 @@
 
 #include "renderer/game_renderer.hpp"
 
-int main()
-{
+int main() try {
 	munchkin::Game game(4);
 	munchkin::StateDebugger debugger(game.get_state());
 	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
@@ -124,4 +123,6 @@ int main()
 	}
 
 	return 0;
+} catch(std::exception const& e) {
+	std::cerr << e.what() << std::endl;
 }
