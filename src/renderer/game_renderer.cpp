@@ -51,18 +51,17 @@ void GameRenderer::render_frame() {
     // Render the background
 //    renderer::render_background(background);
 
-    renderer::SpriteRenderer sprite_renderer([&]() -> void {
-        // Bind a shader
-        glUseProgram(sprite_shader);
+    renderer::SpriteRenderer sprite_renderer;
+    // Bind a shader
+    glUseProgram(sprite_shader);
 
-        // Set draw data    
-        renderer::SpriteRenderer::set_camera_drag(false);
-        renderer::SpriteRenderer::set_texture(background.texture);
-        renderer::SpriteRenderer::set_position(0.5, 0);
+    // Set draw data    
+    sprite_renderer.set_camera_drag(false);
+    sprite_renderer.set_texture(background.texture);
+    sprite_renderer.set_position(0.5, 0);
 
-        // Execute drawcall
-        renderer::SpriteRenderer::do_draw();
-    });
+    // Execute drawcall
+    sprite_renderer.do_draw();
 
 
     // Swap current and last mouse
@@ -70,7 +69,7 @@ void GameRenderer::render_frame() {
 }
 
 void GameRenderer::blit(unsigned int target_framebuf) {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target_framebuf);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuf.handle());
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glBlitFramebuffer(0, 0, framebuf.get_width(), framebuf.get_height(), 

@@ -16,21 +16,17 @@ renderer::SpriteRenderer r([&]() {
 */
 class SpriteRenderer {
 public:
-    template<typename RenderFn>
-    SpriteRenderer(RenderFn&& fn) {
-        setup_for_render();
-        fn();
-    }
+    SpriteRenderer();
 
     // All following functions require a bound shader
 
-    static void set_camera_drag(bool drag);
-    static void set_position(float x, float y);
-    static void set_texture(unsigned int texture);
+   void set_camera_drag(bool drag);
+   void set_position(float x, float y);
+   void set_texture(unsigned int texture);
 
     // Issue a single drawcall with the currently bound state.
     // Meant to be called from the render function passed in the constructor
-    static void do_draw();
+   void do_draw();
 
     static void deallocate();
 

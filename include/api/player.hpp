@@ -3,8 +3,8 @@
 
 namespace munchkin {
 
-class State;
-class CardPtr;
+struct State;
+struct CardPtr;
 
 struct Player {
     int level = 1;

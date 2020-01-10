@@ -31,7 +31,7 @@ namespace munchkin {
 
 			ImGui::TextUnformatted("Players");
 			ImGui::SameLine();
-			ImGui::TextDisabled("(%d)", state->players.size());
+			ImGui::TextDisabled("(%zu)", state->players.size());
 			ImGui::Columns(4);
 			ImGui::TextUnformatted("ID");
 			ImGui::NextColumn();
@@ -44,13 +44,13 @@ namespace munchkin {
 
 			for (auto& player : state->players)
 			{
-				ImGui::Text("%d", player.id);
+				ImGui::Text("%zu", player.id);
 				ImGui::NextColumn();
 				ImGui::Text("%d", player.level);
 				ImGui::NextColumn();
-				ImGui::Text("%d", player.hand.size());
+				ImGui::Text("%zu", player.hand.size());
 				ImGui::NextColumn();
-				ImGui::Text("%d", player.hand_max_cards);
+				ImGui::Text("%zu", player.hand_max_cards);
 				ImGui::NextColumn();
 			}
 			ImGui::Columns(1);
@@ -60,9 +60,9 @@ namespace munchkin {
 			ImGui::TextUnformatted("Game information");
 			ImGui::Indent();
 			{
-				ImGui::Text("Turn number: %d", state->turn_number);
-				ImGui::Text("Current user playing: %d", state->current_player_id);
-				ImGui::Text("Number of active coroutines: %d", state->active_coroutines.size());
+				ImGui::Text("Turn number: %zu", state->turn_number);
+				ImGui::Text("Current user playing: %zu", state->current_player_id);
+				ImGui::Text("Number of active coroutines: %zu", state->active_coroutines.size());
 				ImGui::Text("Should borrow facing up: %s", state->should_borrow_facing_up ? "true" : "false");
 				ImGui::Text("Game stage: %s", state->game_stage.c_str());
 			}
