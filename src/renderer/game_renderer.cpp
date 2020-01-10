@@ -94,6 +94,13 @@ void GameRenderer::blit(unsigned int target_framebuf) {
                       GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 
+void GameRenderer::on_resize(size_t w, size_t h) {
+    window_w = w;
+    window_h = h;
+
+    framebuf.resize(w, h);
+}
+
 void GameRenderer::update_input() {
     // update mouse state
     cur_mouse.pressed_button = SDL_GetMouseState(&cur_mouse.x, &cur_mouse.y);

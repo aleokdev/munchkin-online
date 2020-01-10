@@ -16,7 +16,7 @@ public:
 		renderer.render_frame();
 
 		renderer.blit(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void tick() {

@@ -95,6 +95,10 @@ size_t RenderTarget::get_height() const {
     return height;
 }
 
+void RenderTarget::resize(size_t w, size_t h) {
+    *this = RenderTarget(CreateInfo{w, h});
+}
+
 size_t RenderTarget::handle() {
     return fbo;
 }

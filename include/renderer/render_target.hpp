@@ -39,6 +39,8 @@ public:
     size_t get_width() const;
     size_t get_height() const;
 
+    void resize(size_t w, size_t h);
+
     // Returns the handle to the OpenGL framebuffer object
     size_t handle();
 
