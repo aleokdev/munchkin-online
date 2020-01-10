@@ -66,9 +66,10 @@ int main() try {
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	munchkin::GameRenderer renderer(game, 1280, 720);
+	munchkin::GameRenderer renderer(game.get_state(), 1280, 720);
 
 	bool done = false;
+	bool show_debugger = false;
 	do {
 		// From imgui/examples/example_sdl_opengl3/main.cpp:
 		// Poll and handle events (inputs, window resize, etc.)
@@ -82,14 +83,14 @@ int main() try {
 			ImGui_ImplSDL2_ProcessEvent(&event);
 			if (event.type == SDL_QUIT)
 				done = true;
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
+			else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
 				done = true;
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED
+			else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED
 				&& event.window.windowID == SDL_GetWindowID(window)) {
 					glViewport(0, 0, event.window.data1, event.window.data2);
 				}
-			if (game.ended())
-				break;
+			else if (event.type == SDL_KEYDOWN && !io.WantCaptureKeyboard && event.key.keysym.scancode == SDL_SCANCODE_K && event.key.repeat == 0)
+				show_debugger = !show_debugger;
 		}
 
 		// Start the imgui frame
@@ -101,12 +102,13 @@ int main() try {
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//		debugger.render();
 		renderer.render_frame();
 
 		renderer.blit(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		if (show_debugger)
+			debugger.render();
 		ImGui::Render();
 		glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
