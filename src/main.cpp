@@ -88,6 +88,7 @@ int main() try {
 			else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED
 				&& event.window.windowID == SDL_GetWindowID(window)) {
 					glViewport(0, 0, event.window.data1, event.window.data2);
+					game.renderer.on_resize(event.window.data1, event.window.data2);
 				}
 			else if (event.type == SDL_KEYDOWN && !io.WantCaptureKeyboard && event.key.keysym.scancode == SDL_SCANCODE_K && event.key.repeat == 0)
 				show_debugger = !show_debugger;

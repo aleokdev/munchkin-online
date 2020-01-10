@@ -19,6 +19,8 @@ public:
 	void render_frame();
 	void blit(unsigned int target_framebuf);
 
+	void on_resize(size_t w, size_t h);
+
 private:
 	// windowing data
 	size_t window_w, window_h;
