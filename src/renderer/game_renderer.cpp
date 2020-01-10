@@ -75,7 +75,7 @@ void GameRenderer::render_frame() {
         constexpr float table_size = 700;
         // Calculate position for lower left corner for the table to be centered
         sprite_renderer.set_position(glm::vec2(window_w / 2.0f, window_h / 2.0f));
-        sprite_renderer.set_scale(glm::vec2(table_size, table_size));
+        sprite_renderer.set_scale(glm::vec2(table_size, table_size)); 
 
         // Execute drawcall
         sprite_renderer.do_draw();
