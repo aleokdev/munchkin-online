@@ -11,8 +11,8 @@
 
 namespace munchkin {
 
-GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) : 
-    state(&s), camera_buffer(0, 2 * sizeof(float) + sizeof(glm::mat4), GL_DYNAMIC_DRAW), 
+GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) : 
+    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
     window_w(window_w), window_h(window_h) {
 
     renderer::RenderTarget::CreateInfo info;
@@ -31,6 +31,7 @@ GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) :
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     projection = glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h);
+
 }
 
 GameRenderer::~GameRenderer() {
@@ -60,20 +61,25 @@ void GameRenderer::render_frame() {
     // Render the background
     renderer::render_background(background);
 
-    renderer::SpriteRenderer sprite_renderer;
-    // Bind a shader
-    glUseProgram(sprite_shader);
+    // Render sprites. Inside block for structure + limiting scope of sprite_renderer
+    {
+        renderer::SpriteRenderer sprite_renderer;
+        // Bind a shader
+        glUseProgram(sprite_shader);
 
-    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(projection));
 
-    // Set draw data    
-    sprite_renderer.set_camera_drag(true);
-    sprite_renderer.set_texture(table_texture);
-    sprite_renderer.set_position(glm::vec2(400, 200));
-    sprite_renderer.set_scale(glm::vec2(300, 300));
+        // Set draw data    
+        sprite_renderer.set_camera_drag(true);
+        sprite_renderer.set_texture(table_texture);
+        constexpr float table_size = 700;
+        // Calculate position for lower left corner for the table to be centered
+        sprite_renderer.set_position(glm::vec2(window_w / 2.0f, window_h / 2.0f));
+        sprite_renderer.set_scale(glm::vec2(table_size, table_size)); 
 
-    // Execute drawcall
-    sprite_renderer.do_draw();
+        // Execute drawcall
+        sprite_renderer.do_draw();
+    }
 
     // Swap current and last mouse
     last_mouse = cur_mouse;

@@ -25,6 +25,9 @@ void SpriteRenderer::set_scale(glm::vec2 multiplier) {
     scale = glm::vec3(multiplier, 0);
 }
 
+void SpriteRenderer::set_rotation(float radians) {
+    rotation = radians;
+}
 
 void SpriteRenderer::set_texture(unsigned int texture) {
     glActiveTexture(GL_TEXTURE0);
@@ -37,7 +40,7 @@ void SpriteRenderer::do_draw() {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     model = glm::scale(model, scale);
-    // TODO: rotations
+    model = glm::rotate(model, rotation, glm::vec3(0, 0, 1));
 
     glUniformMatrix4fv(3, 1, GL_FALSE, glm::value_ptr(model));
 
