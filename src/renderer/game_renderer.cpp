@@ -12,14 +12,14 @@
 namespace munchkin {
 
 GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) : 
-    game(&g), camera_buffer(0, 2 * sizeof(float) + sizeof(glm::mat4), GL_DYNAMIC_DRAW), 
+    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
     window_w(window_w), window_h(window_h) {
 
     renderer::RenderTarget::CreateInfo info;
     info.width = window_w;
     info.height = window_h;
 
-    framebuf = std::move(renderer::RenderTarget(info));
+    framebuf = renderer::RenderTarget(info);
     background = renderer::create_background("data/generic/bg.png");
 //    background.scroll_speed = 0.002f;
 
@@ -31,6 +31,7 @@ GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) :
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     projection = glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h);
+
 }
 
 GameRenderer::~GameRenderer() {

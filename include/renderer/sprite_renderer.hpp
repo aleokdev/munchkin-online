@@ -26,6 +26,7 @@ public:
    // position in pixels from window origin (lower left corner is (0, 0)).
    void set_position(glm::vec2 pos);
    void set_scale(glm::vec2 multiplier);
+   void set_rotation(float radians);
    void set_texture(unsigned int texture);
 
     // Issue a single drawcall with the currently bound state.
@@ -45,7 +46,8 @@ private:
     // Only x and y fields are actually used
     glm::vec3 position = glm::vec3(0, 0, 0);
     glm::vec3 scale = glm::vec3(1, 1, 1);
-    glm::vec3 rotation = glm::vec3(0, 0, 0);
+    // Only z rotation is used
+    float rotation;
 };
 
 }

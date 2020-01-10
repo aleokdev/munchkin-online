@@ -35,7 +35,8 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CM
 target_compile_features(${PROJECT_NAME} PUBLIC "cxx_std_17")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(${PROJECT_NAME} PUBLIC "-Wno-deprecated-declarations" "-Wall")
+    target_compile_options(${PROJECT_NAME} PUBLIC "-Wno-deprecated-declarations" "-Wall" "-Wno-unused-private-field"
+        "-Wno-reorder")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
 endif()
