@@ -12,6 +12,8 @@
 #include "api/game_wrapper.hpp"
 #include "api/game.hpp"
 
+#include "api/ai_manager.hpp"
+
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
 
@@ -64,6 +66,7 @@ int main() try {
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	munchkin::GameWrapper<munchkin::Game> game(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 4);
+	munchkin::games::AIManager ai(game.get_state(), std::vector<size_t>{1, 2, 3});
 	munchkin::StateDebugger debugger(game.get_state());
 	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
 	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
@@ -112,6 +115,7 @@ int main() try {
 
 		SDL_GL_SwapWindow(window);
 
+		ai.tick();
 		game.tick();
 	} while (!done);
 	
