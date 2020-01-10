@@ -1,8 +1,6 @@
 ﻿#include <iostream>
 #define SDL_MAIN_HANDLED
 
-#include "api/munchkin.hpp"
-#include "renderer/state_debugger.hpp"
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_opengl3.h>
@@ -10,15 +8,14 @@
 
 #include <glad/glad.h>
 
-#include "renderer/game_renderer.hpp"
+#include "renderer/state_debugger.hpp"
+#include "api/game_wrapper.hpp"
+#include "api/game.hpp"
+
+#define DEFAULT_WINDOW_WIDTH 1280
+#define DEFAULT_WINDOW_HEIGHT 720
 
 int main() try {
-	munchkin::Game game(4);
-	munchkin::StateDebugger debugger(game.get_state());
-	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
-
-	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
-
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
 		std::cerr << "SDL Init error: " << SDL_GetError();
@@ -40,7 +37,7 @@ int main() try {
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
 	SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-	SDL_Window* window = SDL_CreateWindow("Munchkin Online", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+	SDL_Window* window = SDL_CreateWindow("Munchkin Online", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, window_flags);
 	SDL_GLContext gl_context = SDL_GL_CreateContext(window);
 	SDL_GL_MakeCurrent(window, gl_context);
 	SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -66,7 +63,10 @@ int main() try {
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	munchkin::GameRenderer renderer(game.get_state(), 1280, 720);
+	munchkin::GameWrapper<munchkin::Game> game(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 4);
+	munchkin::StateDebugger debugger(game.get_state());
+	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
+	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
 
 	bool done = false;
 	bool show_debugger = false;
@@ -102,10 +102,7 @@ int main() try {
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		renderer.render_frame();
-
-		renderer.blit(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		game.render();
 
 		if (show_debugger)
 			debugger.render();
@@ -120,7 +117,7 @@ int main() try {
 	
 
 	std::cout << std::boolalpha;
-	std::cout << "Game over: " << game.ended() << std::endl;
+	std::cout << "Game over: " << game.game.ended() << std::endl;
 
 	std::cout << "Levels: " << std::endl;
 	for (int i = 0; i < 4; ++i) {
