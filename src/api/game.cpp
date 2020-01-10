@@ -47,7 +47,12 @@ void Game::tick()
                 std::cout << "Encountered dead coroutine, need to discard it from active_coroutines." << std::endl;
             }
             else {
-                coroutine();
+                auto result = coroutine();
+                if (!result.valid())
+                {
+                    std::cout << "Runtime error in coroutine!!" << std::endl;
+                    sol::script_throw_on_error(state.lua, result);
+                }
             }
         }
         state.event_queue.pop();
