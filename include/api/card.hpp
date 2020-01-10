@@ -73,8 +73,8 @@ struct CardPtr {
     operator Card*() const;
     Card* operator->() const;
 
-    size_t card_id;
     State* state;
+    size_t card_id;
 };
 
 }

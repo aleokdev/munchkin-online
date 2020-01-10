@@ -9,7 +9,7 @@
 #define GAMERULES_GAMEFLOW_FILENAME "game_flow.lua"
 
 namespace munchkin {
-	struct State;
+	class State;
 
 	struct GameRules {
 		GameRules(State& state, std::string path);
