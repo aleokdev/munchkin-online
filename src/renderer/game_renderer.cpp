@@ -5,11 +5,14 @@
 
 #include <glad/glad.h>
 #include <sdl/SDL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace munchkin {
 
 GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) : 
-    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
+    game(&g), camera_buffer(0, 2 * sizeof(float) + sizeof(glm::mat4), GL_DYNAMIC_DRAW), 
     window_w(window_w), window_h(window_h) {
 
     renderer::RenderTarget::CreateInfo info;
@@ -21,7 +24,13 @@ GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) :
 //    background.scroll_speed = 0.002f;
 
     sprite_shader = renderer::load_shader("data/shaders/sprite.vert", "data/shaders/sprite.frag");
+    table_texture = renderer::load_texture("data/generic/table.png");
 
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    projection = glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h);
 }
 
 GameRenderer::~GameRenderer() {
@@ -49,20 +58,22 @@ void GameRenderer::render_frame() {
     framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the background
-//    renderer::render_background(background);
+    renderer::render_background(background);
 
     renderer::SpriteRenderer sprite_renderer;
     // Bind a shader
     glUseProgram(sprite_shader);
 
+    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(projection));
+
     // Set draw data    
-    sprite_renderer.set_camera_drag(false);
-    sprite_renderer.set_texture(background.texture);
-    sprite_renderer.set_position(0.5, 0);
+    sprite_renderer.set_camera_drag(true);
+    sprite_renderer.set_texture(table_texture);
+    sprite_renderer.set_position(glm::vec2(400, 200));
+    sprite_renderer.set_scale(glm::vec2(300, 300));
 
     // Execute drawcall
     sprite_renderer.do_draw();
-
 
     // Swap current and last mouse
     last_mouse = cur_mouse;

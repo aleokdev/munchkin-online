@@ -7,6 +7,7 @@
 #include <string>
 #include <stdexcept>
 
+
 namespace munchkin::renderer {
 
 unsigned int load_texture(const char* path) {

@@ -1,6 +1,8 @@
 #ifndef MUNCHKIN_RENDERER_SPRITE_RENDERER_HPP_
 #define MUNCHKIN_RENDERER_SPRITE_RENDERER_HPP_
 
+#include <glm/glm.hpp>
+
 namespace munchkin::renderer {
 
 /*
@@ -21,7 +23,9 @@ public:
     // All following functions require a bound shader
 
    void set_camera_drag(bool drag);
-   void set_position(float x, float y);
+   // position in pixels from window origin (lower left corner is (0, 0)).
+   void set_position(glm::vec2 pos);
+   void set_scale(glm::vec2 multiplier);
    void set_texture(unsigned int texture);
 
     // Issue a single drawcall with the currently bound state.
@@ -37,6 +41,11 @@ private:
     static void init();
 
     static void setup_for_render();
+
+    // Only x and y fields are actually used
+    glm::vec3 position = glm::vec3(0, 0, 0);
+    glm::vec3 scale = glm::vec3(1, 1, 1);
+    glm::vec3 rotation = glm::vec3(0, 0, 0);
 };
 
 }

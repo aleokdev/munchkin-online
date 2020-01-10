@@ -1,6 +1,8 @@
 #include "renderer/sprite_renderer.hpp"
 
 #include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace munchkin::renderer {
 
@@ -12,21 +14,32 @@ SpriteRenderer::SpriteRenderer() {
 }
 
 void SpriteRenderer::set_camera_drag(bool drag) {
-    glUniform1i(4, (int)drag);
+    glUniform1i(1, (int)drag);
 }
+
+void SpriteRenderer::set_position(glm::vec2 pos) {
+    position = glm::vec3(pos, 0);
+}
+
+void SpriteRenderer::set_scale(glm::vec2 multiplier) {
+    scale = glm::vec3(multiplier, 0);
+}
+
 
 void SpriteRenderer::set_texture(unsigned int texture) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glUniform1i(3, 0);
-}
-
-void SpriteRenderer::set_position(float x, float y) {
-    float v[] = {x, y};
-    glUniform2fv(0, 1, v);
+    glUniform1i(0, 0);
 }
 
 void SpriteRenderer::do_draw() {
+    // Calculate model matrix and send to shader
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+    model = glm::scale(model, scale);
+    // TODO: rotations
+
+    glUniformMatrix4fv(3, 1, GL_FALSE, glm::value_ptr(model));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }

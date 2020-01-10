@@ -22,7 +22,7 @@ set(MUNCHKIN_SOURCES
     "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
     "src/renderer/sprite_renderer.cpp"
 )
-set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib")
+set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")
 set(MUNCHKIN_LINK_LIBRARIES "")
 set(MUNCHKIN_LINK_DIRECTORIES "")
 

@@ -5,6 +5,8 @@
 #include "background_renderer.hpp"
 #include "uniform_buffer.hpp"
 
+#include <glm/mat4x4.hpp>
+
 namespace munchkin {
 
 struct Game;
@@ -28,6 +30,8 @@ private:
 		float yoffset;
 	} camera;
 
+	glm::mat4 projection;
+
 	// Game-related data
 	Game* game;
 
@@ -47,6 +51,7 @@ private:
 	// Render data
 	renderer::RenderTarget framebuf;
 	renderer::UniformBuffer camera_buffer;
+	unsigned int table_texture;
 
 	// Assets
 	renderer::Background background;
