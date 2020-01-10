@@ -37,7 +37,7 @@ private:
 
 	// Input
 	struct Mouse {
-		int x, y;
+		int x = 0, y = 0;
 		int pressed_button;
 	};
 
