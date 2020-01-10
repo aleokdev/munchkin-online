@@ -20,6 +20,7 @@ set(MUNCHKIN_SOURCES
     "src/api/card_loader.cpp" "src/api/gamerules.cpp" "src/api/battle.cpp" "src/renderer/state_debugger.cpp"
     "src/renderer/game_renderer.cpp" "src/renderer/render_target.cpp" "src/renderer/background_renderer.cpp"
     "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
+    "src/renderer/sprite_renderer.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib")
 set(MUNCHKIN_LINK_LIBRARIES "")

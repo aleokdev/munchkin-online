@@ -1,4 +1,6 @@
 #include "renderer/game_renderer.hpp"
+#include "renderer/sprite_renderer.hpp"
+#include "renderer/util.hpp"
 #include "api/game.hpp"
 
 #include <glad/glad.h>
@@ -17,10 +19,14 @@ GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) :
     framebuf = std::move(renderer::RenderTarget(info));
     background = renderer::create_background("data/generic/bg.png");
 //    background.scroll_speed = 0.002f;
+
+    sprite_shader = renderer::load_shader("data/shaders/sprite.vert", "data/shaders/sprite.frag");
+
 }
 
 GameRenderer::~GameRenderer() {
     renderer::free_background(background);
+    glDeleteProgram(sprite_shader);
 }
 
 void GameRenderer::render_frame() {
@@ -43,7 +49,21 @@ void GameRenderer::render_frame() {
     framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the background
-    renderer::render_background(background);
+//    renderer::render_background(background);
+
+    renderer::SpriteRenderer sprite_renderer([&]() -> void {
+        // Bind a shader
+        glUseProgram(sprite_shader);
+
+        // Set draw data    
+        renderer::SpriteRenderer::set_camera_drag(false);
+        renderer::SpriteRenderer::set_texture(background.texture);
+        renderer::SpriteRenderer::set_position(0.5, 0);
+
+        // Execute drawcall
+        renderer::SpriteRenderer::do_draw();
+    });
+
 
     // Swap current and last mouse
     last_mouse = cur_mouse;

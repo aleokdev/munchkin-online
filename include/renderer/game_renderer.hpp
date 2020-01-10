@@ -50,6 +50,7 @@ private:
 
 	// Assets
 	renderer::Background background;
+	unsigned int sprite_shader;
 
 	// Functions
 	void update_camera();
