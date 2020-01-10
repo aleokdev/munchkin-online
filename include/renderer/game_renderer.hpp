@@ -9,11 +9,11 @@
 
 namespace munchkin {
 
-class Game;
+class State;
 
 class GameRenderer {
 public:
-	GameRenderer(Game&, size_t window_w, size_t window_h);
+	GameRenderer(State&, size_t window_w, size_t window_h);
 	~GameRenderer();
 
 	void render_frame();
@@ -33,7 +33,7 @@ private:
 	glm::mat4 projection;
 
 	// Game-related data
-	Game* game;
+	State* state;
 
 	// Input
 	struct Mouse {
