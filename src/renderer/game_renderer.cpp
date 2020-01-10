@@ -11,8 +11,8 @@
 
 namespace munchkin {
 
-GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) : 
-    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
+GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) : 
+    state(&s), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
     window_w(window_w), window_h(window_h) {
 
     renderer::RenderTarget::CreateInfo info;
