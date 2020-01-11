@@ -28,8 +28,8 @@ private:
 	// Camera data
 	struct Camera {
 		// offsets are stored relative to center
-		float xoffset;
-		float yoffset;
+		float xoffset = 0;
+		float yoffset = 0;
 	} camera;
 
 	glm::mat4 projection;
