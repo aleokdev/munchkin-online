@@ -17,7 +17,3 @@ end
 function munchkin_state.init_rules(self)
     self.default_hand_max_cards = 5
 end
-
-function munchkin_state.next_player_turn(self)
-    self:set_current_player((self:get_current_player().id+1)%self:get_player_count())
-end

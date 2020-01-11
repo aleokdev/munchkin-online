@@ -15,6 +15,6 @@ function munchkin_state.iter_players(self)
 end
 
 function munchkin_state.next_player_turn(self)
-    self:set_current_player((self:get_current_player() + 1) % self:get_player_count())
-    self.current_turn = self.current_turn + 1
+    self:set_current_player((self:get_current_player().id + 1) % self:get_player_count())
+    self.turn_number = self.turn_number + 1
 end
