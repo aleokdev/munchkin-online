@@ -31,7 +31,14 @@ void drawLuaStateInspectorTable(lua_State* state)
 				std::ostringstream addressStr;
 				addressStr << address;
 
-				final_string.append("<Data @ 0x");
+				final_string.append("<");
+				if (lua_iscfunction(state, -1))
+					final_string.append("C Function");
+				else if (lua_isthread(state, -1))
+					final_string.append("Thread");
+				else if (lua_isuserdata(state, -1))
+					final_string.append("Userdata");
+				final_string.append(" @ 0x");
 				final_string.append(addressStr.str());
 				final_string.append(">");
 				valueData = final_string.c_str();
