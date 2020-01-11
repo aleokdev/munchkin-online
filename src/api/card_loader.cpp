@@ -27,6 +27,8 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
        else
            std::cerr << "Card has no category! Will default to null; This means that it won't be introduced to the game decks" << std::endl;
        CardDef def(lua, script_path, card_json["name"], card_json["description"], def_category);
+       for (auto& play_stage : card_json["play_stages"])
+           def.play_stages.emplace_back(play_stage);
 
        for (auto& [k, v] : card_json["properties"].items())
        {

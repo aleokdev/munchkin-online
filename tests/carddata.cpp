@@ -66,7 +66,7 @@ TEST_CASE("json loader") {
 	SUBCASE("load all carddefs") {
 		std::vector<CardDef> defs(load_cards("data/cardpacks/test/cards.json", state.lua));
 
-		CHECK(defs.size() == 3);
+		CHECK(defs.size() >= 3);
 
 		SUBCASE("load card properties") {
 			CardDef* def = nullptr;
@@ -109,4 +109,25 @@ TEST_CASE("card pointers") {
 	CHECK(&indirect_card1->get_def() == &card2->get_def());
 	CHECK(&indirect_card1->get_def() != &card3->get_def());
 
+}
+
+TEST_CASE("play stages") {
+	// Player count shouldn't matter in this test
+	State state(5);
+
+	SUBCASE("load all carddefs") {
+		std::vector<CardDef> defs(load_cards("data/cardpacks/test/cards.json", state.lua));
+
+		CardDef* def = nullptr;
+		for (auto& d : defs) {
+			if (d.name == "Play Stages Test")
+				def = &d;
+		}
+
+		REQUIRE(def != nullptr);
+
+		CHECK(def->play_stages.size() == 2);
+		CHECK(def->play_stages[0] == "EQUIP_STUFF_AND_OPEN_DUNGEON");
+		CHECK(def->play_stages[1] == "CHARITY");
+	}
 }

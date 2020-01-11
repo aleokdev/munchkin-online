@@ -199,6 +199,8 @@ Card& State::add_card(CardDef& def)
         case DeckType::treasure:
             treasure_deck.push(result);
             break;
+
+        default: break;
     }
 
     return result;

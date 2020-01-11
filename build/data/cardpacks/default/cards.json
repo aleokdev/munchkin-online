@@ -10,6 +10,7 @@
     "name": "Enraged",
     "description": "Adds 5 to the monster's power.",
     "category": "dungeon",
+    "play_stages": [ "FIGHT_MONSTER" ],
     "properties": {
       "power_to_add": 5
     }
@@ -18,6 +19,7 @@
     "script": "scripts/modify_monster.lua",
     "name": "Ancient",
     "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
     "category": "dungeon",
     "properties": {
       "power_to_add": 10
