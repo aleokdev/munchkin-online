@@ -1,4 +1,6 @@
-#pragma once
+#ifndef POS_VEC_HPP__
+#define POS_VEC_HPP__
+
 #include <imgui.h>
 #include <cmath>
 
@@ -11,25 +13,19 @@ namespace pos_vec
 		float x;
 		float y;
 
-		#define DEFINE_OPERATOR(op)				\
-		Vec2D& operator##op##=(const Vec2D& rhs)\
-		{\
+#define DEFINE_OPERATOR(op)\
+		Vec2D& operator op##= (const Vec2D& rhs) {\
 			this->x op##= rhs.x;\
 			this->y op##= rhs.y;\
 			return *this;\
-		}\
-		friend Vec2D operator##op##(Vec2D lhs, const Vec2D& rhs)\
-		{\
-			lhs op##= rhs;\
-			return lhs;\
 		}
 
 		DEFINE_OPERATOR(+);
 		DEFINE_OPERATOR(-);
 		DEFINE_OPERATOR(*);
-		DEFINE_OPERATOR(/);
+		DEFINE_OPERATOR(/ );
 
-	#undef DEFINE_OPERATOR
+#undef DEFINE_OPERATOR
 
 		friend Vec2D operator*(Vec2D lhs, const float& rhs)
 		{
@@ -77,6 +73,19 @@ namespace pos_vec
 		}
 	};
 
+#define DEFINE_OPERATOR(op)\
+	inline Vec2D operator op (Vec2D lhs, const Vec2D& rhs) {\
+			lhs op##= rhs;\
+			return lhs;\
+		}
+
+	DEFINE_OPERATOR(+);
+	DEFINE_OPERATOR(-);
+	DEFINE_OPERATOR(*);
+	DEFINE_OPERATOR(/);
+
+#undef DEFINE_OPERATOR
+
 	struct Rect2D
 	{
 		Vec2D pos;
@@ -109,3 +118,5 @@ namespace pos_vec
 		inline static constexpr Vec2D zero = Vec2D{ 0, 0 };
 	}
 }
+
+#endif
