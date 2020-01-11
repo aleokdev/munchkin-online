@@ -14,9 +14,9 @@ enum class MouseButton {
 using Keycode = SDL_Keycode;
 
 struct MouseState {
-	int x;
-	int y;
-	int button_flagmap;
+	int x = 0;
+	int y = 0;
+	int button_flagmap = 0;
 };
 
 void update();

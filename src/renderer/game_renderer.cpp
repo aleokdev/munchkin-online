@@ -104,15 +104,15 @@ void GameRenderer::on_resize(size_t w, size_t h) {
 
 void GameRenderer::update_input() {
     // update mouse state
-    cur_mouse.pressed_button = SDL_GetMouseState(&cur_mouse.x, &cur_mouse.y);
+    cur_mouse = input::get_current_mouse_state();
 }
 
 void GameRenderer::update_camera() {
     constexpr float pan_speed = 0.1f;
 
     // only enable panning if left mouse button is clicked
-    if (cur_mouse.pressed_button & SDL_BUTTON_LEFT
-        & last_mouse.pressed_button & SDL_BUTTON_LEFT) {
+    if (cur_mouse.button_flagmap & SDL_BUTTON(SDL_BUTTON_LEFT)
+        & last_mouse.button_flagmap & SDL_BUTTON(SDL_BUTTON_LEFT)) {
         int xoffset = cur_mouse.x - last_mouse.x;
         int yoffset = cur_mouse.y - last_mouse.y;
 

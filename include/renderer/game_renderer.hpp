@@ -4,6 +4,7 @@
 #include "render_target.hpp"
 #include "background_renderer.hpp"
 #include "uniform_buffer.hpp"
+#include "input/input.hpp"
 
 #include <glm/mat4x4.hpp>
 
@@ -37,14 +38,8 @@ private:
 	// Game-related data
 	State* state;
 
-	// Input
-	struct Mouse {
-		int x = 0, y = 0;
-		int pressed_button = 0;
-	};
-
-	Mouse last_mouse;
-	Mouse cur_mouse;
+	input::MouseState last_mouse;
+	input::MouseState cur_mouse;
 
 	// Timing
 	float delta_time;
