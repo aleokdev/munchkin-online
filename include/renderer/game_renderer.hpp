@@ -40,7 +40,7 @@ private:
 	// Input
 	struct Mouse {
 		int x = 0, y = 0;
-		int pressed_button;
+		int pressed_button = 0;
 	};
 
 	Mouse last_mouse;

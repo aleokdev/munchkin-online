@@ -110,7 +110,8 @@ void GameRenderer::update_camera() {
     constexpr float pan_speed = 0.1f;
 
     // only enable panning if left mouse button is clicked
-    if (cur_mouse.pressed_button & SDL_BUTTON_LEFT) {
+    if (cur_mouse.pressed_button & SDL_BUTTON_LEFT
+        & last_mouse.pressed_button & SDL_BUTTON_LEFT) {
         int xoffset = cur_mouse.x - last_mouse.x;
         int yoffset = cur_mouse.y - last_mouse.y;
 
