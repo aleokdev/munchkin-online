@@ -14,6 +14,7 @@ public:
 private:
 	State* state;
 	bool show_demo = false;
+	bool show_stateviewer = false;
 	char event_name[64] = "\0";
 };
 
