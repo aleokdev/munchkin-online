@@ -4,11 +4,18 @@
 namespace munchkin {
 
 class State;
-class Card;
+struct CardPtr;
 
-struct Player {
+class Player {
+public:
     int level = 1;
     size_t id = 0;
+
+    int get_power() { return level; }
+
+    std::vector<CardPtr> hand;
+    std::vector<CardPtr> equipped;
+    size_t hand_max_cards;
 };
 
 }

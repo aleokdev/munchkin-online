@@ -17,9 +17,14 @@ project("munchkin-online" VERSION 0.0.0
 
 set(MUNCHKIN_SOURCES 
     "src/api/game.cpp" "src/api/state.cpp" "src/api/card.cpp" "src/api/carddef.cpp"
-    "src/api/card_loader.cpp" "src/api/gamerules.cpp"
+    "src/api/card_loader.cpp" "src/api/gamerules.cpp" "src/api/battle.cpp" "src/renderer/state_debugger.cpp"
+    "src/renderer/game_renderer.cpp" "src/renderer/render_target.cpp" "src/renderer/background_renderer.cpp"
+    "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
+    "src/renderer/title_screen_renderer.cpp"
+    "src/renderer/sprite_renderer.cpp" "src/api/ai_player.cpp" "src/api/ai_manager.cpp"
+    "src/input/input.cpp"
 )
-set(MUNCHKIN_INCLUDE_DIRECTORIES "include")
+set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")
 set(MUNCHKIN_LINK_LIBRARIES "")
 set(MUNCHKIN_LINK_DIRECTORIES "")
 
@@ -32,7 +37,8 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CM
 target_compile_features(${PROJECT_NAME} PUBLIC "cxx_std_17")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(${PROJECT_NAME} PUBLIC "-Wno-deprecated-declarations")
+    target_compile_options(${PROJECT_NAME} PUBLIC "-Wno-deprecated-declarations" "-Wall" "-Wno-unused-private-field"
+        "-Wno-reorder")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
 endif()
@@ -43,6 +49,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
 # Tests
 
 add_executable ("carddata-test" "tests/carddata.cpp" ${MUNCHKIN_SOURCES})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang") 
+    target_compile_options("carddata-test" PUBLIC "-w")
+endif()
 target_compile_features("carddata-test" PUBLIC "cxx_std_17")
 target_include_directories("carddata-test" PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
 target_link_libraries("carddata-test" PUBLIC ${MUNCHKIN_LINK_LIBRARIES})

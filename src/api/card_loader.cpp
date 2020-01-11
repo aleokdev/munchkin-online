@@ -2,6 +2,8 @@
 
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <filesystem>
+#include <stdexcept>
 
 namespace munchkin {
 
@@ -11,10 +13,24 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
     f >> j;
 
     std::vector<CardDef> result;
+    std::filesystem::path basepath(path);
+    basepath = basepath.parent_path();
 
-    for (auto const& card : j) {
-       std::string script_path = j["script"];
-       result.emplace_back(lua, script_path, j["name"], j["description"]);
+    for (auto& card_json : j) {
+       std::string script_path = (basepath/std::filesystem::path((std::string)card_json["script"])).generic_string();
+       CardDef def(lua, script_path, card_json["name"], card_json["description"]);
+
+       for (auto& [k, v] : card_json["properties"].items())
+       {
+           if (v.is_null()) continue;
+           else if (v.is_boolean()) def.metatable[sol::create_if_nil]["properties"][k] = (bool)v;
+           else if (v.is_number()) def.metatable[sol::create_if_nil]["properties"][k] = (int)v;
+           else if (v.is_object()) throw std::runtime_error("load_cards doesn't allow JSON objects or arrays as card properties");
+           else if (v.is_array()) throw std::runtime_error("load_cards doesn't allow JSON objects or arrays as card properties");
+           else if (v.is_string()) def.metatable[sol::create_if_nil]["properties"][k] = (std::string)v;
+       }
+       def.metatable["properties"] = sol::as_table(card_json["properties"]);
+       result.emplace_back(def);
     }
 
     return result;

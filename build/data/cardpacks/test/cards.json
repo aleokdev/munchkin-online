@@ -1,0 +1,22 @@
+[
+  {
+    "script": "scripts/battle.lua",
+    "name": "Battle Test",
+    "description": "This is a test card!"
+  },
+  {
+    "script": "scripts/metatable.lua",
+    "name": "Metatable Test",
+    "description": "This is a test card!"
+  },
+  {
+    "script": "scripts/properties.lua",
+    "name": "Property Test",
+    "description": "This is a test card!",
+    "properties": {
+      "text": "ok",
+      "number": 1,
+      "boolean": true
+    }
+  }
+]

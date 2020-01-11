@@ -12,15 +12,16 @@ public:
 
     void turn();
 
-    void tick(std::string event_name);
+    void tick();
+
+    void push_event(FlowEvent e);
 
     bool ended();
 
-    State const& get_state() const { return state; }
+    State& get_state() { return state; }
 
 private:
     State state;
-    std::string game_stage;
     GameRules gamerules;
 };
 

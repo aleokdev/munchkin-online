@@ -4,3 +4,12 @@
 [submodule "lib/nlohmann"]
 	path = lib/nlohmann
 	url = https://github.com/nlohmann/json
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "lib/stb"]
+	path = lib/stb
+	url = https://github.com/nothings/stb
+[submodule "lib/glm"]
+	path = lib/glm
+	url = https://github.com/g-truc/glm

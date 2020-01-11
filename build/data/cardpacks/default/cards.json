@@ -3,5 +3,21 @@
     "script": "scripts/add_level.lua",
     "name": "Test Card",
     "description": "This is a test card!"
+  },
+  {
+    "script": "scripts/modify_monster.lua",
+    "name": "Enraged",
+    "description": "Adds 5 to the monster's power.",
+    "properties": {
+      "power_to_add": 5
+    }
+  },
+  {
+    "script": "scripts/modify_monster.lua",
+    "name": "Ancient",
+    "description": "Adds 10 to the monster's power.",
+    "properties": {
+      "power_to_add": 10
+    }
   }
 ]
