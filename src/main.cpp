@@ -14,6 +14,8 @@
 
 #include "api/ai_manager.hpp"
 
+#include "input/input.hpp"
+
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
 
@@ -74,6 +76,7 @@ int main() try {
 	bool done = false;
 	bool show_debugger = false;
 	do {
+		munchkin::input::update();
 		// From imgui/examples/example_sdl_opengl3/main.cpp:
 		// Poll and handle events (inputs, window resize, etc.)
 		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
