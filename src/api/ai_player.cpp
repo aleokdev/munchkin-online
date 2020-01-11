@@ -15,7 +15,7 @@ void AIPlayer::tick() {
 		last_action_tick = state->tick;
 
 	if (state->tick > (last_action_tick + ticks_to_think)) {
-		state->event_queue.push(FlowEvent{ "clicked_dungeon_deck" });
+		state->event_queue.push(FlowEvent{ FlowEvent::EventType::clicked_dungeon_deck });
 		last_action_tick = -1;
 	}
 }

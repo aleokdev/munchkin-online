@@ -25,23 +25,15 @@ void Game::turn() {
         Player& player = result.as<Player>();
         std::cout << "The winner is: " << player.id << "\n";
     }
-
-    // Push an event, and in return, calculate the game stage
-    std::cout << "Input event: ";
-    std::string event_to_push;
-    std::cin >> event_to_push;
-    state.event_queue.push({ event_to_push });
     tick();
 }
 
 void Game::tick()
 {
-    state.event_queue.push({ "tick" });
+    state.event_queue.push({ FlowEvent::EventType::tick });
     state.tick++;
     while (state.event_queue.size() > 0) {
         state.last_event = state.event_queue.front();
-        if (state.last_event.name != "tick")
-            std::cout << "Processed event of name " << state.last_event.name << std::endl;
         for (auto& coroutine : state.active_coroutines) {
             if (!coroutine.runnable()) {
                 std::cout << "Encountered dead coroutine, need to discard it from active_coroutines." << std::endl;

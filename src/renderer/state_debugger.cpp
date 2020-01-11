@@ -1,6 +1,7 @@
 #include "renderer/state_debugger.hpp"
 #include "api/state.hpp"
 #include "imgui.h"
+#include <array>
 
 void drawLuaStateInspectorTable(lua_State* state)
 {
@@ -106,13 +107,22 @@ namespace munchkin {
 			if (show_demo)
 				ImGui::ShowDemoWindow(&show_demo);
 
-			ImGui::InputTextWithHint("##ev", "Input event...", event_name, 64);
+			constexpr const char* events[] = { "tick", "clicked_dungeon_deck", "card_discarded", "card_played" };
+			if (ImGui::BeginCombo("##event_to_push", events[current_selected_event])) {
+				for (int i = 0; i < 4; i++)
+				{
+					bool is_selected = i == current_selected_event;
+					if (ImGui::Selectable(events[i], is_selected))
+						current_selected_event = i;
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
 			ImGui::SameLine();
 			if (ImGui::Button("Push Event"))
-			{
-				char cpy_str[64];
-				strcpy_s(cpy_str, 64, event_name);
-				state->event_queue.push({ std::string(cpy_str) });
+			{				
+				state->event_queue.push({ (FlowEvent::EventType)current_selected_event });
 			}
 
 			ImGui::Separator();

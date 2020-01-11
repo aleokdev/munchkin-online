@@ -2,7 +2,7 @@ local function main()
 	local function wait_for_event(ev)
 		repeat
 			coroutine.yield()
-		until game.last_event.name == ev
+		until game.last_event.type == ev
 	end
 
 	local function wait_for_ticks(ticks)
@@ -18,29 +18,29 @@ local function main()
 		local ticks_before = game:get_ticks()
 		repeat
 			coroutine.yield()
-		until game:get_ticks() >= (game:get_ticks() + ticks) or game.last_event.name == ev
+		until game:get_ticks() >= (game:get_ticks() + ticks) or game.last_event.type == ev
 		return game:get_ticks() >= (game:get_ticks() + ticks)
 	end
 
 	local function stage_equip_stuff()
-		wait_for_event("clicked_dungeon_deck")
+		wait_for_event(event_type.clicked_dungeon_deck)
 		game:open_dungeon() -- will call card.on_reveal if it exists, should start a battle if it is a monster
 
 		if game.current_battle ~= nil then
 			game.stage = "FIGHT_MONSTER"
 		else
 			game.stage = "DECIDE_NOMONSTER"
-			wait_for_event("tick")
+			wait_for_event(event_type.tick)
 		end
 	end
 
 	local function stage_fight_monster()
-		wait_for_event("clicked_stop_battle_button")
+		wait_for_event(event_type.clicked_stop_battle_button)
 		
 		local ticks_to_wait = 2.6 * 60 -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
 
 		::wait_again::
-		if not wait_for_ticks_or_event("card_played", ticks_to_wait) then
+		if not wait_for_ticks_or_event(event_type.card_played, ticks_to_wait) then
 			-- Some player added another card to the monster or did something, wait again.
 			goto wait_again
 		end
@@ -62,7 +62,7 @@ local function main()
 				-- User decided to play a monster of their own
 				game.stage = "FIGHT_MONSTER"
 			end
-			if game.last_event.name == "clicked_dungeon_deck" then
+			if game.last_event.type == event_type.clicked_dungeon_deck then
 				-- User decided to loot the room
 				game.stage = "CHARITY"
 				break
@@ -74,7 +74,7 @@ local function main()
 
 	local function stage_get_treasure()
 		for i=0, game.current_battle.treasures_to_draw do
-			wait_for_event("treasure_card_drawn")
+			wait_for_event(event_type.treasure_card_drawn)
 		end
 
 		game.end_current_battle()
@@ -84,7 +84,7 @@ local function main()
 
 	local function stage_charity()
 		while #game:get_current_player().hand > game:get_current_player().hand_max_cards do
-			wait_for_event("card_discarded")
+			wait_for_event(event_type.card_discarded)
 		end
 		game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
 		game:next_player_turn()
@@ -94,7 +94,7 @@ local function main()
 	local stages = { EQUIP_STUFF_AND_OPEN_DUNGEON = stage_equip_stuff, FIGHT_MONSTER = stage_fight_monster, GET_TREASURE = stage_get_treasure, CHARITY = stage_charity, DECIDE_NOMONSTER = stage_decide_nomonster }
 	
 	game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
-	wait_for_event("tick") -- Wait for the game to load cardpacks in
+	wait_for_event(event_type.tick) -- Wait for the game to load cardpacks in
 	while true do
 		stages[game.stage]()
 	end
