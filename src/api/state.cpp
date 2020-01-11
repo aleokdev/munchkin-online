@@ -119,8 +119,8 @@ void State::open_dungeon()
     }
     else {
         active_coroutines.emplace_back(on_reveal);
-        on_reveal();
         dungeon_deck.pop();
+        on_reveal();
     }
 }
 
@@ -190,7 +190,18 @@ void State::add_cardpack(std::string path)
 Card& State::add_card(CardDef& def)
 {
     Card card(*this, def, {});
-    return all_cards.emplace_back(std::move(card));
+    Card& result = all_cards.emplace_back(std::move(card));
+    switch (def.category) {
+        case DeckType::dungeon:
+            dungeon_deck.push(result);
+            break;
+
+        case DeckType::treasure:
+            treasure_deck.push(result);
+            break;
+    }
+
+    return result;
 }
 
 size_t State::get_player_count() const {

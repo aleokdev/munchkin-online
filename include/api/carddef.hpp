@@ -6,13 +6,20 @@
 
 namespace munchkin
 {
+	enum class DeckType {
+		null,
+		dungeon,
+		treasure
+	};
+
 	struct CardDef
 	{
-		CardDef(sol::state& state, std::string const& script_path, std::string _name, std::string _description);
+		CardDef(sol::state& state, std::string const& script_path, std::string _name, std::string _description, DeckType _category = DeckType::null);
 
 		std::string name;
 		std::string description;
 		sol::table metatable;
+		DeckType category;
 	};
 }
 

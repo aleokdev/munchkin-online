@@ -4,6 +4,7 @@
 #include <fstream>
 #include <filesystem>
 #include <stdexcept>
+#include <iostream>
 
 namespace munchkin {
 
@@ -18,7 +19,14 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
 
     for (auto& card_json : j) {
        std::string script_path = (basepath/std::filesystem::path((std::string)card_json["script"])).generic_string();
-       CardDef def(lua, script_path, card_json["name"], card_json["description"]);
+       DeckType def_category(DeckType::null);
+       if (card_json["category"] == "dungeon")
+           def_category = DeckType::dungeon;
+       else if (card_json["category"] == "treasure")
+           def_category = DeckType::treasure;
+       else
+           std::cerr << "Card has no category! Will default to null; This means that it won't be introduced to the game decks" << std::endl;
+       CardDef def(lua, script_path, card_json["name"], card_json["description"], def_category);
 
        for (auto& [k, v] : card_json["properties"].items())
        {

@@ -2,17 +2,20 @@
   {
     "script": "scripts/battle.lua",
     "name": "Battle Test",
-    "description": "This is a test card!"
+    "description": "This is a test card!",
+    "category": "dungeon"
   },
   {
     "script": "scripts/metatable.lua",
     "name": "Metatable Test",
-    "description": "This is a test card!"
+    "description": "This is a test card!",
+    "category": "dungeon"
   },
   {
     "script": "scripts/properties.lua",
     "name": "Property Test",
     "description": "This is a test card!",
+    "category": "dungeon",
     "properties": {
       "text": "ok",
       "number": 1,
