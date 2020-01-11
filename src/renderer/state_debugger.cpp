@@ -109,8 +109,7 @@ namespace munchkin {
 
 			constexpr const char* events[] = { "tick", "clicked_dungeon_deck", "card_discarded", "card_played" };
 			if (ImGui::BeginCombo("##event_to_push", events[current_selected_event])) {
-				for (int i = 0; i < 4; i++)
-				{
+				for (int i = 0; i < 4; i++) {
 					bool is_selected = i == current_selected_event;
 					if (ImGui::Selectable(events[i], is_selected))
 						current_selected_event = i;
@@ -120,10 +119,8 @@ namespace munchkin {
 				ImGui::EndCombo();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Push Event"))
-			{				
+			if (ImGui::Button("Push Event"))				
 				state->event_queue.push({ (FlowEvent::EventType)current_selected_event });
-			}
 
 			ImGui::Separator();
 
@@ -140,8 +137,7 @@ namespace munchkin {
 			ImGui::TextUnformatted("Hand Max Cards");
 			ImGui::NextColumn();
 
-			for (auto& player : state->players)
-			{
+			for (auto& player : state->players) {
 				ImGui::Text("%zu", player.id);
 				ImGui::NextColumn();
 				ImGui::Text("%d", player.level);
@@ -155,16 +151,22 @@ namespace munchkin {
 
 			ImGui::Separator();
 
-			ImGui::TextUnformatted("Game information");
-			ImGui::Indent();
-			{
+			if (ImGui::TreeNode("Card Decks")) {
+				ImGui::Text("Cards in dungeon deck: %i", state->dungeon_deck.size());
+				ImGui::Text("Cards in dungeon discard deck: %i", state->dungeon_discard_deck.size());
+				ImGui::Text("Cards in treasure deck: %i", state->treasure_deck.size());
+				ImGui::Text("Cards in treasure discard deck: %i", state->treasure_discard_deck.size());
+				ImGui::TreePop();
+			}
+
+			if(ImGui::TreeNode("Game information")) {
 				ImGui::Text("Turn number: %zu", state->turn_number);
 				ImGui::Text("Current user playing: %zu", state->current_player_id);
 				ImGui::Text("Number of active coroutines: %zu", state->active_coroutines.size());
 				ImGui::Text("Should borrow facing up: %s", state->should_borrow_facing_up ? "true" : "false");
 				ImGui::Text("Game stage: %s", state->game_stage.c_str());
+				ImGui::TreePop();
 			}
-			ImGui::Unindent();
 		}
 		ImGui::End();
 	}
