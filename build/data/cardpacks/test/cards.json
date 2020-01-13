@@ -2,7 +2,8 @@
   {
     "script": "scripts/battle.lua",
     "name": "Battle Test",
-    "description": "This is a test card!"
+    "description": "This is a test card!",
+    "category": "dungeon"
   },
   {
     "script": "scripts/metatable.lua",
@@ -13,6 +14,17 @@
     "script": "scripts/properties.lua",
     "name": "Property Test",
     "description": "This is a test card!",
+    "properties": {
+      "text": "ok",
+      "number": 1,
+      "boolean": true
+    }
+  },
+  {
+    "script": "scripts/metatable.lua",
+    "name": "Play Stages Test",
+    "description": "Test Text",
+    "play_stages":  ["EQUIP_STUFF_AND_OPEN_DUNGEON", "CHARITY"],
     "properties": {
       "text": "ok",
       "number": 1,

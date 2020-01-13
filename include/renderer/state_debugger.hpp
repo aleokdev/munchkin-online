@@ -14,7 +14,8 @@ public:
 private:
 	State* state;
 	bool show_demo = false;
-	char event_name[64] = "\0";
+	bool show_stateviewer = false;
+	int current_selected_event = 0;
 };
 
 }

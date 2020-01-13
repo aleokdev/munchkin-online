@@ -16,9 +16,15 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     }
     current_player_id = 0;
 
+    lua.new_enum<FlowEvent::EventType>("event_type",
+        { {"tick", FlowEvent::EventType::tick},
+        {"clicked_dungeon_deck", FlowEvent::EventType::clicked_dungeon_deck},
+        {"card_discarded", FlowEvent::EventType::card_discarded},
+        {"card_played", FlowEvent::EventType::card_played} });
+
     // register types in lua api
     lua.new_usertype<FlowEvent>("flow_event",
-        "name", &FlowEvent::name);
+        "type", &FlowEvent::type);
 
     // TODO: Rename to munchkin_game OR rename game to state
     sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",
@@ -113,8 +119,8 @@ void State::open_dungeon()
     }
     else {
         active_coroutines.emplace_back(on_reveal);
-        on_reveal();
         dungeon_deck.pop();
+        on_reveal();
     }
 }
 
@@ -184,7 +190,20 @@ void State::add_cardpack(std::string path)
 Card& State::add_card(CardDef& def)
 {
     Card card(*this, def, {});
-    return all_cards.emplace_back(std::move(card));
+    Card& result = all_cards.emplace_back(std::move(card));
+    switch (def.category) {
+        case DeckType::dungeon:
+            dungeon_deck.push(result);
+            break;
+
+        case DeckType::treasure:
+            treasure_deck.push(result);
+            break;
+
+        default: break;
+    }
+
+    return result;
 }
 
 size_t State::get_player_count() const {

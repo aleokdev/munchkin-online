@@ -17,7 +17,13 @@
 
 namespace munchkin {
 struct FlowEvent {
-    std::string name;
+    enum class EventType {
+        tick,
+        clicked_dungeon_deck,
+        card_discarded,
+        card_played
+    };
+    EventType type;
 };
 
 class State {
