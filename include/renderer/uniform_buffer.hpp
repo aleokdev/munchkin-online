@@ -3,7 +3,9 @@
 
 #include <glad/glad.h>
 
-namespace munchkin::renderer {
+namespace munchkin {
+
+namespace renderer {
 
 class UniformBuffer {
 public:
@@ -23,6 +25,8 @@ private:
     unsigned int ubo = 0;
     size_t binding = 0;
 };
+
+}
 
 }
 
