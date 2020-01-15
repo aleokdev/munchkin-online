@@ -11,6 +11,8 @@ class State;
 class Player;
 struct CardPtr;
 
+
+
 // Cards refer to CardDefs
 class Card {
 public:
@@ -53,6 +55,20 @@ public:
     State& get_state() {
         return *state;
     }
+
+    enum class CardLocation {
+        invalid,
+        dungeon_deck,
+        dungeon_discard_deck,
+        treasure_deck,
+        treasure_discard_deck,
+        player_equipped,
+        player_hand
+    };
+
+    CardLocation location = CardLocation::invalid;
+    // The ID of the player that owns this card (If location is set to player_equipped or player_hand)
+    int owner_id = 0;
 
 private:
     State* state;

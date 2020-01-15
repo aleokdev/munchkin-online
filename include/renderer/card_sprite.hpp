@@ -3,18 +3,18 @@
 
 namespace munchkin {
 
-struct CardSprite {
-	enum class CardPos {
-		invalid,
-		dungeon_deck,
-		dungeon_discard_deck,
-		treasure_deck,
-		treasure_discard_deck
-	};
+class CardSprite {
+public:
 	CardSprite(CardPtr);
 
-	CardPos pos_enum;
-	pos_vec::Vec2D pos;
+	void set_target_pos(math::Vec2D target);
+	math::Vec2D get_current_pos();
+	void instantly_set_pos(math::Vec2D target);
+
+private:
+	math::Vec2D target_pos;
+	math::Vec2D current_pos;
+	const int movement_slowness = 8;
 	CardPtr card;
 };
 

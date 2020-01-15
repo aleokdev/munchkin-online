@@ -6,18 +6,21 @@ namespace munchkin {
 
 CardSprite::CardSprite(CardPtr _card) : card(_card)
 {
-	bool is_in_dungeon_deck = false;
-	for (auto& card : _card.state->dungeon_deck)
-		if (card == _card) {
-			is_in_dungeon_deck = true;
-			break;
-		}
-	if (is_in_dungeon_deck) {
-		pos_enum = CardPos::dungeon_deck;
-		return;
-	}
+}
 
-	pos_enum = CardPos::invalid;
+void CardSprite::set_target_pos(math::Vec2D target)
+{
+	target_pos = target;
+}
+
+math::Vec2D CardSprite::get_current_pos()
+{
+	return current_pos;
+}
+
+void CardSprite::instantly_set_pos(math::Vec2D target)
+{
+	target_pos = current_pos = target;
 }
 
 }

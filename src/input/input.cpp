@@ -23,9 +23,9 @@ MouseState get_current_mouse_state() {
 	return mouse;
 }
 
-::pos_vec::Vec2D get_mouse_pos()
+::math::Vec2D get_mouse_pos()
 {
-	return ::pos_vec::Vec2D{ (float)mouse.x, (float)mouse.y };
+	return ::math::Vec2D{ (float)mouse.x, (float)mouse.y };
 }
 
 }

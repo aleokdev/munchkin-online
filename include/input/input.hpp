@@ -25,7 +25,7 @@ bool is_key_pressed(Keycode);
 bool is_mousebutton_pressed(MouseButton mouse_button);
 
 MouseState get_current_mouse_state();
-::pos_vec::Vec2D get_mouse_pos();
+::math::Vec2D get_mouse_pos();
 	
 }
 }
