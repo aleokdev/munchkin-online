@@ -76,10 +76,10 @@ public:
     Card& add_card(CardDef& def);
     std::vector<Card> all_cards;
 
-    std::queue<CardPtr> dungeon_deck;
-    std::queue<CardPtr> dungeon_discard_deck;
-    std::queue<CardPtr> treasure_deck;
-    std::queue<CardPtr> treasure_discard_deck;
+    std::vector<CardPtr> dungeon_deck;
+    std::vector<CardPtr> dungeon_discard_deck;
+    std::vector<CardPtr> treasure_deck;
+    std::vector<CardPtr> treasure_discard_deck;
 
     std::queue<FlowEvent> event_queue;
     FlowEvent last_event;

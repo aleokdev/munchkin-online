@@ -24,7 +24,7 @@ set(MUNCHKIN_SOURCES
     "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
     "src/renderer/title_screen_renderer.cpp"
     "src/renderer/sprite_renderer.cpp" "src/api/ai_player.cpp" "src/api/ai_manager.cpp"
-    "src/input/input.cpp"
+    "src/input/input.cpp" "src/renderer/card_sprite.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")
 set(MUNCHKIN_LINK_LIBRARIES "")
