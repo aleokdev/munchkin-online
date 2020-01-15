@@ -4,6 +4,8 @@
 
 namespace munchkin {
 
+namespace renderer {
+
 CardSprite::CardSprite(CardPtr _card) : card(_card)
 {
 }
@@ -21,6 +23,8 @@ math::Vec2D CardSprite::get_current_pos()
 void CardSprite::instantly_set_pos(math::Vec2D target)
 {
 	target_pos = current_pos = target;
+}
+
 }
 
 }
