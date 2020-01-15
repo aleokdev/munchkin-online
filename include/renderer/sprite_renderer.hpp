@@ -3,7 +3,9 @@
 
 #include <glm/glm.hpp>
 
-namespace munchkin::renderer {
+namespace munchkin {
+
+namespace renderer {
 
 /*
 Example usage of this class:
@@ -22,16 +24,16 @@ public:
 
     // All following functions require a bound shader
 
-   void set_camera_drag(bool drag);
-   // position in pixels from window origin (lower left corner is (0, 0)).
-   void set_position(glm::vec2 pos);
-   void set_scale(glm::vec2 multiplier);
-   void set_rotation(float radians);
-   void set_texture(unsigned int texture);
+    void set_camera_drag(bool drag);
+    // position in pixels from window origin (lower left corner is (0, 0)).
+    void set_position(glm::vec2 pos);
+    void set_scale(glm::vec2 multiplier);
+    void set_rotation(float radians);
+    void set_texture(unsigned int texture);
 
     // Issue a single drawcall with the currently bound state.
     // Meant to be called from the render function passed in the constructor
-   void do_draw();
+    void do_draw();
 
     static void deallocate();
 
@@ -49,6 +51,8 @@ private:
     // Only z rotation is used
     float rotation;
 };
+
+}
 
 }
 
