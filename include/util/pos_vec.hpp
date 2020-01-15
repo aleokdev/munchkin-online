@@ -119,6 +119,6 @@ inline Vec2D operator op (Vec2D lhs, const Vec2D& rhs) {\
 		inline static constexpr Vec2D zero = Vec2D{ 0, 0 };
 	}
 
-#endif
-
 }
+
+#endif

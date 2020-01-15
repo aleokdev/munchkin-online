@@ -67,11 +67,13 @@ int main() try {
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	munchkin::GameWrapper<munchkin::Game> game(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 4);
-	munchkin::games::AIManager ai(game.get_state(), std::vector<size_t>{1, 2, 3});
-	munchkin::StateDebugger debugger(game.get_state());
+	munchkin::Game game(4);
 	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
 	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
+	munchkin::GameRenderer game_renderer(game.get_state(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+	// Add AI to players 1, 2 and 3 (not 0, that's the local player)
+	munchkin::games::AIManager ai(game.get_state(), std::vector<size_t>{1, 2, 3});
+	munchkin::StateDebugger debugger(game.get_state());
 
 	bool done = false;
 	bool show_debugger = false;
@@ -94,7 +96,7 @@ int main() try {
 			else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED
 				&& event.window.windowID == SDL_GetWindowID(window)) {
 					glViewport(0, 0, event.window.data1, event.window.data2);
-					game.renderer.on_resize(event.window.data1, event.window.data2);
+					game_renderer.on_resize(event.window.data1, event.window.data2);
 				}
 			else if (event.type == SDL_KEYDOWN && !io.WantCaptureKeyboard && event.key.keysym.scancode == SDL_SCANCODE_K && event.key.repeat == 0)
 				show_debugger = !show_debugger;
@@ -109,7 +111,9 @@ int main() try {
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		game.render();
+		game_renderer.render_frame();
+		game_renderer.blit(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		if (show_debugger)
 			debugger.render();
@@ -125,7 +129,7 @@ int main() try {
 	
 
 	std::cout << std::boolalpha;
-	std::cout << "Game over: " << game.game.ended() << std::endl;
+	std::cout << "Game over: " << game.ended() << std::endl;
 
 	std::cout << "Levels: " << std::endl;
 	for (int i = 0; i < 4; ++i) {

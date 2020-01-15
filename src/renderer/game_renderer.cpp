@@ -2,6 +2,7 @@
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
 #include "api/game.hpp"
+#include "api/state.hpp"
 
 #include <glad/glad.h>
 #include <sdl/SDL.h>
@@ -9,12 +10,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 namespace munchkin {
 
-GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) : 
+GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) :
     state(&s), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
-    window_w(window_w), window_h(window_h) {
+    window_w(window_w), window_h(window_h), camera( -((int)window_w) / 2.f, -((int)window_h) / 2.f ) {
 
     renderer::RenderTarget::CreateInfo info;
     info.width = window_w;
@@ -33,6 +33,10 @@ GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) :
 
     projection = glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h);
 
+    // TODO FIXME: This doesn't add cards that are added AFTER the gamerenderer has been created!
+    for (auto& card : state->all_cards) {
+        card_sprites.emplace_back(&card);
+    }
 }
 
 GameRenderer::~GameRenderer() {
@@ -75,11 +79,13 @@ void GameRenderer::render_frame() {
         sprite_renderer.set_texture(table_texture);
         constexpr float table_size = 700;
         // Calculate position for lower left corner for the table to be centered
-        sprite_renderer.set_position(glm::vec2(window_w / 2.0f, window_h / 2.0f));
-        sprite_renderer.set_scale(glm::vec2(table_size, table_size)); 
-
+        sprite_renderer.set_position(glm::vec2(0, 0));
+        sprite_renderer.set_scale(glm::vec2(table_size, table_size));
         // Execute drawcall
         sprite_renderer.do_draw();
+
+        draw_cards(sprite_renderer);
+
     }
 
     // Swap current and last mouse
@@ -124,6 +130,11 @@ void GameRenderer::update_camera() {
         camera_buffer.write_data(&camera.xoffset, sizeof(float), 0);
         camera_buffer.write_data(&camera.yoffset, sizeof(float), sizeof(float));
     }
+}
+
+void GameRenderer::draw_cards(renderer::SpriteRenderer& spr) {
+    for (auto& card : card_sprites)
+        card.draw(spr);
 }
 
 }

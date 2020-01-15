@@ -5,6 +5,7 @@
 #include "background_renderer.hpp"
 #include "uniform_buffer.hpp"
 #include "input/input.hpp"
+#include "card_sprite.hpp"
 
 #include <glm/mat4x4.hpp>
 
@@ -28,9 +29,10 @@ private:
 
 	// Camera data
 	struct Camera {
+		Camera(float x, float y) : xoffset(x), yoffset(y) {}
 		// offsets are stored relative to center
-		float xoffset = 0;
-		float yoffset = 0;
+		float xoffset;
+		float yoffset;
 	} camera;
 
 	glm::mat4 projection;
@@ -54,9 +56,13 @@ private:
 	renderer::Background background;
 	unsigned int sprite_shader;
 
+	// Sprites
+	std::vector<renderer::CardSprite> card_sprites;
+
 	// Functions
 	void update_camera();
 	void update_input();
+	void draw_cards(renderer::SpriteRenderer&);
 };
 
 }
