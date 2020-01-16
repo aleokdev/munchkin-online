@@ -4,8 +4,9 @@
 #include <imgui.h>
 #include <cmath>
 
-namespace pos_vec
+namespace math
 {
+
 	struct Vec2D;
 
 	struct Vec2D
@@ -14,11 +15,11 @@ namespace pos_vec
 		float y;
 
 #define DEFINE_OPERATOR(op)\
-		Vec2D& operator op##= (const Vec2D& rhs) {\
-			this->x op##= rhs.x;\
-			this->y op##= rhs.y;\
-			return *this;\
-		}
+	Vec2D& operator op##= (const Vec2D& rhs) {\
+		this->x op##= rhs.x;\
+		this->y op##= rhs.y;\
+		return *this;\
+	}
 
 		DEFINE_OPERATOR(+);
 		DEFINE_OPERATOR(-);
@@ -74,15 +75,15 @@ namespace pos_vec
 	};
 
 #define DEFINE_OPERATOR(op)\
-	inline Vec2D operator op (Vec2D lhs, const Vec2D& rhs) {\
-			lhs op##= rhs;\
-			return lhs;\
-		}
+inline Vec2D operator op (Vec2D lhs, const Vec2D& rhs) {\
+		lhs op##= rhs;\
+		return lhs;\
+	}
 
 	DEFINE_OPERATOR(+);
 	DEFINE_OPERATOR(-);
 	DEFINE_OPERATOR(*);
-	DEFINE_OPERATOR(/);
+	DEFINE_OPERATOR(/ );
 
 #undef DEFINE_OPERATOR
 
@@ -98,7 +99,7 @@ namespace pos_vec
 				p.y >= pos.y &&
 				p.x <= (pos.x + size.x) &&
 				p.y <= (pos.y + size.y)
-				);			
+				);
 		}
 
 		Vec2D get_center() const
@@ -117,6 +118,7 @@ namespace pos_vec
 		inline static constexpr Vec2D right = Vec2D{ 0, 1 };
 		inline static constexpr Vec2D zero = Vec2D{ 0, 0 };
 	}
+
 }
 
 #endif

@@ -1,7 +1,9 @@
 #ifndef MUNCHKIN_RENDERER_BACKGROUND_RENDERER_HPP_
 #define MUNCHKIN_RENDERER_BACKGROUND_RENDERER_HPP_
 
-namespace munchkin::renderer {
+namespace munchkin {
+
+namespace renderer {
 
 struct Background {
     unsigned int texture;
@@ -25,6 +27,8 @@ void update_background_scroll(Background& bg, float delta_time);
 void render_background(Background const& bg);
 
 void free_background(Background& bg);
+
+}
 
 }
 

@@ -18,13 +18,14 @@ project("munchkin-online" VERSION 0.0.0
 						  DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
 set(MUNCHKIN_SOURCES 
-    "src/api/game.cpp" "src/api/state.cpp" "src/api/card.cpp" "src/api/carddef.cpp"
+    "src/game.cpp" "src/api/state.cpp" "src/api/card.cpp" "src/api/carddef.cpp"
     "src/api/card_loader.cpp" "src/api/gamerules.cpp" "src/api/battle.cpp" "src/renderer/state_debugger.cpp"
-    "src/renderer/game_renderer.cpp" "src/renderer/render_target.cpp" "src/renderer/background_renderer.cpp"
+    "src/systems/game_renderer.cpp" "src/renderer/render_target.cpp" "src/renderer/background_renderer.cpp"
     "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
     "src/renderer/title_screen_renderer.cpp"
     "src/renderer/sprite_renderer.cpp" "src/api/ai_player.cpp" "src/api/ai_manager.cpp"
-    "src/input/input.cpp"
+    "src/input/input.cpp" "src/renderer/card_sprite.cpp"
+    "src/systems/input_binder.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")
 set(MUNCHKIN_LINK_LIBRARIES "")
