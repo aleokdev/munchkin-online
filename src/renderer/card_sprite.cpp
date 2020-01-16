@@ -68,7 +68,7 @@ void CardSprite::calculate_target_from_location()
         float player_angle = ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI - M_PI / 2.f;
         // TODO: Don't assume table radius
         // this isn't actually the table radius, it's just the radius of an imaginary circurference where all the cards are placed
-        constexpr float table_radius = 750*2;
+        constexpr float table_radius = 750;
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
         target_pos = player_pos;
         target_rotation = player_angle + M_PI / 2.f;
@@ -81,7 +81,7 @@ void CardSprite::calculate_target_from_location()
         float player_angle = ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI - M_PI / 2.f;
         // TODO: Don't assume table radius
         // this isn't actually the table radius, it's just the radius of an imaginary circurference where all the cards are placed
-        constexpr float table_radius = 450*2;
+        constexpr float table_radius = 450;
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
         target_pos = player_pos;
         target_rotation = player_angle + M_PI / 2.f;

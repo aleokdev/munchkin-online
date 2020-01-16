@@ -4,9 +4,11 @@ namespace munchkin {
 namespace input {
 
 MouseState mouse;
+MouseState last_mouse;
 
 void update()
 {
+	last_mouse = mouse;
 	mouse.button_flagmap = SDL_GetMouseState(&mouse.x, &mouse.y);
 }
 
@@ -17,6 +19,11 @@ bool is_key_pressed(Keycode keycode) {
 
 bool is_mousebutton_pressed(MouseButton mousebutton) {
 	return mouse.button_flagmap & SDL_BUTTON((int)mousebutton);
+}
+
+bool has_mousebutton_been_clicked(MouseButton mousebutton)
+{
+	return !(last_mouse.button_flagmap & SDL_BUTTON((int)mousebutton)) && (mouse.button_flagmap & SDL_BUTTON((int)mousebutton));
 }
 
 MouseState get_current_mouse_state() {

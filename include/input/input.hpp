@@ -23,6 +23,8 @@ void update();
 
 bool is_key_pressed(Keycode);
 bool is_mousebutton_pressed(MouseButton mouse_button);
+// Returns true if the mousebutton given was released the previous frame and is now pressed.
+bool has_mousebutton_been_clicked(MouseButton mouse_button);
 
 MouseState get_current_mouse_state();
 ::math::Vec2D get_mouse_pos();
