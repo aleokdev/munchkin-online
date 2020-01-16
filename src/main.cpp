@@ -12,6 +12,7 @@
 #include "api/game_wrapper.hpp"
 #include "game.hpp"
 #include "systems/input_binder.hpp"
+#include "systems/game_renderer.hpp"
 
 #include "api/ai_manager.hpp"
 

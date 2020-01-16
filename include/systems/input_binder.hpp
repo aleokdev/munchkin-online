@@ -11,6 +11,8 @@ namespace systems {
 class InputBinder {
 	InputBinder(Game&);
 
+	void tick();
+
 private:
 	Game* const game;
 };
