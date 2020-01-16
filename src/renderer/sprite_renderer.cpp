@@ -38,9 +38,9 @@ void SpriteRenderer::set_texture(unsigned int texture) {
 void SpriteRenderer::do_draw() {
     // Calculate model matrix and send to shader
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    model = glm::scale(model, scale);
     model = glm::rotate(model, rotation, glm::vec3(0, 0, 1));
+    model = glm::scale(model, scale);
+    model = glm::translate(model, position);
 
     glUniformMatrix4fv(3, 1, GL_FALSE, glm::value_ptr(model));
 
