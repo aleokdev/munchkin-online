@@ -1,11 +1,10 @@
 #ifndef MUNCHKIN_GAME_RENDERER_HPP__
 #define MUNCHKIN_GAME_RENDERER_HPP__
 
-#include "render_target.hpp"
-#include "background_renderer.hpp"
-#include "uniform_buffer.hpp"
+#include "renderer/render_target.hpp"
+#include "renderer/background_renderer.hpp"
+#include "renderer/uniform_buffer.hpp"
 #include "input/input.hpp"
-#include "card_sprite.hpp"
 
 #include <glm/mat4x4.hpp>
 

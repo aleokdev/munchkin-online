@@ -1,7 +1,7 @@
 #ifndef MUNCHKIN_GAME_WRAPPER_HPP__
 #define MUNCHKIN_GAME_WRAPPER_HPP__
 
-#include "renderer/game_renderer.hpp"
+#include "systems/game_renderer.hpp"
 #include "gamerules.hpp"
 #include "state.hpp"
 
