@@ -30,6 +30,7 @@ public:
     void set_scale(glm::vec2 multiplier);
     void set_rotation(float radians);
     void set_texture(unsigned int texture);
+    void set_color(float r, float g, float b, float a);
 
     // Issue a single drawcall with the currently bound state.
     // Meant to be called from the render function passed in the constructor
@@ -48,6 +49,7 @@ private:
     // Only x and y fields are actually used
     glm::vec3 position = glm::vec3(0, 0, 0);
     glm::vec3 scale = glm::vec3(1, 1, 1);
+    glm::vec4 color = glm::vec4(1, 1, 1, 1);
     // Only z rotation is used
     float rotation;
 };

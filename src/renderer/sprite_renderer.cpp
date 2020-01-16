@@ -35,6 +35,12 @@ void SpriteRenderer::set_texture(unsigned int texture) {
     glUniform1i(0, 0);
 }
 
+void SpriteRenderer::set_color(float r, float g, float b, float a)
+{
+    color = glm::vec4(r, g, b, a);
+    glUniform4fv(4, 1, glm::value_ptr(color));
+}
+
 void SpriteRenderer::do_draw() {
     // Calculate model matrix and send to shader
     glm::mat4 model = glm::mat4(1.0f);
@@ -45,6 +51,9 @@ void SpriteRenderer::do_draw() {
     glUniformMatrix4fv(3, 1, GL_FALSE, glm::value_ptr(model));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Reset color data (just in case)
+    set_color(1, 1, 1, 1);
 }
 
 void SpriteRenderer::deallocate() {
