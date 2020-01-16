@@ -11,6 +11,8 @@
 
 namespace munchkin {
 
+namespace systems {
+
 class Game;
 
 class GameRenderer {
@@ -62,6 +64,7 @@ private:
 	void draw_cards(renderer::SpriteRenderer&);
 };
 
+}
 }
 
 

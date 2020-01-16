@@ -11,6 +11,7 @@
 #include "renderer/state_debugger.hpp"
 #include "api/game_wrapper.hpp"
 #include "game.hpp"
+#include "systems/input_binder.hpp"
 
 #include "api/ai_manager.hpp"
 

@@ -1,4 +1,4 @@
-#include "renderer/game_renderer.hpp"
+#include "systems/game_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
 #include "game.hpp"
@@ -12,9 +12,11 @@
 
 namespace munchkin {
 
+namespace systems {
+
 GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) :
-    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
-    window_w(window_w), window_h(window_h), camera( -1, -1) {
+    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW),
+    window_w(window_w), window_h(window_h), camera(-1, -1) {
 
     renderer::RenderTarget::CreateInfo info;
     info.width = window_w;
@@ -22,7 +24,7 @@ GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) :
 
     framebuf = renderer::RenderTarget(info);
     background = renderer::create_background("data/generic/bg.png");
-//    background.scroll_speed = 0.002f;
+    //    background.scroll_speed = 0.002f;
 
     sprite_shader = renderer::load_shader("data/shaders/sprite.vert", "data/shaders/sprite.frag");
     table_texture = renderer::load_texture("data/generic/table.png");
@@ -65,7 +67,7 @@ void GameRenderer::render_frame() {
     glViewport(0, 0, framebuf.get_width(), framebuf.get_height());
 
     renderer::RenderTarget::bind(framebuf);
-    
+
     framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the background
@@ -101,9 +103,9 @@ void GameRenderer::blit(unsigned int target_framebuf) {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target_framebuf);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuf.handle());
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glBlitFramebuffer(0, 0, framebuf.get_width(), framebuf.get_height(), 
-                      0, 0, framebuf.get_width(), framebuf.get_height(), 
-                      GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBlitFramebuffer(0, 0, framebuf.get_width(), framebuf.get_height(),
+        0, 0, framebuf.get_width(), framebuf.get_height(),
+        GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 
 void GameRenderer::on_resize(size_t w, size_t h) {
@@ -142,4 +144,5 @@ void GameRenderer::draw_cards(renderer::SpriteRenderer& spr) {
         card.draw(spr);
 }
 
+}
 }
