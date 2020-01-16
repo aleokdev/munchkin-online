@@ -9,6 +9,7 @@ namespace systems {
 
 // Binds input from the user to Game and its state
 class InputBinder {
+public:
 	InputBinder(Game&);
 
 	void tick();

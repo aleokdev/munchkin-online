@@ -6,6 +6,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "util/pos_vec.hpp"
+
 namespace munchkin {
 
 namespace renderer {
@@ -23,6 +25,10 @@ public:
 
 	void draw(SpriteRenderer&);
 
+	math::Rect2D get_rect();
+
+	bool is_being_hovered = false;
+
 private:
 	math::Vec2D target_pos = { 0,0 };
 	float target_rotation = 0;
@@ -30,7 +36,7 @@ private:
 	float current_rotation = 0;
 	inline static constexpr float movement_slowness = 8;
 	inline static constexpr float rotation_slowness = 8;
-	inline static constexpr float texture_scale = 0.1f;
+	inline static constexpr float texture_scale = 0.2f;
 	inline static constexpr float texture_width = 454;
 	inline static constexpr float texture_height = 704;
 	CardPtr card;

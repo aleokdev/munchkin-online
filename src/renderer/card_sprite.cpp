@@ -68,7 +68,7 @@ void CardSprite::calculate_target_from_location()
         float player_angle = ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI - M_PI / 2.f;
         // TODO: Don't assume table radius
         // this isn't actually the table radius, it's just the radius of an imaginary circurference where all the cards are placed
-        constexpr float table_radius = 750;
+        constexpr float table_radius = 750*2;
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
         target_pos = player_pos;
         target_rotation = player_angle + M_PI / 2.f;
@@ -81,7 +81,7 @@ void CardSprite::calculate_target_from_location()
         float player_angle = ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI - M_PI / 2.f;
         // TODO: Don't assume table radius
         // this isn't actually the table radius, it's just the radius of an imaginary circurference where all the cards are placed
-        constexpr float table_radius = 450;
+        constexpr float table_radius = 450*2;
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
         target_pos = player_pos;
         target_rotation = player_angle + M_PI / 2.f;
@@ -108,8 +108,16 @@ void CardSprite::draw(SpriteRenderer& spr)
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
     spr.set_scale(glm::vec2(texture_width*texture_scale, texture_height*texture_scale));
     spr.set_rotation(current_rotation);
+    if (is_being_hovered)
+        spr.set_color(1.1f, 1.1f, 1.1f, 1);
 
 	spr.do_draw();
+}
+
+math::Rect2D CardSprite::get_rect()
+{
+    math::Vec2D size{ texture_width * texture_scale, texture_height * texture_scale };
+    return math::Rect2D{ current_pos - size/2.f, size };
 }
 
 }

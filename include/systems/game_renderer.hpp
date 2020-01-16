@@ -17,7 +17,7 @@ namespace systems {
 
 class GameRenderer {
 public:
-	GameRenderer(Game&, size_t window_w, size_t window_h);
+	GameRenderer(Game&);
 	~GameRenderer();
 
 	void render_frame();
@@ -26,17 +26,6 @@ public:
 	void on_resize(size_t w, size_t h);
 
 private:
-	// windowing data
-	size_t window_w, window_h;
-
-	// Camera data
-	struct Camera {
-		Camera(float x, float y) : xoffset(x), yoffset(y) {}
-		// offsets are stored relative to center
-		float xoffset;
-		float yoffset;
-	} camera;
-
 	glm::mat4 projection;
 
 	// Game-related data
