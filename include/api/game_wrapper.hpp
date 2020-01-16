@@ -32,7 +32,7 @@ public:
 	}
 
 	T game;
-	GameRenderer renderer;
+	systems::GameRenderer renderer;
 };
 
 }

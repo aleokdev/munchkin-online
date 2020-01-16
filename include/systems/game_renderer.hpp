@@ -4,15 +4,16 @@
 #include "renderer/render_target.hpp"
 #include "renderer/background_renderer.hpp"
 #include "renderer/uniform_buffer.hpp"
+#include "renderer/sprite_renderer.hpp"
 #include "input/input.hpp"
 
 #include <glm/mat4x4.hpp>
 
 namespace munchkin {
 
-namespace systems {
-
 class Game;
+
+namespace systems {
 
 class GameRenderer {
 public:

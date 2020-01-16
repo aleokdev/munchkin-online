@@ -6,8 +6,10 @@ namespace systems {
 
 InputBinder::InputBinder(Game& g) : game(&g) {}
 
-InputBinder::tick() {
+void InputBinder::tick() {
+	for (auto& sprite : game->card_sprites) {
 
+	}
 }
 
 }
