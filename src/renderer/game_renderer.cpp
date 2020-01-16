@@ -14,7 +14,7 @@ namespace munchkin {
 
 GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) :
     state(&s), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
-    window_w(window_w), window_h(window_h), camera( -((int)window_w) / 2.f, -((int)window_h) / 2.f ) {
+    window_w(window_w), window_h(window_h), camera( -1, -1) {
 
     renderer::RenderTarget::CreateInfo info;
     info.width = window_w;
@@ -32,6 +32,11 @@ GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) :
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     projection = glm::ortho(0.0f, (float)window_w, 0.0f, (float)window_h);
+
+    // Update camera data
+    renderer::UniformBuffer::bind(camera_buffer);
+    camera_buffer.write_data(&camera.xoffset, sizeof(float), 0);
+    camera_buffer.write_data(&camera.yoffset, sizeof(float), sizeof(float));
 
     // TODO FIXME: This doesn't add cards that are added AFTER the gamerenderer has been created!
     for (auto& card : state->all_cards) {
