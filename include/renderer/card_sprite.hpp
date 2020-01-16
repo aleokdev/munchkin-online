@@ -25,8 +25,8 @@ private:
 	float target_rotation = 0;
 	math::Vec2D current_pos = { 0,0 };
 	float current_rotation = 0;
-	inline static constexpr float movement_slowness = 32.f;
-	inline static constexpr float rotation_slowness = 32.f;
+	inline static constexpr float movement_slowness = 8;
+	inline static constexpr float rotation_slowness = 8;
 	inline static constexpr float texture_scale = 0.1f;
 	inline static constexpr float texture_width = 454;
 	inline static constexpr float texture_height = 704;
