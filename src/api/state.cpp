@@ -99,12 +99,16 @@ int State::get_ticks() const
 void State::give_treasure(Player& player)
 {
     player.hand.emplace_back(treasure_deck.front());
+    treasure_deck.front()->location = Card::CardLocation::player_hand;
+    treasure_deck.front()->owner_id = player.id;
     treasure_deck.pop();
 }
 
 void State::give_dungeon(Player& player)
 {
     player.hand.emplace_back(dungeon_deck.front());
+    dungeon_deck.front()->location = Card::CardLocation::player_hand;
+    dungeon_deck.front()->owner_id = player.id;
     dungeon_deck.pop();
 }
 
@@ -194,10 +198,12 @@ Card& State::add_card(CardDef& def)
     switch (def.category) {
         case DeckType::dungeon:
             dungeon_deck.push(result);
+            result.location = Card::CardLocation::dungeon_deck;
             break;
 
         case DeckType::treasure:
             treasure_deck.push(result);
+            result.location = Card::CardLocation::treasure_deck;
             break;
 
         default: break;
