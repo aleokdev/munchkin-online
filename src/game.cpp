@@ -1,4 +1,4 @@
-#include "api/game.hpp"
+#include "game.hpp"
 
 #include "api/card.hpp"
 

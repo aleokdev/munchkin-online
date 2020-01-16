@@ -1,8 +1,9 @@
 #ifndef MUNCHKIN_GAME_HPP_
 #define MUNCHKIN_GAME_HPP_
 
-#include "state.hpp"
-#include "gamerules.hpp"
+#include "api/state.hpp"
+#include "api/gamerules.hpp"
+#include "renderer/card_sprite.hpp"
 
 namespace munchkin {
 
@@ -20,9 +21,11 @@ public:
 
     State& get_state() { return state; }
 
-private:
     State state;
     GameRules gamerules;
+
+	// Sprites
+	std::vector<renderer::CardSprite> card_sprites;
 };
 
 }

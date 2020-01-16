@@ -1,7 +1,7 @@
 #include "renderer/game_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
-#include "api/game.hpp"
+#include "game.hpp"
 #include "api/state.hpp"
 
 #include <glad/glad.h>
@@ -12,8 +12,8 @@
 
 namespace munchkin {
 
-GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) :
-    state(&s), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
+GameRenderer::GameRenderer(Game& g, size_t window_w, size_t window_h) :
+    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW), 
     window_w(window_w), window_h(window_h), camera( -1, -1) {
 
     renderer::RenderTarget::CreateInfo info;
@@ -39,8 +39,8 @@ GameRenderer::GameRenderer(State& s, size_t window_w, size_t window_h) :
     camera_buffer.write_data(&camera.yoffset, sizeof(float), sizeof(float));
 
     // TODO FIXME: This doesn't add cards that are added AFTER the gamerenderer has been created!
-    for (auto& card : state->all_cards) {
-        card_sprites.emplace_back(&card);
+    for (auto& card : game->get_state().all_cards) {
+        game->card_sprites.emplace_back(&card);
     }
 }
 
@@ -138,7 +138,7 @@ void GameRenderer::update_camera() {
 }
 
 void GameRenderer::draw_cards(renderer::SpriteRenderer& spr) {
-    for (auto& card : card_sprites)
+    for (auto& card : game->card_sprites)
         card.draw(spr);
 }
 

@@ -11,11 +11,11 @@
 
 namespace munchkin {
 
-class State;
+class Game;
 
 class GameRenderer {
 public:
-	GameRenderer(State&, size_t window_w, size_t window_h);
+	GameRenderer(Game&, size_t window_w, size_t window_h);
 	~GameRenderer();
 
 	void render_frame();
@@ -38,7 +38,7 @@ private:
 	glm::mat4 projection;
 
 	// Game-related data
-	State* state;
+	Game* game;
 
 	input::MouseState last_mouse;
 	input::MouseState cur_mouse;
@@ -55,9 +55,6 @@ private:
 	// Assets
 	renderer::Background background;
 	unsigned int sprite_shader;
-
-	// Sprites
-	std::vector<renderer::CardSprite> card_sprites;
 
 	// Functions
 	void update_camera();

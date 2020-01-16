@@ -1,3 +1,6 @@
+#ifndef MUNCHKIN_CARD_SPRITE_HPP__
+#define MUNCHKIN_CARD_SPRITE_HPP__
+
 #include "api/card.hpp"
 #include "util/pos_vec.hpp"
 
@@ -40,3 +43,5 @@ private:
 }
 
 }
+
+#endif

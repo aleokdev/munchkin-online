@@ -10,7 +10,7 @@
 
 #include "renderer/state_debugger.hpp"
 #include "api/game_wrapper.hpp"
-#include "api/game.hpp"
+#include "game.hpp"
 
 #include "api/ai_manager.hpp"
 
@@ -70,7 +70,7 @@ int main() try {
 	munchkin::Game game(4);
 	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
 	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
-	munchkin::GameRenderer game_renderer(game.get_state(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+	munchkin::GameRenderer game_renderer(game, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 	// Add AI to players 1, 2 and 3 (not 0, that's the local player)
 	munchkin::games::AIManager ai(game.get_state(), std::vector<size_t>{1, 2, 3});
 	munchkin::StateDebugger debugger(game.get_state());
