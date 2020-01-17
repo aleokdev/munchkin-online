@@ -72,6 +72,14 @@ namespace math
 			ret.y = x;
 			return ret;
 		}
+
+		Vec2D abs() const
+		{
+			Vec2D ret;
+			ret.x = std::abs(x);
+			ret.y = std::abs(y);
+			return ret;
+		}
 	};
 
 #define DEFINE_OPERATOR(op)\

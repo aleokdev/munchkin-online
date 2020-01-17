@@ -9,6 +9,7 @@
 #include "util/pos_vec.hpp"
 
 namespace munchkin {
+	class Game;
 
 namespace renderer {
 
@@ -16,7 +17,7 @@ class SpriteRenderer;
 
 class CardSprite {
 public:
-	CardSprite(CardPtr);
+	CardSprite(Game&, CardPtr);
 
 	void set_target_pos(math::Vec2D target);
 	math::Vec2D get_current_pos();
@@ -30,6 +31,8 @@ public:
 	bool is_being_hovered = false;
 
 private:
+	Game* const game;
+
 	math::Vec2D target_pos = { 0,0 };
 	float target_rotation = 0;
 	math::Vec2D current_pos = { 0,0 };

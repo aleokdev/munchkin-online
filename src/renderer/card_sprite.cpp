@@ -11,12 +11,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
+#include "game.hpp"
 
 namespace munchkin {
 
 namespace renderer {
 
-CardSprite::CardSprite(CardPtr _card) : card(_card)
+CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card)
 {
     // TODO: Get texture filename from card
     dungeon_back_texture = renderer::load_texture("data/cardpacks/default/textures/dungeon-back.png");
@@ -103,7 +104,8 @@ void CardSprite::draw(SpriteRenderer& spr)
 
     current_pos += (target_pos - current_pos) / movement_slowness;
     current_rotation += (target_rotation - current_rotation) / rotation_slowness;
-    current_size += math::vectors::x_axis * ((card->topside_up ? (-texture_width * texture_scale) : (texture_width * texture_scale)) - current_size.x) / flip_slowness;
+    const bool is_card_visible = card->visibility == Card::CardVisibility::front_visible || (card->visibility == Card::CardVisibility::front_visible_to_owner && card->owner_id == game->local_player_id);
+    current_size += math::vectors::x_axis * ((is_card_visible ? (-texture_width * texture_scale) : (texture_width * texture_scale)) - current_size.x) / flip_slowness;
 
     // Set draw data
     if (current_size.x > 0)
@@ -121,7 +123,7 @@ void CardSprite::draw(SpriteRenderer& spr)
 
 math::Rect2D CardSprite::get_rect()
 {
-    return math::Rect2D{ current_pos - current_size/2.f, current_size };
+    return math::Rect2D{ current_pos - current_size.abs()/2.f, current_size.abs() };
 }
 
 }

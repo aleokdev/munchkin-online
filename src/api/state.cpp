@@ -117,7 +117,8 @@ void State::open_dungeon()
     if (dungeon_deck.size() == 0) return;
 
     sol::function on_reveal = dungeon_deck.front()->get_data_variable("on_reveal");
-    dungeon_deck.front()->topside_up = true;
+    // TODO: Show card at the center of the table for like 2 seconds, then move its location to the player's hand
+    dungeon_deck.front()->visibility = Card::CardVisibility::front_visible;
 
     if (on_reveal == sol::lua_nil) {
         give_dungeon(get_current_player());

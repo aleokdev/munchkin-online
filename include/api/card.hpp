@@ -69,10 +69,18 @@ public:
     CardLocation location = CardLocation::invalid;
     // The ID of the player that owns this card (If location is set to player_equipped or player_hand)
     int owner_id = 0;
+    
+    enum class CardVisibility {
+        // The back of the card is visible to everybody (Back facing top)
+        back_visible,
+        // The front of the card is visible to everybody (Front facing top)
+        front_visible,
+        // The front of the card is visible only to the card's owner (Set via owner_id) (Front facing top), rest of the players see it as back_visible
+        front_visible_to_owner
+    };
 
-    // false -> The visible part of the card is the back side.
-    // true -> The visible part of the card is the actual important side.
-    bool topside_up = false;
+    // Specifies what is visible about the card (The back or the front side)
+    CardVisibility visibility = CardVisibility::back_visible;
 
 private:
     State* state;

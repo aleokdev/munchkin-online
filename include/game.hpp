@@ -38,6 +38,8 @@ public:
 
 	// Sprites
 	std::vector<renderer::CardSprite> card_sprites;
+
+	size_t local_player_id = 0;
 };
 
 }
