@@ -1,9 +1,51 @@
 [
   {
-    "script": "scripts/add_level.lua",
-    "name": "Test Card",
-    "description": "This is a test card!",
-    "category": "dungeon"
+    "script": "scripts/card/add_level.lua",
+    "name": "1,000 Gold Pieces",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Boil an Anthill",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Bribe GM With Food",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Convenient Addition Error",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Invoke Obscure Rules",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Mutilate the Bodies",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Potion of General Studliness",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Whine at the GM",
+    "description": "Go up one level.",
+    "category": "treasure"
   },
   {
     "script": "scripts/modify_monster.lua",
@@ -23,6 +65,22 @@
     "category": "dungeon",
     "properties": {
       "power_to_add": 10
+    }
+  },
+  {
+    "script": "scripts/monster.lua",
+    "name": "Vulkan",
+    "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
+    "play_stages": [],
+    "category": "dungeon",
+    "properties": {
+      "power": 10,
+      "treasures": 2,
+      "levels": 1,
+      "bad_stuff_script": "scripts/modify_levels.lua",
+      "bad_stuff_properties": {
+
+      }
     }
   }
 ]
