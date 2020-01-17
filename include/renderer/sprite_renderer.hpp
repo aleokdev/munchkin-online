@@ -50,7 +50,8 @@ private:
     glm::vec3 position = glm::vec3(0, 0, 0);
     glm::vec3 scale = glm::vec3(1, 1, 1);
     glm::vec4 color = glm::vec4(1, 1, 1, 1);
-    // Only z rotation is used
+
+    // Only Z rotation really needed
     float rotation;
 };
 

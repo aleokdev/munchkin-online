@@ -35,8 +35,7 @@ void SpriteRenderer::set_texture(unsigned int texture) {
     glUniform1i(0, 0);
 }
 
-void SpriteRenderer::set_color(float r, float g, float b, float a)
-{
+void SpriteRenderer::set_color(float r, float g, float b, float a) {
     color = glm::vec4(r, g, b, a);
     glUniform4fv(4, 1, glm::value_ptr(color));
 }

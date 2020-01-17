@@ -117,6 +117,7 @@ void State::open_dungeon()
     if (dungeon_deck.size() == 0) return;
 
     sol::function on_reveal = dungeon_deck.front()->get_data_variable("on_reveal");
+    dungeon_deck.front()->topside_up = true;
 
     if (on_reveal == sol::lua_nil) {
         give_dungeon(get_current_player());

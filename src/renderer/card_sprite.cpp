@@ -20,6 +20,7 @@ CardSprite::CardSprite(CardPtr _card) : card(_card)
 {
     // TODO: Get texture filename from card
     dungeon_back_texture = renderer::load_texture("data/cardpacks/default/textures/dungeon-back.png");
+    default_front_texture = renderer::load_texture("data/cardpacks/default/textures/dungeon-front.png");
 }
 
 void CardSprite::set_target_pos(math::Vec2D target)
@@ -102,11 +103,15 @@ void CardSprite::draw(SpriteRenderer& spr)
 
     current_pos += (target_pos - current_pos) / movement_slowness;
     current_rotation += (target_rotation - current_rotation) / rotation_slowness;
+    current_size += math::vectors::x_axis * ((card->topside_up ? (-texture_width * texture_scale) : (texture_width * texture_scale)) - current_size.x) / flip_slowness;
 
-    // Set draw data    
-    spr.set_texture(dungeon_back_texture);
+    // Set draw data
+    if (current_size.x > 0)
+        spr.set_texture(dungeon_back_texture);
+    else
+        spr.set_texture(default_front_texture);
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
-    spr.set_scale(glm::vec2(texture_width*texture_scale, texture_height*texture_scale));
+    spr.set_scale(glm::vec2(std::abs(current_size.x), current_size.y));
     spr.set_rotation(current_rotation);
     if (is_being_hovered)
         spr.set_color(1.1f, 1.1f, 1.1f, 1);
@@ -116,8 +121,7 @@ void CardSprite::draw(SpriteRenderer& spr)
 
 math::Rect2D CardSprite::get_rect()
 {
-    math::Vec2D size{ texture_width * texture_scale, texture_height * texture_scale };
-    return math::Rect2D{ current_pos - size/2.f, size };
+    return math::Rect2D{ current_pos - current_size/2.f, current_size };
 }
 
 }

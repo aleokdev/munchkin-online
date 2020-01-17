@@ -70,6 +70,10 @@ public:
     // The ID of the player that owns this card (If location is set to player_equipped or player_hand)
     int owner_id = 0;
 
+    // false -> The visible part of the card is the back side.
+    // true -> The visible part of the card is the actual important side.
+    bool topside_up = false;
+
 private:
     State* state;
     CardDef* def;
