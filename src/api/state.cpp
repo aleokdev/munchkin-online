@@ -90,6 +90,18 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         {"front_visible", Card::CardVisibility::front_visible},
         {"front_visible_to_owner", Card::CardVisibility::front_visible_to_owner} });
 
+    lua.new_enum<Card::CardLocation>("card_location",
+        {
+            {"invalid", Card::CardLocation::invalid},
+            {"dungeon_deck", Card::CardLocation::dungeon_deck},
+            {"dungeon_discard_deck", Card::CardLocation::dungeon_discard_deck},
+            {"treasure_deck", Card::CardLocation::treasure_deck},
+            {"treasure_discard_deck", Card::CardLocation::treasure_discard_deck},
+            {"player_equipped", Card::CardLocation::player_equipped},
+            {"player_hand", Card::CardLocation::player_hand},
+            {"table_center", Card::CardLocation::table_center}
+        });
+
     lua.new_usertype<Card>("munchkin_card",
         "get_id", &Card::get_id,
         "visibility", &Card::visibility,
