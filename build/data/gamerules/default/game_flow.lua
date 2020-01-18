@@ -87,6 +87,10 @@ local function main()
 			end
 			if game.last_event.type == event_type.clicked_dungeon_deck then
 				-- User decided to loot the room
+				local front = game:get_dungeon_deck_front()
+				game:give_dungeon(game:get_current_player())
+				front:get().visibility = card_visibility.front_visible_to_owner
+
 				game.stage = "CHARITY"
 				break
 			end
