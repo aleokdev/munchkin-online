@@ -48,13 +48,13 @@ local card = {}
 
 function card.on_reveal(self) 
 	-- The monster has been revealed from the deck, start a new battle
-	game.start_battle()
+	game:start_battle()
 
 	-- Add this card to the current battle...
-	game.get_current_battle().add_card(self)
+	game.current_battle.add_card(self)
 
 	-- And add the power of the monster to the card added (In this case, 12)
-	game.get_current_battle().modify_card(self, 12)
+	game.current_battle.modify_card(self, 12)
 
 	-- Done!
 end
