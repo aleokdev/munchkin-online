@@ -8,7 +8,7 @@
 
 #include <glad/glad.h>
 
-#include "renderer/state_debugger.hpp"
+#include "systems/state_debugger.hpp"
 #include "api/game_wrapper.hpp"
 #include "game.hpp"
 #include "systems/input_binder.hpp"
@@ -74,9 +74,9 @@ int main() try {
 	std::cout << "Cards loaded: " << game.get_state().all_cards.size() << std::endl;
 	munchkin::systems::GameRenderer game_renderer(game);
 	munchkin::systems::InputBinder player_input(game);
+	munchkin::systems::StateDebugger debugger(game);
 	// Add AI to players 1, 2 and 3 (not 0, that's the local player)
 	munchkin::games::AIManager ai(game.get_state(), std::vector<size_t>{1, 2, 3});
-	munchkin::StateDebugger debugger(game.get_state());
 
 	bool done = false;
 	bool show_debugger = false;
