@@ -18,6 +18,9 @@
 
 #include "input/input.hpp"
 
+#include "renderer/sprite_renderer.hpp"
+#include "renderer/font_renderer.hpp"
+
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
 
@@ -139,6 +142,9 @@ int main() try {
 	for (int i = 0; i < 4; ++i) {
 		std::cout << i << ": " << game.get_state().players[i].level << "\n";
 	}
+
+	munchkin::renderer::SpriteRenderer::deallocate();
+	munchkin::renderer::FontRenderer::deallocate();
 
 	return 0;
 } catch(std::exception const& e) {
