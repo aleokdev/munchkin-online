@@ -152,10 +152,10 @@ namespace munchkin {
 			ImGui::Separator();
 
 			if (ImGui::TreeNode("Card Decks")) {
-				ImGui::Text("Cards in dungeon deck: %i", state->dungeon_deck.size());
-				ImGui::Text("Cards in dungeon discard deck: %i", state->dungeon_discard_deck.size());
-				ImGui::Text("Cards in treasure deck: %i", state->treasure_deck.size());
-				ImGui::Text("Cards in treasure discard deck: %i", state->treasure_discard_deck.size());
+				ImGui::Text("Cards in dungeon deck: %zu", state->dungeon_deck.size());
+				ImGui::Text("Cards in dungeon discard deck: %zu", state->dungeon_discard_deck.size());
+				ImGui::Text("Cards in treasure deck: %zu", state->treasure_deck.size());
+				ImGui::Text("Cards in treasure discard deck: %zu", state->treasure_discard_deck.size());
 				ImGui::TreePop();
 			}
 
