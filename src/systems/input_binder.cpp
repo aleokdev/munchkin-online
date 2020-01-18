@@ -16,7 +16,7 @@ void InputBinder::tick() {
 		if (sprite.get_rect().contains(m_pos))
 		{
 			sprite.is_being_hovered = true;
-			if (input::has_mousebutton_been_clicked(input::MouseButton::left))
+			if (input::has_mousebutton_been_clicked(input::MouseButton::left) && sprite.get_card_ptr()->location == Card::CardLocation::dungeon_deck)
 			{
 				game->push_event(FlowEvent{ FlowEvent::EventType::clicked_dungeon_deck });
 				break;

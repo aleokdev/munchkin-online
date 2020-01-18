@@ -30,6 +30,8 @@ public:
 
 	bool is_being_hovered = false;
 
+	CardPtr get_card_ptr() { return card; }
+
 private:
 	Game* const game;
 
