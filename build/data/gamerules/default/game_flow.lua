@@ -24,13 +24,15 @@ local function main()
 
 	local function stage_equip_stuff()
 		wait_for_event(event_type.clicked_dungeon_deck)
-		game:open_dungeon() -- will call card.on_reveal if it exists, should start a battle if it is a monster
+		game:open_dungeon() -- will add card.on_reveal to active coroutines if it exists
+		wait_for_event(event_type.tick)
+		wait_for_event(event_type.tick) -- Wait for card.on_reveal if it exists
+		print("finished waiting for card.on_reveal")
 
 		if game.current_battle ~= nil then
 			game.stage = "FIGHT_MONSTER"
 		else
 			game.stage = "DECIDE_NOMONSTER"
-			wait_for_event(event_type.tick)
 		end
 	end
 
