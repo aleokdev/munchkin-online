@@ -11,7 +11,7 @@ namespace systems {
 InputBinder::InputBinder(Game& g) : game(&g) {}
 
 void InputBinder::tick() {
-	math::Vec2D m_pos = input::get_mouse_pos() + game->camera.offset * math::Vec2D{ (float)game->window_w, -(float)game->window_h } /2.f - math::Vec2D{ 0, (float)game->window_h };
+	math::Vec2D m_pos = (input::get_mouse_pos() + game->camera.offset * math::Vec2D{ (float)game->window_w, -(float)game->window_h } / 2.f - math::Vec2D{ 0, (float)game->window_h }) * math::Vec2D{ 1,-1 };
 	for (auto& sprite : game->card_sprites) {
 		if (sprite.get_rect().contains(m_pos))
 		{
