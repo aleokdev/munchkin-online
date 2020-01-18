@@ -41,7 +41,7 @@ GameRenderer::GameRenderer(Game& g) :
 
     // TODO FIXME: This doesn't add cards that are added AFTER the gamerenderer has been created!
     for (auto& card : game->get_state().all_cards) {
-        game->card_sprites.emplace_back(&card);
+        game->card_sprites.emplace_back(*game, &card);
     }
 }
 

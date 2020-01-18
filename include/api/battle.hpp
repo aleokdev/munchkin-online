@@ -9,9 +9,10 @@
 namespace munchkin {
 
 struct Battle {
-	Battle(Player& source) : source_player(&source) {}
-	Battle() : source_player(nullptr) {}
+	Battle(State& s, Player& source) : state(&s), source_player(&source) {}
+	Battle() : state(nullptr), source_player(nullptr) {}
 
+	State* state;
 	Player* source_player;
 	std::vector<Player*> helpers;
 	// The offset for the total players' power. Can be negative.
@@ -21,6 +22,11 @@ struct Battle {
 	// Map where Card is the played card and size_t is the (monster) power of that card. Needed because we need
 	// to keep track of each card's individual power.
 	std::unordered_map<CardPtr, int> played_cards;
+
+	void add_card(int id);
+	void remove_card(int id);
+	void modify_card(int id, int power);
+
 	// The offset for the total monsters' power. Can be negative.
 	int monster_power_offset;
 	int get_total_monster_power();

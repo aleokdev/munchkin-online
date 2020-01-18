@@ -3,21 +3,24 @@
 
 namespace munchkin {
 
-class State;
+	class Game;
+
+namespace systems {
 
 class StateDebugger {
 public:
-	StateDebugger(State&);
+	StateDebugger(Game&);
 
 	void render();
 
 private:
-	State* state;
+	Game* game;
 	bool show_demo = false;
 	bool show_stateviewer = false;
 	int current_selected_event = 0;
 };
 
+}
 }
 
 #endif

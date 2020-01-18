@@ -30,8 +30,6 @@ class State {
 public:
     State(size_t player_count, std::string gamerule_path = DEFAULT_GAMERULES_PATH);
 
-    void load_cards_from_json(std::string_view path);
-
     // api functions
     // More information in scripting_api.md
 
@@ -39,7 +37,6 @@ public:
 
     void give_treasure(Player& player);
     void give_dungeon(Player& player);
-    void open_dungeon();
 
     void start_battle();
     void end_current_battle();
@@ -70,8 +67,6 @@ public:
     size_t current_player_id;
     size_t player_count;
 
-    std::vector<CardDef> carddefs;
-
     void add_cardpack(std::string path);
     Card& add_card(CardDef& def);
     std::vector<Card> all_cards;
@@ -80,6 +75,23 @@ public:
     std::queue<CardPtr> dungeon_discard_deck;
     std::queue<CardPtr> treasure_deck;
     std::queue<CardPtr> treasure_discard_deck;
+
+    // Dumb lua API wrappers for decks
+    CardPtr get_dungeon_deck_front() { return dungeon_deck.front(); }
+    int get_dungeon_deck_size() { return dungeon_deck.size(); }
+    void dungeon_deck_pop() { return dungeon_deck.pop(); }
+
+    CardPtr get_dungeon_discard_deck_front() { return dungeon_discard_deck.front(); }
+    int get_dungeon_discard_deck_size() { return dungeon_discard_deck.size(); }
+    void dungeon_discard_deck_pop() { return dungeon_discard_deck.pop(); }
+
+    CardPtr get_treasure_deck_front() { return treasure_deck.front(); }
+    int get_treasure_deck_size() { return treasure_deck.size(); }
+    void treasure_deck_pop() { return treasure_deck.pop(); }
+
+    CardPtr get_treasure_discard_deck_front() { return treasure_discard_deck.front(); }
+    int get_treasure_discard_deck_size() { return treasure_discard_deck.size(); }
+    void treasure_discard_deck_pop() { return treasure_discard_deck.pop(); }
 
     std::queue<FlowEvent> event_queue;
     FlowEvent last_event;

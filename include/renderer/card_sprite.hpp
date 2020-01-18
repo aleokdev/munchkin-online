@@ -9,6 +9,7 @@
 #include "util/pos_vec.hpp"
 
 namespace munchkin {
+	class Game;
 
 namespace renderer {
 
@@ -16,7 +17,7 @@ class SpriteRenderer;
 
 class CardSprite {
 public:
-	CardSprite(CardPtr);
+	CardSprite(Game&, CardPtr);
 
 	void set_target_pos(math::Vec2D target);
 	math::Vec2D get_current_pos();
@@ -29,21 +30,32 @@ public:
 
 	bool is_being_hovered = false;
 
+	CardPtr get_card_ptr() { return card; }
+
 private:
+	Game* const game;
+
 	math::Vec2D target_pos = { 0,0 };
 	float target_rotation = 0;
 	math::Vec2D current_pos = { 0,0 };
 	float current_rotation = 0;
+
 	inline static constexpr float movement_slowness = 16;
 	inline static constexpr float rotation_slowness = 16;
+	inline static constexpr float flip_slowness = 16;
 	inline static constexpr float texture_scale = 0.2f;
 	inline static constexpr float texture_width = 454;
 	inline static constexpr float texture_height = 704;
+
+	math::Vec2D current_size = { texture_width * texture_scale, texture_height * texture_scale };
+
 	CardPtr card;
 	Card::CardLocation last_card_location = Card::CardLocation::invalid;
 
-	// TODO: Textures are duplicated! Do asset system and assign all textures that point to the same file to the same ID?
-	unsigned int dungeon_back_texture;
+	// TODO: Back textures are duplicated! Do asset system and assign all textures that point to the same file to the same ID?
+	unsigned int back_texture;
+
+	unsigned int front_texture;
 };
 
 }

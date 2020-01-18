@@ -32,9 +32,10 @@ void Game::tick()
 {
     state.event_queue.push({ FlowEvent::EventType::tick });
     state.tick++;
+    std::vector<sol::coroutine> last_coroutines = state.active_coroutines;
     while (state.event_queue.size() > 0) {
         state.last_event = state.event_queue.front();
-        for (auto& coroutine : state.active_coroutines) {
+        for (auto& coroutine : last_coroutines) {
             if (!coroutine.runnable()) {
                 std::cout << "Encountered dead coroutine, need to discard it from active_coroutines." << std::endl;
             }

@@ -11,15 +11,17 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
+#include "game.hpp"
 
 namespace munchkin {
 
 namespace renderer {
 
-CardSprite::CardSprite(CardPtr _card) : card(_card)
+CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card)
 {
     // TODO: Get texture filename from card
-    dungeon_back_texture = renderer::load_texture("data/cardpacks/default/textures/dungeon-back.png");
+    back_texture = renderer::load_texture(card->get_def().category == DeckType::dungeon ? "data/cardpacks/default/textures/dungeon-back.png" : "data/cardpacks/default/textures/treasure-back.png");
+    front_texture = renderer::load_texture(card->get_def().category == DeckType::dungeon ? "data/cardpacks/default/textures/dungeon-front.png" : "data/cardpacks/default/textures/treasure-front.png");
 }
 
 void CardSprite::set_target_pos(math::Vec2D target)
@@ -88,6 +90,10 @@ void CardSprite::calculate_target_from_location()
         break;
     }
 
+    case munchkin::Card::CardLocation::table_center:
+        target_pos = { 0, -texture_height * texture_scale * 1.6f };
+        break;
+
     default:
         break;
     }
@@ -102,11 +108,16 @@ void CardSprite::draw(SpriteRenderer& spr)
 
     current_pos += (target_pos - current_pos) / movement_slowness;
     current_rotation += (target_rotation - current_rotation) / rotation_slowness;
+    const bool is_card_visible = card->visibility == Card::CardVisibility::front_visible || (card->visibility == Card::CardVisibility::front_visible_to_owner && card->owner_id == game->local_player_id);
+    current_size += math::vectors::x_axis * ((is_card_visible ? (-texture_width * texture_scale) : (texture_width * texture_scale)) - current_size.x) / flip_slowness;
 
-    // Set draw data    
-    spr.set_texture(dungeon_back_texture);
+    // Set draw data
+    if (current_size.x > 0)
+        spr.set_texture(back_texture);
+    else
+        spr.set_texture(front_texture);
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
-    spr.set_scale(glm::vec2(texture_width*texture_scale, texture_height*texture_scale));
+    spr.set_scale(glm::vec2(std::abs(current_size.x), current_size.y));
     spr.set_rotation(current_rotation);
     if (is_being_hovered)
         spr.set_color(1.1f, 1.1f, 1.1f, 1);
@@ -116,8 +127,7 @@ void CardSprite::draw(SpriteRenderer& spr)
 
 math::Rect2D CardSprite::get_rect()
 {
-    math::Vec2D size{ texture_width * texture_scale, texture_height * texture_scale };
-    return math::Rect2D{ current_pos - size/2.f, size };
+    return math::Rect2D{ current_pos - current_size.abs()/2.f, current_size.abs() };
 }
 
 }

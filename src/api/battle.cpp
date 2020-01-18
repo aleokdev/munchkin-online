@@ -2,8 +2,7 @@
 
 namespace munchkin {
 
-	int Battle::get_total_player_power()
-	{
+	int Battle::get_total_player_power() {
 		int ret = source_player->get_power();
 
 		for (auto& helper : helpers)
@@ -16,8 +15,7 @@ namespace munchkin {
 		return ret;
 	}
 
-	int Battle::get_total_monster_power()
-	{
+	int Battle::get_total_monster_power() {
 		int ret = 0;
 		for (auto& [card, power] : played_cards)
 		{
@@ -29,4 +27,16 @@ namespace munchkin {
 		return ret;
 	}
 
+	void Battle::add_card(int id) {
+		CardPtr(*state, id)->location = Card::CardLocation::table_center;
+		played_cards.insert(std::pair<CardPtr, int>(CardPtr(*state, id), 0));
+	}
+
+	void Battle::remove_card(int id) {
+		played_cards.erase(CardPtr(*state, id));
+	}
+
+	void Battle::modify_card(int id, int power) {
+		played_cards[CardPtr(*state, id)] += power;
+	}
 }

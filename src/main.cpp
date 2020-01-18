@@ -8,7 +8,7 @@
 
 #include <glad/glad.h>
 
-#include "renderer/state_debugger.hpp"
+#include "systems/state_debugger.hpp"
 #include "api/game_wrapper.hpp"
 #include "game.hpp"
 #include "systems/input_binder.hpp"
@@ -17,6 +17,9 @@
 #include "api/ai_manager.hpp"
 
 #include "input/input.hpp"
+
+#include "renderer/sprite_renderer.hpp"
+#include "renderer/font_renderer.hpp"
 
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
@@ -71,12 +74,12 @@ int main() try {
 
 	munchkin::Game game(4, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
-	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
+	std::cout << "Cards loaded: " << game.get_state().all_cards.size() << std::endl;
 	munchkin::systems::GameRenderer game_renderer(game);
 	munchkin::systems::InputBinder player_input(game);
+	munchkin::systems::StateDebugger debugger(game);
 	// Add AI to players 1, 2 and 3 (not 0, that's the local player)
 	munchkin::games::AIManager ai(game.get_state(), std::vector<size_t>{1, 2, 3});
-	munchkin::StateDebugger debugger(game.get_state());
 
 	bool done = false;
 	bool show_debugger = false;
@@ -139,6 +142,9 @@ int main() try {
 	for (int i = 0; i < 4; ++i) {
 		std::cout << i << ": " << game.get_state().players[i].level << "\n";
 	}
+
+	munchkin::renderer::SpriteRenderer::deallocate();
+	munchkin::renderer::FontRenderer::deallocate();
 
 	return 0;
 } catch(std::exception const& e) {
