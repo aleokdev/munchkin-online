@@ -64,7 +64,7 @@ public:
         treasure_discard_deck,
         player_equipped,
         player_hand,
-        battle
+        table_center
     };
 
     CardLocation location = CardLocation::invalid;
