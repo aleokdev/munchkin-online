@@ -20,8 +20,8 @@ namespace renderer {
 CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card)
 {
     // TODO: Get texture filename from card
-    dungeon_back_texture = renderer::load_texture("data/cardpacks/default/textures/dungeon-back.png");
-    default_front_texture = renderer::load_texture("data/cardpacks/default/textures/dungeon-front.png");
+    back_texture = renderer::load_texture(card->get_def().category == DeckType::dungeon ? "data/cardpacks/default/textures/dungeon-back.png" : "data/cardpacks/default/textures/treasure-back.png");
+    front_texture = renderer::load_texture(card->get_def().category == DeckType::dungeon ? "data/cardpacks/default/textures/dungeon-front.png" : "data/cardpacks/default/textures/treasure-front.png");
 }
 
 void CardSprite::set_target_pos(math::Vec2D target)
@@ -113,9 +113,9 @@ void CardSprite::draw(SpriteRenderer& spr)
 
     // Set draw data
     if (current_size.x > 0)
-        spr.set_texture(dungeon_back_texture);
+        spr.set_texture(back_texture);
     else
-        spr.set_texture(default_front_texture);
+        spr.set_texture(front_texture);
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
     spr.set_scale(glm::vec2(std::abs(current_size.x), current_size.y));
     spr.set_rotation(current_rotation);

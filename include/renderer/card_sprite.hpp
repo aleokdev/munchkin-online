@@ -53,9 +53,9 @@ private:
 	Card::CardLocation last_card_location = Card::CardLocation::invalid;
 
 	// TODO: Back textures are duplicated! Do asset system and assign all textures that point to the same file to the same ID?
-	unsigned int dungeon_back_texture;
+	unsigned int back_texture;
 
-	unsigned int default_front_texture;
+	unsigned int front_texture;
 };
 
 }

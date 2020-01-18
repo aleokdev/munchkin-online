@@ -216,8 +216,8 @@ void State::add_cardpack(std::string path)
     std::vector<CardDef> new_carddefs = load_cards(path, lua);
     for (auto& def : new_carddefs)
     {
-        carddefs.emplace_back(def);
-        add_card(def);
+        CardDef& added_def = carddefs.emplace_back(def);
+        add_card(added_def);
     }
 }
 

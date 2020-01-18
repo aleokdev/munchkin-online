@@ -28,6 +28,7 @@ public:
     Card(State&, CardDef&, ConstructorKey);
 
     Card(Card&&) = default;
+    Card(Card const&) = default;
 
     Card& operator=(Card const&) = default;
     Card& operator=(Card&&) = default;
@@ -36,8 +37,8 @@ public:
 
     ~Card() = default;
 
-    CardDef& get_def() { return *def; }
-    CardDef const& get_def() const { return *def; }
+    CardDef& get_def() { return def; }
+    CardDef const& get_def() const { return def; }
 
     template<typename... Args>
     sol::object execute_function(std::string name, Args&&... args) {
@@ -85,7 +86,7 @@ public:
 
 private:
     State* state;
-    CardDef* def;
+    CardDef def;
     sol::table data;
     size_t id;
 };

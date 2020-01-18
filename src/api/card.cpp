@@ -6,7 +6,7 @@
 
 namespace munchkin {
 
-	Card::Card(State& st, CardDef& def, ConstructorKey) : state(&st), def(&def), data(sol::state_view(def.metatable.lua_state()).create_table()) {
+	Card::Card(State& st, CardDef& def, ConstructorKey) : state(&st), def(def), data(sol::state_view(def.metatable.lua_state()).create_table()) {
 		id = st.generate_id();
 
 		// TODO: Replace with metatables (HOW?)
