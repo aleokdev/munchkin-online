@@ -45,6 +45,7 @@ local function main()
 			game.stage = "FIGHT_MONSTER"
 		else
 			wait_for_ticks(120) -- Wait for a while before giving the card to the player
+			game:give_dungeon(game:get_current_player()) -- TODO FIXME: WILL NOT WORK WITH CARDS THAT HAVE A NON-BATTLE ON_REVEAL FUNCTION
 			card_ptr:get().location = card_location.player_hand
 			card_ptr:get().visibility = card_visibility.front_visible_to_owner
 			card_ptr:get().owner_id = game:get_current_player().id
