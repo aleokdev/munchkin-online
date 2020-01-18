@@ -90,6 +90,10 @@ void CardSprite::calculate_target_from_location()
         break;
     }
 
+    case munchkin::Card::CardLocation::battle:
+        target_pos = { 0, texture_height * texture_scale / 3.f * 2.f };
+        break;
+
     default:
         break;
     }

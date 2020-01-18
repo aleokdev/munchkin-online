@@ -64,10 +64,19 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "player_power_offset", &Battle::player_power_offset,
         "monster_power_offset", &Battle::monster_power_offset,
         "get_total_player_power", &Battle::get_total_player_power,
-        "get_total_monster_power", &Battle::get_total_monster_power
+        "get_total_monster_power", &Battle::get_total_monster_power,
+        "add_card", &Battle::add_card,
+        "remove_card", &Battle::remove_card,
+        "modify_card", &Battle::modify_card
     );
 
+    lua.new_usertype<CardPtr>("munchkin_card_ptr",
+        "id", &CardPtr::card_id,
+
+        "get_location", &CardPtr::get_location);
+
     lua.open_libraries(sol::lib::coroutine);
+    lua.open_libraries(sol::lib::base);
     
     // Load the generic API wrapper
     lua["game"] = this;
@@ -116,17 +125,21 @@ void State::open_dungeon()
 {
     if (dungeon_deck.size() == 0) return;
 
-    sol::function on_reveal = dungeon_deck.front()->get_data_variable("on_reveal");
+    CardPtr card = dungeon_deck.front();
+    sol::function on_reveal = card->get_data_variable("on_reveal");
     // TODO: Show card at the center of the table for like 2 seconds, then move its location to the player's hand
+    // TODO: Move open_dungeon to api_wrapper.lua?
     dungeon_deck.front()->visibility = Card::CardVisibility::front_visible;
 
     if (on_reveal == sol::lua_nil) {
         give_dungeon(get_current_player());
     }
     else {
-        active_coroutines.emplace_back(on_reveal);
+        std::cout << "Found on_reveal..." << std::endl;
         dungeon_deck.pop();
-        on_reveal();
+        // TODO: Add to active coroutines instead of just executing on_reveal
+        // (It doesn't work for some reason; coroutine stays in a permanent "yielded" state)
+        on_reveal(card); //active_coroutines.emplace_back(on_reveal);
     }
 }
 
@@ -135,7 +148,7 @@ void State::start_battle()
     if (current_battle)
         return;
 
-    current_battle = Battle(get_current_player());
+    current_battle = Battle(*this, get_current_player());
 }
 
 void State::end_current_battle()

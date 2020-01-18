@@ -63,7 +63,8 @@ public:
         treasure_deck,
         treasure_discard_deck,
         player_equipped,
-        player_hand
+        player_hand,
+        battle
     };
 
     CardLocation location = CardLocation::invalid;
@@ -103,6 +104,9 @@ struct CardPtr {
 
     State* state;
     size_t card_id;
+
+    // API definitions
+    Card::CardLocation get_location() { return ((Card*)this)->location; }
 };
 
 }
