@@ -143,6 +143,7 @@ void State::give_treasure(Player& player)
     player.hand.emplace_back(treasure_deck.front());
     treasure_deck.front()->location = Card::CardLocation::player_hand;
     treasure_deck.front()->owner_id = player.id;
+    treasure_deck.front()->visibility = Card::CardVisibility::front_visible_to_owner;
     treasure_deck.pop();
 }
 
@@ -151,6 +152,7 @@ void State::give_dungeon(Player& player)
     player.hand.emplace_back(dungeon_deck.front());
     dungeon_deck.front()->location = Card::CardLocation::player_hand;
     dungeon_deck.front()->owner_id = player.id;
+    dungeon_deck.front()->visibility = Card::CardVisibility::front_visible_to_owner;
     dungeon_deck.pop();
 }
 
