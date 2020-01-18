@@ -105,6 +105,8 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     lua.new_usertype<Card>("munchkin_card",
         "get_id", &Card::get_id,
         "visibility", &Card::visibility,
+        "location", &Card::location,
+        "owner_id", &Card::owner_id,
         sol::meta_function::index, &Card::get_data_variable);
     lua.new_usertype<CardPtr>("munchkin_card_ptr",
         "id", &CardPtr::card_id,

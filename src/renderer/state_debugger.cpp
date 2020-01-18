@@ -151,6 +151,7 @@ namespace munchkin {
 
 			ImGui::Separator();
 
+			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing);
 			if (ImGui::TreeNode("Card Decks")) {
 				ImGui::Text("Cards in dungeon deck: %zu", state->dungeon_deck.size());
 				ImGui::Text("Cards in dungeon discard deck: %zu", state->dungeon_discard_deck.size());
@@ -159,7 +160,9 @@ namespace munchkin {
 				ImGui::TreePop();
 			}
 
+			ImGui::SetNextItemOpen(true, ImGuiCond_Appearing);
 			if(ImGui::TreeNode("Game information")) {
+				ImGui::Text("Current tick: %zu", state->tick);
 				ImGui::Text("Turn number: %zu", state->turn_number);
 				ImGui::Text("Current user playing: %zu", state->current_player_id);
 				ImGui::Text("Number of active coroutines: %zu", state->active_coroutines.size());

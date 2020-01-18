@@ -9,7 +9,7 @@ local function main()
 		local ticks_before = game:get_ticks()
 		repeat
 			coroutine.yield()
-		until game:get_ticks() >= (game:get_ticks() + ticks)
+		until game:get_ticks() >= (ticks_before + ticks)
 	end
 
 	-- Waits for a number or ticks, or until an event has happened.
@@ -31,28 +31,23 @@ local function main()
 		end
 
 		card_ptr = game:get_dungeon_deck_front()
-		print("1")
-		on_reveal = card_ptr:get()["on_reveal"]
-		print("2")
-
+		card_ptr:get().location = card_location.table_center
 		card_ptr:get().visibility = card_visibility.front_visible
-		print("3")
+		on_reveal = card_ptr:get()["on_reveal"]
 
-		if on_reveal == nil then
-			game:give_dungeon(game:get_current_player())
-		else
+		if on_reveal ~= nil then
 			print("Found on_reveal...")
-			on_reveal(card_ptr)
 			game:dungeon_deck_pop()
+			on_reveal(card_ptr)
 		end
-
-		wait_for_event(event_type.tick)
-		wait_for_event(event_type.tick) -- Wait for card.on_reveal if it exists
-		print("finished waiting for card.on_reveal")
-
+		
 		if game.current_battle ~= nil then
 			game.stage = "FIGHT_MONSTER"
 		else
+			wait_for_ticks(120) -- Wait for a while before giving the card to the player
+			card_ptr:get().location = card_location.player_hand
+			card_ptr:get().visibility = card_visibility.front_visible_to_owner
+			card_ptr:get().owner_id = game:get_current_player().id
 			game.stage = "DECIDE_NOMONSTER"
 		end
 	end
