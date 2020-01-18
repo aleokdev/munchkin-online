@@ -79,5 +79,18 @@
       "levels": 1,
       "bad_stuff_script": "scripts/modify_levels.lua"
     }
+  },
+  {
+    "script": "scripts/card/monster.lua",
+    "name": "Generic Monster",
+    "description": "Generic description.",
+    "play_stages": [],
+    "category": "dungeon",
+    "properties": {
+      "power": 15,
+      "treasures": 3,
+      "levels": 2,
+      "bad_stuff_script": "scripts/modify_levels.lua"
+    }
   }
 ]
