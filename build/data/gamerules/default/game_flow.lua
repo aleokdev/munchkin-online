@@ -75,6 +75,7 @@ local function main()
 	end
 
 	local function stage_decide_nomonster()
+		print("ok")
 		while true do
 			if game.current_battle ~= nil then
 				-- User decided to play a monster of their own
@@ -82,9 +83,8 @@ local function main()
 			end
 			if game.last_event.type == event_type.clicked_dungeon_deck then
 				-- User decided to loot the room
-				local front = game:get_dungeon_deck_front()
 				game:give_dungeon(game:get_current_player())
-				front:get().visibility = card_visibility.front_visible_to_owner
+				print("dungeon card given")
 
 				game.stage = "CHARITY"
 				break
@@ -92,6 +92,7 @@ local function main()
 
 			coroutine.yield()
 		end
+		print("aight im outta here")
 	end
 
 	local function stage_get_treasure()

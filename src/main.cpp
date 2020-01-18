@@ -71,7 +71,7 @@ int main() try {
 
 	munchkin::Game game(4, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
-	std::cout << "Cards loaded: " << game.get_state().carddefs.size() << std::endl;
+	std::cout << "Cards loaded: " << game.get_state().all_cards.size() << std::endl;
 	munchkin::systems::GameRenderer game_renderer(game);
 	munchkin::systems::InputBinder player_input(game);
 	// Add AI to players 1, 2 and 3 (not 0, that's the local player)

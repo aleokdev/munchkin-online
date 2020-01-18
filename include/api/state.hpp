@@ -30,8 +30,6 @@ class State {
 public:
     State(size_t player_count, std::string gamerule_path = DEFAULT_GAMERULES_PATH);
 
-    void load_cards_from_json(std::string_view path);
-
     // api functions
     // More information in scripting_api.md
 
@@ -68,8 +66,6 @@ public:
     std::vector<Player> players;
     size_t current_player_id;
     size_t player_count;
-
-    std::vector<CardDef> carddefs;
 
     void add_cardpack(std::string path);
     Card& add_card(CardDef& def);

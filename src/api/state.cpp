@@ -133,10 +133,6 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
 }
 
-void State::load_cards_from_json(std::string_view path) {
-    carddefs = load_cards(path, lua);
-}
-
 int State::get_ticks() const
 {
 	return tick;
@@ -215,10 +211,7 @@ void State::add_cardpack(std::string path)
 {
     std::vector<CardDef> new_carddefs = load_cards(path, lua);
     for (auto& def : new_carddefs)
-    {
-        CardDef& added_def = carddefs.emplace_back(def);
-        add_card(added_def);
-    }
+        add_card(def);
 }
 
 Card& State::add_card(CardDef& def)
