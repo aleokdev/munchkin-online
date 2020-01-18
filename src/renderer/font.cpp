@@ -1,5 +1,6 @@
 #include "renderer/font.hpp"
 
+#include <glm/glm.hpp>
 #include <freetype/freetype.h>
 #include <iostream>
 
