@@ -40,11 +40,11 @@ public:
     CardDef const& get_def() const { return *def; }
 
     template<typename... Args>
-    sol::object execute_function(std::string_view name, Args&&... args) {
+    sol::object execute_function(std::string name, Args&&... args) {
         return data[name](data, std::forward<Args>(args)...);
     }
 
-    sol::object get_data_variable(std::string_view name) {
+    sol::object get_data_variable(std::string name) {
         return data[name];
     }
 
@@ -101,12 +101,10 @@ struct CardPtr {
 
     operator Card*() const;
     Card* operator->() const;
+    Card& get() { return **this; }
 
     State* state;
     size_t card_id;
-
-    // API definitions
-    Card::CardLocation get_location() { return ((Card*)this)->location; }
 };
 
 }

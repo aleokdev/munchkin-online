@@ -24,7 +24,28 @@ local function main()
 
 	local function stage_equip_stuff()
 		wait_for_event(event_type.clicked_dungeon_deck)
-		game:open_dungeon() -- will add card.on_reveal to active coroutines if it exists
+		
+		if game:get_dungeon_deck_size() == 0 then
+			print("Out of cards to draw!")
+			return -- end the game
+		end
+
+		card_ptr = game:get_dungeon_deck_front()
+		print("1")
+		on_reveal = card_ptr:get()["on_reveal"]
+		print("2")
+
+		card_ptr:get().visibility = card_visibility.front_visible
+		print("3")
+
+		if on_reveal == nil then
+			game:give_dungeon(game:get_current_player())
+		else
+			print("Found on_reveal...")
+			on_reveal(card_ptr)
+			game:dungeon_deck_pop()
+		end
+
 		wait_for_event(event_type.tick)
 		wait_for_event(event_type.tick) -- Wait for card.on_reveal if it exists
 		print("finished waiting for card.on_reveal")

@@ -35,7 +35,6 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
         "give_treasure", &State::give_treasure,
         "give_dungeon", &State::give_dungeon,
-        "open_dungeon", &State::open_dungeon,
         "should_borrow_facing_up", &State::should_borrow_facing_up,
 
         "start_battle", &State::start_battle,
@@ -48,6 +47,22 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "set_current_player", &State::set_current_player,
         // next_player_turn defined in api_wrapper
         "get_visible_cards", &State::get_visible_cards,
+
+        "get_dungeon_deck_front", &State::get_dungeon_deck_front,
+        "get_dungeon_deck_size", &State::get_dungeon_deck_size,
+        "dungeon_deck_pop", & State::dungeon_deck_pop,
+
+        "get_dungeon_discard_deck_front", & State::get_dungeon_discard_deck_front,
+        "get_dungeon_discard_deck_size", & State::get_dungeon_discard_deck_size,
+        "dungeon_discard_deck_pop", & State::dungeon_discard_deck_pop,
+
+        "get_treasure_deck_front", & State::get_treasure_deck_front,
+        "get_treasure_deck_size", & State::get_treasure_deck_size,
+        "treasure_deck_pop", & State::treasure_deck_pop,
+
+        "get_treasure_discard_deck_front", & State::get_treasure_discard_deck_front,
+        "get_treasure_discard_deck_size", & State::get_treasure_discard_deck_size,
+        "treasure_discard_deck_pop", & State::treasure_discard_deck_pop,
 
         "default_hand_max_cards", &State::default_hand_max_cards
     );
@@ -70,10 +85,18 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "modify_card", &Battle::modify_card
     );
 
+    lua.new_enum<Card::CardVisibility>("card_visibility",
+        { {"back_visible", Card::CardVisibility::back_visible},
+        {"front_visible", Card::CardVisibility::front_visible},
+        {"front_visible_to_owner", Card::CardVisibility::front_visible_to_owner} });
+
+    lua.new_usertype<Card>("munchkin_card",
+        "get_id", &Card::get_id,
+        "visibility", &Card::visibility,
+        sol::meta_function::index, &Card::get_data_variable);
     lua.new_usertype<CardPtr>("munchkin_card_ptr",
         "id", &CardPtr::card_id,
-
-        "get_location", &CardPtr::get_location);
+        "get", &CardPtr::get);
 
     lua.open_libraries(sol::lib::coroutine);
     lua.open_libraries(sol::lib::base);
@@ -119,28 +142,6 @@ void State::give_dungeon(Player& player)
     dungeon_deck.front()->location = Card::CardLocation::player_hand;
     dungeon_deck.front()->owner_id = player.id;
     dungeon_deck.pop();
-}
-
-void State::open_dungeon()
-{
-    if (dungeon_deck.size() == 0) return;
-
-    CardPtr card = dungeon_deck.front();
-    sol::function on_reveal = card->get_data_variable("on_reveal");
-    // TODO: Show card at the center of the table for like 2 seconds, then move its location to the player's hand
-    // TODO: Move open_dungeon to api_wrapper.lua?
-    dungeon_deck.front()->visibility = Card::CardVisibility::front_visible;
-
-    if (on_reveal == sol::lua_nil) {
-        give_dungeon(get_current_player());
-    }
-    else {
-        std::cout << "Found on_reveal..." << std::endl;
-        dungeon_deck.pop();
-        // TODO: Add to active coroutines instead of just executing on_reveal
-        // (It doesn't work for some reason; coroutine stays in a permanent "yielded" state)
-        on_reveal(card); //active_coroutines.emplace_back(on_reveal);
-    }
 }
 
 void State::start_battle()

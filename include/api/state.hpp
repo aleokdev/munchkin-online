@@ -39,7 +39,6 @@ public:
 
     void give_treasure(Player& player);
     void give_dungeon(Player& player);
-    void open_dungeon();
 
     void start_battle();
     void end_current_battle();
@@ -80,6 +79,23 @@ public:
     std::queue<CardPtr> dungeon_discard_deck;
     std::queue<CardPtr> treasure_deck;
     std::queue<CardPtr> treasure_discard_deck;
+
+    // Dumb lua API wrappers for decks
+    CardPtr get_dungeon_deck_front() { return dungeon_deck.front(); }
+    int get_dungeon_deck_size() { return dungeon_deck.size(); }
+    void dungeon_deck_pop() { return dungeon_deck.pop(); }
+
+    CardPtr get_dungeon_discard_deck_front() { return dungeon_discard_deck.front(); }
+    int get_dungeon_discard_deck_size() { return dungeon_discard_deck.size(); }
+    void dungeon_discard_deck_pop() { return dungeon_discard_deck.pop(); }
+
+    CardPtr get_treasure_deck_front() { return treasure_deck.front(); }
+    int get_treasure_deck_size() { return treasure_deck.size(); }
+    void treasure_deck_pop() { return treasure_deck.pop(); }
+
+    CardPtr get_treasure_discard_deck_front() { return treasure_discard_deck.front(); }
+    int get_treasure_discard_deck_size() { return treasure_discard_deck.size(); }
+    void treasure_discard_deck_pop() { return treasure_discard_deck.pop(); }
 
     std::queue<FlowEvent> event_queue;
     FlowEvent last_event;
