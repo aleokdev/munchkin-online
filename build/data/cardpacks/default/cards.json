@@ -68,6 +68,36 @@
     }
   },
   {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 2",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
+    }
+  },
+  {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 3",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
+    }
+  },
+  {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 4",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
+    }
+  },
+  {
     "script": "scripts/card/monster.lua",
     "name": "Vulkan",
     "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",

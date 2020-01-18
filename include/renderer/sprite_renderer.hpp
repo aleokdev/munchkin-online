@@ -40,7 +40,7 @@ public:
 
 private:
     // shared data for vertices
-    static unsigned int vao, vbo;
+    static inline unsigned int vao, vbo = 0;
 
     static void init();
 

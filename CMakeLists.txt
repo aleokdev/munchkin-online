@@ -27,6 +27,7 @@ set(MUNCHKIN_SOURCES
     "src/input/input.cpp" "src/renderer/card_sprite.cpp"
     "src/systems/input_binder.cpp"
     "src/systems/state_debugger.cpp"
+    "src/renderer/font_renderer.cpp"
     "src/renderer/font.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")

@@ -11,7 +11,7 @@ namespace renderer {
 class Font {
 public:
     Font() = default;
-    Font(std::path path);
+    Font(std::filesystem::path path);
     ~Font();
 
     struct glyph_data {

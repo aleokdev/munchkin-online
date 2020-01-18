@@ -12,7 +12,7 @@ namespace munchkin {
 			setup_for_render();
 		}
 
-		FontRenderer::deallocate() {
+		void FontRenderer::deallocate() {
 			if (vao) {
 				glDeleteVertexArrays(1, &vao);
 			}
@@ -21,7 +21,7 @@ namespace munchkin {
 			}
 		}
 
-		FontRenderer::setup_for_render() {
+		void FontRenderer::setup_for_render() {
 			if (!vao || !vbo) {
 				init();
 			}
@@ -63,7 +63,7 @@ namespace munchkin {
 			glVertexAttribBinding(1, 1);
 		}
 
-		static void FontRenderer::render_char(Font::glyph_data const& data, glm::vec2 offset) {
+		/*static void FontRenderer::render_glyph(Font::glyph_data const& data, glm::vec2 offset) {
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, data.texture);
@@ -76,7 +76,7 @@ namespace munchkin {
 			glUniform2fv(2, 1, glm::value_ptr(offset));
 
 			glDrawElements(GL_TRIANGLES, quad.index_size(), GL_UNSIGNED_INT, nullptr);
-		}
+		}*/
 
 	}
 }

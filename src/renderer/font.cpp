@@ -1,7 +1,10 @@
 #include "renderer/font.hpp"
 
-#include <glm/glm.hpp>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include <freetype/freetype.h>
+#include <glad/glad.h>
+#include <glm/glm.hpp>
 #include <iostream>
 
 namespace munchkin {
@@ -55,13 +58,13 @@ void load_glyphs(FT_Library& ft,
     FT_Done_Face(face);
 }
 
-Font::Font(std::path path) {
+Font::Font(std::filesystem::path path) {
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         std::cout << "Failed to initialize freetype library" << std::endl;
         return;
     }
-    load_glyphs(ft, path.c_str(), glyphs);
+    load_glyphs(ft, path.string().c_str(), glyphs);
     FT_Done_FreeType(ft);
 }
 

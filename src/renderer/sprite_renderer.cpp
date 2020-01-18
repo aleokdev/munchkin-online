@@ -6,9 +6,6 @@
 
 namespace munchkin::renderer {
 
-unsigned int SpriteRenderer::vao = 0;
-unsigned int SpriteRenderer::vbo = 0;
-
 SpriteRenderer::SpriteRenderer() {
     setup_for_render();
 }

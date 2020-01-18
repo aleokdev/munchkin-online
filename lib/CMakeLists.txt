@@ -17,6 +17,7 @@ set(MUNCHKIN_INCLUDE_DIRECTORIES
 	"${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples"
 	"${CMAKE_CURRENT_SOURCE_DIR}/glad/include/"
 	"${CMAKE_CURRENT_SOURCE_DIR}/freetype/include/"
+	"${CMAKE_CURRENT_SOURCE_DIR}/freetype/"
 	PARENT_SCOPE
 )
 
