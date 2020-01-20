@@ -3,6 +3,7 @@
 set(MUNCHKIN_LINK_LIBRARIES
 	"${CMAKE_CURRENT_SOURCE_DIR}/SDL2.lib"
 	"${CMAKE_CURRENT_SOURCE_DIR}/lua53.lib"
+	"${CMAKE_BUILD_DIR}/freetype.lib"
 	PARENT_SCOPE)
 
 set(MUNCHKIN_INCLUDE_DIRECTORIES
@@ -32,3 +33,5 @@ set(MUNCHKIN_SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/imgui_impl_opengl3.cpp"
 	PARENT_SCOPE
 )
+
+add_subdirectory("freetype")
