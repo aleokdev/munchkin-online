@@ -25,6 +25,8 @@ public:
 
 	void on_resize(size_t w, size_t h);
 
+	void update_sprite_vector();
+
 private:
 	glm::mat4 projection;
 

@@ -9,7 +9,7 @@
 #include <glad/glad.h>
 
 #include "systems/state_debugger.hpp"
-#include "api/game_wrapper.hpp"
+#include "game_wrapper.hpp"
 #include "game.hpp"
 #include "systems/input_binder.hpp"
 #include "systems/game_renderer.hpp"
@@ -62,7 +62,7 @@ int main() try {
 	// Setup ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
 	// Setup Dear ImGui style
@@ -72,79 +72,12 @@ int main() try {
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	munchkin::Game game(4, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-	game.get_state().add_cardpack("data/cardpacks/default/cards.json");
-	std::cout << "Cards loaded: " << game.get_state().all_cards.size() << std::endl;
-	munchkin::systems::GameRenderer game_renderer(game);
-	munchkin::systems::InputBinder player_input(game);
-	munchkin::systems::StateDebugger debugger(game);
-	// Add AI to players 1, 2 and 3 (not 0, that's the local player)
-	munchkin::games::AIManager ai(game.get_state(), std::vector<size_t>{1, 2, 3});
-
-	bool done = false;
-	bool show_debugger = false;
-	do {
-		munchkin::input::update();
-		// From imgui/examples/example_sdl_opengl3/main.cpp:
-		// Poll and handle events (inputs, window resize, etc.)
-		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-		// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-		// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			ImGui_ImplSDL2_ProcessEvent(&event);
-			if (event.type == SDL_QUIT)
-				done = true;
-			else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
-				done = true;
-			else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED
-				&& event.window.windowID == SDL_GetWindowID(window)) {
-					glViewport(0, 0, event.window.data1, event.window.data2);
-					game_renderer.on_resize(event.window.data1, event.window.data2);
-				}
-			else if (event.type == SDL_KEYDOWN && !io.WantCaptureKeyboard && event.key.keysym.scancode == SDL_SCANCODE_K && event.key.repeat == 0)
-				show_debugger = !show_debugger;
-		}
-
-		// Start the imgui frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(window);
-		ImGui::NewFrame();
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(0, 0, 0, 1);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		game_renderer.render_frame();
-		game_renderer.blit(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		if (show_debugger)
-			debugger.render();
-		ImGui::Render();
-		glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		SDL_GL_SwapWindow(window);
-
-		ai.tick();
-		player_input.tick();
-		game.tick();
-	} while (!done);
+	munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 4, 3);
+	wrapper.game.get_state().add_cardpack("data/cardpacks/default/cards.json");
+	std::cout << "Cards loaded: " << wrapper.game.get_state().all_cards.size() << std::endl;
+	wrapper.renderer.update_sprite_vector();
 	
-
-	std::cout << std::boolalpha;
-	std::cout << "Game over: " << game.ended() << std::endl;
-
-	std::cout << "Levels: " << std::endl;
-	for (int i = 0; i < 4; ++i) {
-		std::cout << i << ": " << game.get_state().players[i].level << "\n";
-	}
-
-	munchkin::renderer::SpriteRenderer::deallocate();
-	munchkin::renderer::FontRenderer::deallocate();
+	wrapper.main_loop(window);
 
 	return 0;
 } catch(std::exception const& e) {

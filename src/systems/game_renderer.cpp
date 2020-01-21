@@ -39,10 +39,7 @@ GameRenderer::GameRenderer(Game& g) :
     camera_buffer.write_data(&game->camera.offset.x, sizeof(float), 0);
     camera_buffer.write_data(&game->camera.offset.y, sizeof(float), sizeof(float));
 
-    // TODO FIXME: This doesn't add cards that are added AFTER the gamerenderer has been created!
-    for (auto& card : game->get_state().all_cards) {
-        game->card_sprites.emplace_back(*game, &card);
-    }
+    update_sprite_vector();
 }
 
 GameRenderer::~GameRenderer() {
@@ -114,28 +111,23 @@ void GameRenderer::on_resize(size_t w, size_t h) {
     framebuf.resize(w, h);
 }
 
+void GameRenderer::update_sprite_vector() {
+    game->card_sprites.clear();
+    for (auto& card : game->get_state().all_cards) {
+        game->card_sprites.emplace_back(*game, &card);
+    }
+}
+
 void GameRenderer::update_input() {
     // update mouse state
     cur_mouse = input::get_current_mouse_state();
 }
 
 void GameRenderer::update_camera() {
-    constexpr float pan_speed = 0.1f;
-
-    // only enable panning if left mouse button is clicked
-    if (cur_mouse.button_flagmap & SDL_BUTTON(SDL_BUTTON_LEFT)
-        & last_mouse.button_flagmap & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-        int xoffset = cur_mouse.x - last_mouse.x;
-        int yoffset = cur_mouse.y - last_mouse.y;
-
-        game->camera.offset.x -= xoffset * pan_speed * delta_time;
-        game->camera.offset.y += yoffset * pan_speed * delta_time;
-
-        // update uniform buffer data
-        renderer::UniformBuffer::bind(camera_buffer);
-        camera_buffer.write_data(&game->camera.offset.x, sizeof(float), 0);
-        camera_buffer.write_data(&game->camera.offset.y, sizeof(float), sizeof(float));
-    }
+    // update uniform buffer data
+    renderer::UniformBuffer::bind(camera_buffer);
+    camera_buffer.write_data(&game->camera.offset.x, sizeof(float), 0);
+    camera_buffer.write_data(&game->camera.offset.y, sizeof(float), sizeof(float));
 }
 
 void GameRenderer::draw_cards(renderer::SpriteRenderer& spr) {

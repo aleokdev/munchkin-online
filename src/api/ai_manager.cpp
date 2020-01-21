@@ -5,7 +5,7 @@ namespace games {
 
 AIManager::AIManager(State& s, std::vector<size_t> players_to_control) : state(&s) {
 	for (size_t id : players_to_control) {
-		ais.emplace_back(AIPlayer(s, id));
+		ais.emplace_back(s, id);
 	}
 }
 

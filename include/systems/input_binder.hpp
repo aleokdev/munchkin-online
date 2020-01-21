@@ -1,6 +1,8 @@
 #ifndef MUNCHKIN_INPUT_BINDER_HPP__
 #define MUNCHKIN_INPUT_BINDER_HPP__
 
+#include "input/input.hpp"
+
 namespace munchkin {
 
 class Game;
@@ -16,6 +18,9 @@ public:
 
 private:
 	Game* const game;
+
+	float last_frame_time;
+	input::MouseState last_mouse_state;
 };
 
 }
