@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>munchkin_state Class &#8212; Munchkin Online w1-unstable documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Welcome to Munchkin Online’s scripting API documentation!" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="munchkin-state-class">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">munchkin_state</span></code> Class<a class="headerlink" href="#munchkin-state-class" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">munchkin_state</span></code> class represents a game state, which includes only the actual game information,
+and not systems such as input or rendering. This class should not be instantiated; Instead, the
+<cite>game</cite> variable is given, which contains the current game state.</p>
+<div class="section" id="functions-and-data">
+<h2>Functions and data<a class="headerlink" href="#functions-and-data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="general-information">
+<h3>General information<a class="headerlink" href="#general-information" title="Permalink to this headline">¶</a></h3>
+<dl class="data">
+<dt id="last_event">
+<code class="sig-name descname">last_event</code><a class="headerlink" href="#last_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the last event recorded by the game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Vartype</dt>
+<dd class="field-odd"><p>flow_event</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><cite>last_event</cite> might be replaced by a <cite>coroutine.yield</cite> return value at some point.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="get_ticks">
+<em class="property">classmethod </em><code class="sig-name descname">get_ticks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#get_ticks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts up each time the game sends the <cite>tick</cite> event. Starts at 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="data">
+<dt id="stage">
+<code class="sig-name descname">stage</code><a class="headerlink" href="#stage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the game’s stage. This value is a string, and determines which cards can be played
+at any given moment. It also describes what is currently happening in the game.</p>
+<p>In the default gamerules, this value can be any of the following:
+* <cite>EQUIP_AND_OPEN_DUNGEON</cite>
+* <cite>FIGHT_MONSTER</cite>
+* <cite>DECIDE_NOMONSTER</cite>
+* <cite>GET_TREASURE</cite>
+* <cite>CHARITY</cite>
+* <cite>FLEE_MONSTER</cite>
+* <cite>SUCCESSFUL_FLEE</cite>
+For more information, <a class="reference external" href="https://drive.google.com/file/d/13Kpp6ZPXDKrDfIHnG4Z4bXMH0h5eotn5/view?usp=sharing">here’s a diagram explaining the relation between those stages.</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Vartype</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="data">
+<dt id="turn_number">
+<code class="sig-name descname">turn_number</code><a class="headerlink" href="#turn_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>This value starts at 0, and increases every time <cite>next_player_turn</cite> is called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Vartype</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="card-borrowing">
+<h3>Card Borrowing<a class="headerlink" href="#card-borrowing" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="munchkin_state.give_treasure">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">give_treasure</code><span class="sig-paren">(</span><em class="sig-param">player</em><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.give_treasure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves one treasure card from the treasure deck to a player’s hand. Takes into account the
+<a class="reference internal" href="#munchkin_state.should_borrow_facing_up" title="munchkin_state.should_borrow_facing_up"><code class="xref py py-data docutils literal notranslate"><span class="pre">should_borrow_facing_up</span></code></a> variable.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><cite>should_borrow_facing_up</cite> will be deprecated at some point and the function will change to
+<cite>give_treasure(player, visibility = card_visibility.front_visible_to_owner)</cite>.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.give_dungeon">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">give_dungeon</code><span class="sig-paren">(</span><em class="sig-param">player</em><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.give_dungeon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves one dungeon card from the dungeon deck to a player’s hand. Takes into account the
+<a class="reference internal" href="#munchkin_state.should_borrow_facing_up" title="munchkin_state.should_borrow_facing_up"><code class="xref py py-data docutils literal notranslate"><span class="pre">should_borrow_facing_up</span></code></a> variable.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><cite>should_borrow_facing_up</cite> will be deprecated at some point and the function will change to
+<cite>give_treasure(player, visibility = card_visibility.front_visible_to_owner)</cite>.</p>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt id="munchkin_state.should_borrow_facing_up">
+<code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">should_borrow_facing_up</code><a class="headerlink" href="#munchkin_state.should_borrow_facing_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates if the next card drawn from a deck will face up or down.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><cite>should_borrow_facing_up</cite> will be deprecated at some point due to poor design.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="battles">
+<h3>Battles<a class="headerlink" href="#battles" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="munchkin_state.start_battle">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">start_battle</code><span class="sig-paren">(</span><em class="sig-param">player</em><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.start_battle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="munchkin_state.current_battle">
+<code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">current_battle</code><a class="headerlink" href="#munchkin_state.current_battle" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current <code class="xref py py-class docutils literal notranslate"><span class="pre">munchkin_battle</span></code> active in the game, or nil if none exists or the last one has
+ended.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.end_current_battle">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">end_current_battle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.end_current_battle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="players">
+<h3>Players<a class="headerlink" href="#players" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="munchkin_state.get_player">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_player</code><span class="sig-paren">(</span><em class="sig-param">id</em><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a player that has a specific ID. Returns nil if it couldn’t be found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_player</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_player_count">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_player_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_player_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of players in this game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_current_player">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_current_player</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_current_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the user that is currently playing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_player</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.set_current_player">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">set_current_player</code><span class="sig-paren">(</span><em class="sig-param">id</em><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.set_current_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the user that is currently playing via its ID. Does nothing if it couldn’t find a player with the
+ID specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_player</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.next_player_turn">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">next_player_turn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.next_player_turn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increases <cite>turn_number</cite> by one, and changes the user that is currently playing.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to use this function, remember to also reset <cite>stage</cite> to its default value so the next user
+starts where every other user does.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="cards">
+<h3>Cards<a class="headerlink" href="#cards" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="munchkin_state.get_visible_cards">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_visible_cards</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_visible_cards" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the cards visible on the table, which includes all the current battle cards, all the cards of
+other players, and the first card of each deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_card_ptr[]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_dungeon_deck_front">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_dungeon_deck_front</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_dungeon_deck_front" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the front (topmost card) of the dungeon deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_card_ptr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_dungeon_deck_size">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_dungeon_deck_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_dungeon_deck_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size of the dungeon deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_dungeon_deck_pop">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_dungeon_deck_pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_dungeon_deck_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the topmost card of the dungeon deck from it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_dungeon_discard_deck_front">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_dungeon_discard_deck_front</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_dungeon_discard_deck_front" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the front (topmost card) of the dungeon discard deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_card_ptr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_dungeon_discard_deck_size">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_dungeon_discard_deck_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_dungeon_discard_deck_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size of the dungeon discard deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_dungeon_discard_deck_pop">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_dungeon_discard_deck_pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_dungeon_discard_deck_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the topmost card of the dungeon discard deck from it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_treasure_deck_front">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_treasure_deck_front</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_treasure_deck_front" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the front (topmost card) of the treasure deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_card_ptr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_treasure_deck_size">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_treasure_deck_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_treasure_deck_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size of the treasure deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_treasure_deck_pop">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_treasure_deck_pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_treasure_deck_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the topmost card of the treasure deck from it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_treasure_discard_deck_front">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_treasure_discard_deck_front</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_treasure_discard_deck_front" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the front (topmost card) of the treasure discard deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>munchkin_card_ptr</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_treasure_discard_deck_size">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_treasure_discard_deck_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_treasure_discard_deck_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size of the treasure discard deck.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="munchkin_state.get_treasure_discard_deck_pop">
+<em class="property">classmethod </em><code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">get_treasure_discard_deck_pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#munchkin_state.get_treasure_discard_deck_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the topmost card of the treasure discard deck from it.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="munchkin_state.default_hand_max_cards">
+<code class="sig-prename descclassname">munchkin_state.</code><code class="sig-name descname">default_hand_max_cards</code><a class="headerlink" href="#munchkin_state.default_hand_max_cards" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of maximum cards a player can have in their hand. This value <em>should be</em> set in the <cite>rules.lua</cite>
+file and is only used in the scripting API, not internally. Furthermore, there is no guarantee that
+this value will be set at any given time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Vartype</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Munchkin Online</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-class docutils literal notranslate"><span class="pre">munchkin_state</span></code> Class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions-and-data">Functions and data</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to Munchkin Online’s scripting API documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, aleok & NotAPenguin.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/api/munchkin_state.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
