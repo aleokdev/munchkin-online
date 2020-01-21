@@ -39,10 +39,7 @@ GameRenderer::GameRenderer(Game& g) :
     camera_buffer.write_data(&game->camera.offset.x, sizeof(float), 0);
     camera_buffer.write_data(&game->camera.offset.y, sizeof(float), sizeof(float));
 
-    // TODO FIXME: This doesn't add cards that are added AFTER the gamerenderer has been created!
-    for (auto& card : game->get_state().all_cards) {
-        game->card_sprites.emplace_back(*game, &card);
-    }
+    update_sprite_vector();
 }
 
 GameRenderer::~GameRenderer() {
@@ -112,6 +109,13 @@ void GameRenderer::on_resize(size_t w, size_t h) {
     game->window_h = h;
 
     framebuf.resize(w, h);
+}
+
+void GameRenderer::update_sprite_vector() {
+    game->card_sprites.clear();
+    for (auto& card : game->get_state().all_cards) {
+        game->card_sprites.emplace_back(*game, &card);
+    }
 }
 
 void GameRenderer::update_input() {
