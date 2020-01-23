@@ -13,6 +13,17 @@ namespace munchkin {
 
 namespace renderer {
 
+namespace internal {
+namespace card_sprite {
+	inline static constexpr float movement_slowness = 16;
+	inline static constexpr float rotation_slowness = 16;
+	inline static constexpr float flip_slowness = 16;
+	inline static constexpr float texture_scale = 0.2f;
+	inline static constexpr float texture_width = 454;
+	inline static constexpr float texture_height = 704;
+}
+}
+
 class SpriteRenderer;
 
 class CardSprite {
@@ -40,17 +51,12 @@ private:
 	math::Vec2D current_pos = { 0,0 };
 	float current_rotation = 0;
 
-	inline static constexpr float movement_slowness = 16;
-	inline static constexpr float rotation_slowness = 16;
-	inline static constexpr float flip_slowness = 16;
-	inline static constexpr float texture_scale = 0.2f;
-	inline static constexpr float texture_width = 454;
-	inline static constexpr float texture_height = 704;
-
-	math::Vec2D current_size = { texture_width * texture_scale, texture_height * texture_scale };
+	math::Vec2D current_size = { internal::card_sprite::texture_width * internal::card_sprite::texture_scale,
+							     internal::card_sprite::texture_height * internal::card_sprite::texture_scale };
 
 	CardPtr card;
 	Card::CardLocation last_card_location = Card::CardLocation::invalid;
+	size_t last_cards_in_owner = 0;
 
 	// TODO: Back textures are duplicated! Do asset system and assign all textures that point to the same file to the same ID?
 	unsigned int back_texture;
@@ -59,7 +65,6 @@ private:
 };
 
 }
-
 }
 
 #endif

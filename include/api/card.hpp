@@ -106,6 +106,8 @@ struct CardPtr {
 
     State* state;
     size_t card_id;
+
+    bool operator==(CardPtr const& b) { return card_id == b.card_id; }
 };
 
 }

@@ -13,6 +13,8 @@
 #include <cmath>
 #include "game.hpp"
 
+using namespace munchkin::renderer::internal::card_sprite;
+
 namespace munchkin {
 
 namespace renderer {
@@ -67,12 +69,27 @@ void CardSprite::calculate_target_from_location()
     case munchkin::Card::CardLocation::player_hand:
     {
         Player& card_owner = card.state->players[card->owner_id];
+        const int hand_size = card_owner.hand.size();
+        int hand_index = 0;
+        for (auto& card_ptr : card_owner.hand)
+        {
+            if (card_ptr == card)
+                break;
+            hand_index++;
+        }
+
         float player_angle = ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI - M_PI / 2.f;
         // TODO: Don't assume table radius
         // this isn't actually the table radius, it's just the radius of an imaginary circurference where all the cards are placed
         constexpr float table_radius = 750;
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
-        target_pos = player_pos;
+
+        constexpr float space_between_cards = texture_width * texture_scale / 2.f + 50.f;
+        math::Vec2D move_axis = math::Vec2D{ std::cos(player_angle - (float)M_PI / 2.f), std::sin(player_angle - (float)M_PI / 2.f) }.normalized();
+        math::Vec2D card_pos = math::Vec2D::lerp(player_pos - move_axis * hand_size * space_between_cards / 2.f,
+                                                 player_pos + move_axis * hand_size * space_between_cards / 2.f,
+                                                 (float)hand_index / (float)hand_size);
+        target_pos = card_pos;
         target_rotation = player_angle + M_PI / 2.f;
         break;
     }
@@ -101,9 +118,10 @@ void CardSprite::calculate_target_from_location()
 
 void CardSprite::draw(SpriteRenderer& spr)
 {
-    if (last_card_location != card->location) {
+    if (last_card_location != card->location || card.state->players[card->owner_id].hand.size() != last_cards_in_owner) {
         calculate_target_from_location();
         last_card_location = card->location;
+        last_cards_in_owner = card.state->players[card->owner_id].hand.size();
     }
 
     current_pos += (target_pos - current_pos) / movement_slowness;
