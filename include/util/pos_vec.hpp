@@ -80,6 +80,14 @@ namespace math
 			ret.y = std::abs(y);
 			return ret;
 		}
+
+		Vec2D lerp(Vec2D const& a, Vec2D const& b, float factor)
+		{
+			return Vec2D{
+				(1-factor) * a.x + factor * b.x,
+				(1-factor) * a.y + factor * b.y
+			};
+		}
 	};
 
 #define DEFINE_OPERATOR(op)\
