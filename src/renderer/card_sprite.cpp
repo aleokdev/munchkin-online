@@ -85,7 +85,7 @@ void CardSprite::calculate_target_from_location()
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
 
         constexpr float space_between_cards = texture_width * texture_scale / 2.f + 50.f;
-        math::Vec2D move_axis = math::Vec2D{ std::cos(player_angle - (float)M_PI / 2.f), std::sin(player_angle - (float)M_PI / 2.f) }.normalized();
+        math::Vec2D move_axis = math::Vec2D{ std::cos(player_angle - (float)M_PI / 2.f), std::sin(player_angle - (float)M_PI / 2.f) };
         math::Vec2D card_pos = math::Vec2D::lerp(player_pos - move_axis * hand_size * space_between_cards / 2.f,
                                                  player_pos + move_axis * hand_size * space_between_cards / 2.f,
                                                  (float)hand_index / (float)hand_size);
