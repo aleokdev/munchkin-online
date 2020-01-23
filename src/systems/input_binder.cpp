@@ -22,10 +22,29 @@ void InputBinder::tick() {
 		if (sprite.get_rect().contains(m_pos))
 		{
 			sprite.is_being_hovered = true;
-			if (input::has_mousebutton_been_clicked(input::MouseButton::left) && sprite.get_card_ptr()->location == Card::CardLocation::dungeon_deck)
+			if (input::has_mousebutton_been_clicked(input::MouseButton::left))
 			{
-				game->push_event(FlowEvent{ FlowEvent::EventType::clicked_dungeon_deck });
-				break;
+				switch (sprite.get_card_ptr()->location)
+				{
+				case(Card::CardLocation::dungeon_deck):
+					game->push_event(FlowEvent{ FlowEvent::EventType::clicked_dungeon_deck });
+					break;
+
+				case(Card::CardLocation::player_hand):
+				{
+					// TODO: Check for current stage, current player and most importantly: PUSH THIS TO ACTIVE_COROUTINES (doesn't work right now for some reason)
+					sol::object on_play = sprite.get_card_ptr()->get_data_variable("on_play");
+					if (on_play == sol::lua_nil)
+						break;
+					on_play.as<sol::function>()();
+					sprite.get_card_ptr()->location = sprite.get_card_ptr()->get_def().category == DeckType::dungeon ? Card::CardLocation::dungeon_discard_deck : Card::CardLocation::treasure_discard_deck;
+					
+					break;
+				}
+
+				default: break;
+				}
+				
 			}
 		}
 		else

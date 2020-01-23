@@ -48,6 +48,12 @@
     "category": "treasure"
   },
   {
+    "script": "scripts/card/add_level.lua",
+    "name": "TEST CARD",
+    "description": "Go up one level.",
+    "category": "dungeon"
+  },
+  {
     "script": "scripts/card/modify_monster.lua",
     "name": "Enraged",
     "description": "Adds 5 to the monster's power.",
