@@ -81,12 +81,20 @@ namespace math
 			return ret;
 		}
 
-		Vec2D lerp(Vec2D const& a, Vec2D const& b, float factor)
+		static Vec2D lerp(Vec2D const& a, Vec2D const& b, float factor)
 		{
 			return Vec2D{
 				(1-factor) * a.x + factor * b.x,
 				(1-factor) * a.y + factor * b.y
 			};
+		}
+
+		Vec2D normalized()
+		{
+			const float mag = get_length();
+			if (mag == 0)
+				return Vec2D{ 0,0 };
+			return Vec2D{ x / mag, y / mag };
 		}
 	};
 
