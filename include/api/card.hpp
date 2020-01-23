@@ -68,7 +68,9 @@ public:
         table_center
     };
 
-    CardLocation location = CardLocation::invalid;
+    void move_to(CardLocation, int owner_id = 0);
+    CardLocation get_location();
+
     // The ID of the player that owns this card (If location is set to player_equipped or player_hand)
     int owner_id = 0;
     
@@ -89,6 +91,7 @@ private:
     CardDef def;
     sol::table data;
     size_t id;
+    CardLocation location = CardLocation::invalid;
 };
 
 // CardPtrs refer to the ID of a card. This is basically a safer version of Card*, because addresses aren't involved.

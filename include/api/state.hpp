@@ -71,27 +71,27 @@ public:
     Card& add_card(CardDef& def);
     std::vector<Card> all_cards;
 
-    std::queue<CardPtr> dungeon_deck;
-    std::queue<CardPtr> dungeon_discard_deck;
-    std::queue<CardPtr> treasure_deck;
-    std::queue<CardPtr> treasure_discard_deck;
+    std::vector<CardPtr> dungeon_deck;
+    std::vector<CardPtr> dungeon_discard_deck;
+    std::vector<CardPtr> treasure_deck;
+    std::vector<CardPtr> treasure_discard_deck;
 
     // Dumb lua API wrappers for decks
-    CardPtr get_dungeon_deck_front() { return dungeon_deck.front(); }
+    CardPtr get_dungeon_deck_front() { return dungeon_deck.back(); }
     int get_dungeon_deck_size() { return dungeon_deck.size(); }
-    void dungeon_deck_pop() { return dungeon_deck.pop(); }
+    void dungeon_deck_pop() { return dungeon_deck.pop_back(); }
 
-    CardPtr get_dungeon_discard_deck_front() { return dungeon_discard_deck.front(); }
+    CardPtr get_dungeon_discard_deck_front() { return dungeon_discard_deck.back(); }
     int get_dungeon_discard_deck_size() { return dungeon_discard_deck.size(); }
-    void dungeon_discard_deck_pop() { return dungeon_discard_deck.pop(); }
+    void dungeon_discard_deck_pop() { return dungeon_discard_deck.pop_back(); }
 
-    CardPtr get_treasure_deck_front() { return treasure_deck.front(); }
+    CardPtr get_treasure_deck_front() { return treasure_deck.back(); }
     int get_treasure_deck_size() { return treasure_deck.size(); }
-    void treasure_deck_pop() { return treasure_deck.pop(); }
+    void treasure_deck_pop() { return treasure_deck.pop_back(); }
 
-    CardPtr get_treasure_discard_deck_front() { return treasure_discard_deck.front(); }
+    CardPtr get_treasure_discard_deck_front() { return treasure_discard_deck.back(); }
     int get_treasure_discard_deck_size() { return treasure_discard_deck.size(); }
-    void treasure_discard_deck_pop() { return treasure_discard_deck.pop(); }
+    void treasure_discard_deck_pop() { return treasure_discard_deck.pop_back(); }
 
     std::queue<FlowEvent> event_queue;
     FlowEvent last_event;

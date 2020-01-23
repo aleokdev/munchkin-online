@@ -43,7 +43,7 @@ void CardSprite::instantly_set_pos(math::Vec2D target)
 
 void CardSprite::calculate_target_from_location()
 {
-    switch (card->location)
+    switch (card->get_location())
     {
     case munchkin::Card::CardLocation::invalid:
         target_pos = { 0, 100 }; // test value
@@ -118,9 +118,9 @@ void CardSprite::calculate_target_from_location()
 
 void CardSprite::draw(SpriteRenderer& spr)
 {
-    if (last_card_location != card->location || card.state->players[card->owner_id].hand.size() != last_cards_in_owner) {
+    if (last_card_location != card->get_location() || card.state->players[card->owner_id].hand.size() != last_cards_in_owner) {
         calculate_target_from_location();
-        last_card_location = card->location;
+        last_card_location = card->get_location();
         last_cards_in_owner = card.state->players[card->owner_id].hand.size();
     }
 

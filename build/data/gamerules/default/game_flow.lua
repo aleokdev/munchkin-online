@@ -31,7 +31,7 @@ local function main()
 		end
 
 		card_ptr = game:get_dungeon_deck_front()
-		card_ptr:get().location = card_location.table_center
+		card_ptr:get():move_to(card_location.table_center, 0)
 		card_ptr:get().visibility = card_visibility.front_visible
 		on_reveal = card_ptr:get()["on_reveal"]
 
@@ -45,10 +45,8 @@ local function main()
 			game.stage = "FIGHT_MONSTER"
 		else
 			wait_for_ticks(120) -- Wait for a while before giving the card to the player
-			game:give_dungeon(game:get_current_player()) -- TODO FIXME: WILL NOT WORK WITH CARDS THAT HAVE A NON-BATTLE ON_REVEAL FUNCTION
-			card_ptr:get().location = card_location.player_hand
-			card_ptr:get().visibility = card_visibility.front_visible_to_owner
-			card_ptr:get().owner_id = game:get_current_player().id
+			card_ptr:get():move_to(card_location.player_hand, game:get_current_player().id)
+			card_ptr:get().visibility = card_visibility.front_visible_to_owner -- TODO FIXME: visibility doesn't change?
 			game.stage = "DECIDE_NOMONSTER"
 		end
 	end

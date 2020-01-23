@@ -28,7 +28,7 @@ namespace munchkin {
 	}
 
 	void Battle::add_card(int id) {
-		CardPtr(*state, id)->location = Card::CardLocation::table_center;
+		CardPtr(*state, id)->move_to(Card::CardLocation::table_center);
 		played_cards.insert(std::pair<CardPtr, int>(CardPtr(*state, id), 0));
 	}
 

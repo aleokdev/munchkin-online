@@ -105,9 +105,11 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     lua.new_usertype<Card>("munchkin_card",
         "get_id", &Card::get_id,
         "visibility", &Card::visibility,
-        "location", &Card::location,
+        "get_location", &Card::get_location,
+        "move_to", &Card::move_to,
         "owner_id", &Card::owner_id,
         sol::meta_function::index, &Card::get_data_variable);
+
     lua.new_usertype<CardPtr>("munchkin_card_ptr",
         "id", &CardPtr::card_id,
         "get", &CardPtr::get);
@@ -140,20 +142,12 @@ int State::get_ticks() const
 
 void State::give_treasure(Player& player)
 {
-    player.hand.emplace_back(treasure_deck.front());
-    treasure_deck.front()->location = Card::CardLocation::player_hand;
-    treasure_deck.front()->owner_id = player.id;
-    treasure_deck.front()->visibility = Card::CardVisibility::front_visible_to_owner;
-    treasure_deck.pop();
+    treasure_deck.back()->move_to(Card::CardLocation::player_hand, player.id);
 }
 
 void State::give_dungeon(Player& player)
 {
-    player.hand.emplace_back(dungeon_deck.front());
-    dungeon_deck.front()->location = Card::CardLocation::player_hand;
-    dungeon_deck.front()->owner_id = player.id;
-    dungeon_deck.front()->visibility = Card::CardVisibility::front_visible_to_owner;
-    dungeon_deck.pop();
+    dungeon_deck.back()->move_to(Card::CardLocation::player_hand, player.id);
 }
 
 void State::start_battle()
@@ -222,13 +216,11 @@ Card& State::add_card(CardDef& def)
     Card& result = all_cards.emplace_back(std::move(card));
     switch (def.category) {
         case DeckType::dungeon:
-            dungeon_deck.push(result);
-            result.location = Card::CardLocation::dungeon_deck;
+            result.move_to(Card::CardLocation::dungeon_deck);
             break;
 
         case DeckType::treasure:
-            treasure_deck.push(result);
-            result.location = Card::CardLocation::treasure_deck;
+            result.move_to(Card::CardLocation::treasure_deck);
             break;
 
         default: break;

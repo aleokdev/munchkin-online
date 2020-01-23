@@ -24,7 +24,7 @@ void InputBinder::tick() {
 			sprite.is_being_hovered = true;
 			if (input::has_mousebutton_been_clicked(input::MouseButton::left))
 			{
-				switch (sprite.get_card_ptr()->location)
+				switch (sprite.get_card_ptr()->get_location())
 				{
 				case(Card::CardLocation::dungeon_deck):
 					game->push_event(FlowEvent{ FlowEvent::EventType::clicked_dungeon_deck });
@@ -37,7 +37,7 @@ void InputBinder::tick() {
 					if (on_play == sol::lua_nil)
 						break;
 					on_play.as<sol::function>()();
-					sprite.get_card_ptr()->location = sprite.get_card_ptr()->get_def().category == DeckType::dungeon ? Card::CardLocation::dungeon_discard_deck : Card::CardLocation::treasure_discard_deck;
+					sprite.get_card_ptr()->move_to(sprite.get_card_ptr()->get_def().category == DeckType::dungeon ? Card::CardLocation::dungeon_discard_deck : Card::CardLocation::treasure_discard_deck);
 					
 					break;
 				}
