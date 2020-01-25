@@ -115,6 +115,19 @@ local function main()
 	
 	game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
 	wait_for_event(event_type.tick) -- Wait for the game to load cardpacks in
+
+	-- Give 4 cards of each type to the players
+	for player in game:iter_players() do
+		for i=1, 4 do
+			game:give_dungeon(player)
+			wait_for_ticks(10)
+		end
+		for i=1, 4 do
+			game:give_treasure(player)
+			wait_for_ticks(10)
+		end
+	end
+
 	while true do
 		stages[game.stage]()
 	end
