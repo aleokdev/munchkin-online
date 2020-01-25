@@ -1,18 +1,21 @@
 ﻿---
 BasedOnStyle: LLVM
+AccessModifierOffset: '-4'
 AllowShortBlocksOnASingleLine: 'true'
 AllowShortCaseLabelsOnASingleLine: 'true'
 AllowShortFunctionsOnASingleLine: All
-AllowShortIfStatementsOnASingleLine: 'true'
 AllowShortLoopsOnASingleLine: 'true'
-AlwaysBreakTemplateDeclarations: 'true'
 BinPackParameters: 'false'
 BreakConstructorInitializers: AfterColon
+ColumnLimit: '100'
 CompactNamespaces: 'false'
 Cpp11BracedListStyle: 'true'
 IndentCaseLabels: 'true'
 IndentPPDirectives: AfterHash
+IndentWidth: '4'
 Language: Cpp
+NamespaceIndentation: None
+PointerAlignment: Left
 SortIncludes: 'true'
 SpaceAfterTemplateKeyword: 'false'
 SpaceBeforeAssignmentOperators: 'true'
@@ -21,7 +24,4 @@ SpacesInAngles: 'false'
 SpacesInParentheses: 'false'
 SpacesInSquareBrackets: 'false'
 TabWidth: '4'
-IndentWidth: '4'
-AccessModifierOffset: '-4'
-PointerAlignment: 'Left'
 ...

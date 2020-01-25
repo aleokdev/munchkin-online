@@ -1,14 +1,14 @@
 #include "systems/game_renderer.hpp"
+#include "api/state.hpp"
+#include "game.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
-#include "game.hpp"
-#include "api/state.hpp"
 
 #include <glad/glad.h>
-#include <sdl/SDL.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <sdl/SDL.h>
 
 namespace munchkin {
 
@@ -77,7 +77,7 @@ void GameRenderer::render_frame() {
 
         glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(projection));
 
-        // Set draw data    
+        // Set draw data
         sprite_renderer.set_camera_drag(true);
         sprite_renderer.set_texture(table_texture);
         constexpr float table_size = 1400;
@@ -88,7 +88,6 @@ void GameRenderer::render_frame() {
         sprite_renderer.do_draw();
 
         draw_cards(sprite_renderer);
-
     }
 
     // Swap current and last mouse
@@ -99,9 +98,8 @@ void GameRenderer::blit(unsigned int target_framebuf) {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target_framebuf);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuf.handle());
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glBlitFramebuffer(0, 0, framebuf.get_width(), framebuf.get_height(),
-        0, 0, framebuf.get_width(), framebuf.get_height(),
-        GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBlitFramebuffer(0, 0, framebuf.get_width(), framebuf.get_height(), 0, 0, framebuf.get_width(),
+                      framebuf.get_height(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 
 void GameRenderer::on_resize(size_t w, size_t h) {
@@ -131,9 +129,8 @@ void GameRenderer::update_camera() {
 }
 
 void GameRenderer::draw_cards(renderer::SpriteRenderer& spr) {
-    for (auto& card : game->card_sprites)
-        card.draw(spr);
+    for (auto& card : game->card_sprites) card.draw(spr);
 }
 
-}
-}
+} // namespace systems
+} // namespace munchkin

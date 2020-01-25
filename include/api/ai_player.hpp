@@ -2,7 +2,7 @@
 #define MUNCHKIN_AI_PLAYER_HPP__
 
 namespace munchkin {
-	class State;
+class State;
 }
 
 namespace munchkin {
@@ -10,18 +10,18 @@ namespace games {
 
 class AIPlayer {
 public:
-	AIPlayer(State&, size_t attached_id);
+    AIPlayer(State&, size_t attached_id);
 
-	void tick();
+    void tick();
 
 private:
-	State* state;
-	size_t player_id;
+    State* state;
+    size_t player_id;
 
-	const int ticks_to_think = 40;
-	int last_action_tick = -1;
+    const int ticks_to_think = 40;
+    int last_action_tick = -1;
 };
 
-}
-}
+} // namespace games
+} // namespace munchkin
 #endif

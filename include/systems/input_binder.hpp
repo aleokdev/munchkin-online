@@ -12,18 +12,18 @@ namespace systems {
 // Binds input from the user to Game and its state
 class InputBinder {
 public:
-	InputBinder(Game&);
+    InputBinder(Game&);
 
-	void tick();
+    void tick();
 
 private:
-	Game* const game;
+    Game* const game;
 
-	float last_frame_time;
-	input::MouseState last_mouse_state;
+    float last_frame_time;
+    input::MouseState last_mouse_state;
 };
 
-}
-}
+} // namespace systems
+} // namespace munchkin
 
 #endif

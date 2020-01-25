@@ -1,16 +1,16 @@
 #ifndef MUNCHKIN_STATE_HPP_
 #define MUNCHKIN_STATE_HPP_
 
+#include "gamerules.hpp"
+#include <optional>
+#include <queue>
 #include <sol/sol.hpp>
 #include <string_view>
-#include <queue>
-#include <optional>
-#include "gamerules.hpp"
 
-#include "player.hpp"
-#include "carddef.hpp"
-#include "card.hpp"
 #include "battle.hpp"
+#include "card.hpp"
+#include "carddef.hpp"
+#include "player.hpp"
 
 #define STATE_API_WRAPPER_FILE_PATH "data/generic/api_wrapper.lua"
 #define STATE_API_RULES_FILE_NAME "rules.lua"
@@ -67,9 +67,7 @@ public:
     size_t turn_number = 1;
     size_t tick = 0;
 
-    size_t generate_id() {
-        return last_id++;
-    }
+    size_t generate_id() { return last_id++; }
     size_t last_id = 0;
 
     std::vector<Player> players;
@@ -119,6 +117,6 @@ private:
     std::string game_stage;
 };
 
-}
+} // namespace munchkin
 
 #endif

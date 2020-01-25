@@ -6,7 +6,8 @@ namespace munchkin {
 namespace renderer {
 
 /*
-    Note that all functions that modify this target directly, such as clear(), operate on the currently bound framebuffer.
+    Note that all functions that modify this target directly, such as clear(), operate on the
+   currently bound framebuffer.
 */
 
 class RenderTarget {
@@ -16,8 +17,8 @@ public:
     };
 
     RenderTarget() = default;
-    // Note: This function changes the GL state. After this call, the framebuffer owned by this RenderTarget and it's 
-    // corresponding texture and renderbuffer will be bound.
+    // Note: This function changes the GL state. After this call, the framebuffer owned by this
+    // RenderTarget and it's corresponding texture and renderbuffer will be bound.
     RenderTarget(CreateInfo const& info);
     RenderTarget(RenderTarget const&) = delete;
     RenderTarget(RenderTarget&& rhs);
@@ -29,8 +30,8 @@ public:
 
     static void bind(RenderTarget& target);
 
-    // Returns whether the render target is valid. A render target is considered valid when it has a valid texture,
-    // fbo and rbo attached, and none of the dimensions is 0.
+    // Returns whether the render target is valid. A render target is considered valid when it has a
+    // valid texture, fbo and rbo attached, and none of the dimensions is 0.
     bool valid() const;
 
     // Clears the stored framebuffer
@@ -59,8 +60,8 @@ private:
     void destroy();
 };
 
-}
+} // namespace renderer
 
-}
+} // namespace munchkin
 
 #endif

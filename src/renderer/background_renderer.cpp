@@ -2,11 +2,11 @@
 
 #include "renderer/util.hpp"
 
-#include <stb/stb_image.h>
 #include <glad/glad.h>
+#include <stb/stb_image.h>
 
-#include <string>
 #include <fstream>
+#include <string>
 
 namespace munchkin::renderer {
 
@@ -57,7 +57,8 @@ Background create_background(const char* bg_image_path) {
 void update_background_scroll(Background& bg, float delta_time) {
     bg.scroll += bg.scroll_speed * delta_time;
 
-    // prevent eventual overflow. We only do this after scroll > 100 so we don't have to reset too often
+    // prevent eventual overflow. We only do this after scroll > 100 so we don't have to reset too
+    // often
     if (bg.scroll > 100.0f) {
         bg.scroll -= 100.0f;
     }
@@ -84,4 +85,4 @@ void free_background(Background& bg) {
     glDeleteProgram(bg.shader);
 }
 
-}
+} // namespace munchkin::renderer

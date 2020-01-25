@@ -3,10 +3,8 @@
 
 namespace munchkin::renderer {
 
-class TitleScreenRenderer {
-    
-};
+class TitleScreenRenderer {};
 
-}
+} // namespace munchkin::renderer
 
 #endif

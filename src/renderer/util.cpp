@@ -4,9 +4,8 @@
 #include <stb/stb_image.h>
 
 #include <fstream>
-#include <string>
 #include <stdexcept>
-
+#include <string>
 
 namespace munchkin::renderer {
 
@@ -27,7 +26,6 @@ unsigned int load_texture(const char* path) {
     stbi_image_free(data);
     return texture;
 }
-
 
 static std::string read_file(const char* path) {
     using namespace std::literals::string_literals;
@@ -54,7 +52,6 @@ static unsigned int create_shader_stage(GLenum stage, const char* source) {
 
     return shader;
 }
-
 
 unsigned int load_shader(const char* vtx_path, const char* frag_path) {
     using namespace std::literals::string_literals;
@@ -83,4 +80,4 @@ unsigned int load_shader(const char* vtx_path, const char* frag_path) {
     return prog;
 }
 
-}
+} // namespace munchkin::renderer

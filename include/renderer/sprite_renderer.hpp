@@ -55,8 +55,8 @@ private:
     float rotation;
 };
 
-}
+} // namespace renderer
 
-}
+} // namespace munchkin
 
 #endif
