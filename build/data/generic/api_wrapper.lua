@@ -26,23 +26,11 @@ end
 selection = {}
 
 function selection.choose_card(filter)
-    local selection_cards = {}
-
-    if filter == nil then
-        for card in pairs(game.all_cards) do
-            selection_cards:insert(card)
-        end
-    else
-        for card in pairs(game.all_cards) do
-            if filter(card) then
-                selection_cards:insert(card)
-            end
-        end
-    end
+    filter = filter or function() return true end
 
     repeat
         coroutine.yield()
-    until game.last_event.type == event_type.card_clicked
+    until game.last_event.type == event_type.card_clicked and filter(game.last_event.card_involved)
 
     return game.last_event.card_involved
 end
