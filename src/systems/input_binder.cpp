@@ -3,6 +3,7 @@
 
 #include "input/input.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 namespace munchkin {
@@ -19,12 +20,13 @@ void InputBinder::tick() {
 
 	math::Vec2D m_pos = (input::get_mouse_pos() + game->camera.offset * math::Vec2D{ (float)game->window_w, -(float)game->window_h } / 2.f - math::Vec2D{ 0, (float)game->window_h }) * math::Vec2D{ 1,-1 };
 	for (auto& sprite : game->card_sprites) {
+		Card& card = *sprite.get_card_ptr();
 		if (sprite.get_rect().contains(m_pos))
 		{
 			sprite.is_being_hovered = true;
 			if (input::has_mousebutton_been_clicked(input::MouseButton::left))
 			{
-				switch (sprite.get_card_ptr()->get_location())
+				switch (card.get_location())
 				{
 				case(Card::CardLocation::dungeon_deck):
 					game->push_event(FlowEvent{ FlowEvent::EventType::clicked_dungeon_deck });
@@ -32,6 +34,11 @@ void InputBinder::tick() {
 
 				case(Card::CardLocation::player_hand):
 				{
+					// Do not allow interacting with card if it is not owned by the local player or it is not on an allowed play stage
+					if (game->local_player_id != card.owner_id ||
+						std::find(card.get_def().play_stages.begin(), card.get_def().play_stages.end(), game->state.get_game_stage()) == card.get_def().play_stages.end())
+						break;
+
 					// TODO: Check for current stage, current player and most importantly: PUSH THIS TO ACTIVE_COROUTINES (doesn't work right now for some reason)
 					sol::object on_play = sprite.get_card_ptr()->get_data_variable("on_play");
 					if (on_play == sol::lua_nil)
