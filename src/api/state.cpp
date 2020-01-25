@@ -142,11 +142,17 @@ int State::get_ticks() const
 
 void State::give_treasure(Player& player)
 {
-    treasure_deck.back()->move_to(Card::CardLocation::player_hand, player.id);
+    if (treasure_deck.size() == 0)
+        return;
+    CardPtr ptr = treasure_deck.back();
+    ptr->move_to(Card::CardLocation::player_hand, player.id);
+    ptr->visibility = Card::CardVisibility::front_visible_to_owner;
 }
 
 void State::give_dungeon(Player& player)
 {
+    if (dungeon_deck.size() == 0)
+        return;
     CardPtr ptr = dungeon_deck.back();
     ptr->move_to(Card::CardLocation::player_hand, player.id);
     ptr->visibility = Card::CardVisibility::front_visible_to_owner;
