@@ -58,18 +58,19 @@ public:
     }
 
     enum class CardLocation {
-        invalid,
-        dungeon_deck,
-        dungeon_discard_deck,
-        treasure_deck,
-        treasure_discard_deck,
-        player_equipped,
-        player_hand,
-        table_center
+        invalid = 0,
+        dungeon_deck = 1,
+        dungeon_discard_deck = 2 << 0,
+        treasure_deck = 2 << 1,
+        treasure_discard_deck = 2 << 2,
+        player_equipped = 2 << 3,
+        player_hand = 2 << 4,
+        table_center = 2 << 5
     };
 
     void move_to(CardLocation, int owner_id = 0);
     CardLocation get_location();
+    bool is_being_owned_by_player() { return (int)location & ((int)CardLocation::player_equipped | (int)CardLocation::player_hand); }
 
     // The ID of the player that owns this card (If location is set to player_equipped or player_hand)
     int owner_id = 0;

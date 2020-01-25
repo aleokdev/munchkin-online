@@ -13,6 +13,8 @@
 #include <cmath>
 #include "game.hpp"
 
+#include <algorithm>
+
 using namespace munchkin::renderer::internal::card_sprite;
 
 namespace munchkin {
@@ -123,12 +125,18 @@ void CardSprite::draw(SpriteRenderer& spr)
         last_cards_in_owner = card.state->players[card->owner_id].hand.size();
     }
 
+    bool render_darker = false;
+    if (card->is_being_owned_by_player() && card.state->get_game_stage() != card.state->get_last_game_stage()) {
+        render_darker = card->owner_id == card.state->current_player_id &&
+            std::find(card->get_def().play_stages.begin(), card->get_def().play_stages.end(), card.state->get_game_stage()) == card->get_def().play_stages.end();
+    }
+
     current_pos += (target_pos - current_pos) / movement_slowness;
     current_rotation += (target_rotation - current_rotation) / rotation_slowness;
     const bool is_card_visible = card->visibility == Card::CardVisibility::front_visible || (card->visibility == Card::CardVisibility::front_visible_to_owner && card->owner_id == game->local_player_id);
     
     current_size += math::vectors::x_axis * ((is_card_visible ? -texture_width : texture_width) - current_size.x) / flip_slowness;
-    current_scale += ((is_being_hovered? texture_hovered_scale : texture_scale) - current_scale) / scale_slowness;
+    current_scale += (((is_being_hovered && !render_darker)? texture_hovered_scale : texture_scale) - current_scale) / scale_slowness;
 
 
     // Set draw data
@@ -139,7 +147,9 @@ void CardSprite::draw(SpriteRenderer& spr)
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
     spr.set_scale(glm::vec2(std::abs(current_size.x) * current_scale, current_size.y * current_scale));
     spr.set_rotation(current_rotation);
-    if (is_being_hovered)
+    if (render_darker)
+        spr.set_color(.7f, .7f, .7f, 1);
+    else if (is_being_hovered)
         spr.set_color(1.1f, 1.1f, 1.1f, 1);
 
 	spr.do_draw();
