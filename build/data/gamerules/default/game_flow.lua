@@ -37,7 +37,6 @@ local function main()
 
 		if on_reveal ~= nil then
 			print("Found on_reveal...")
-			game:dungeon_deck_pop()
 			on_reveal(card_ptr)
 		end
 		

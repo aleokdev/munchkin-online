@@ -58,20 +58,8 @@
       "treasures": 2,
       "levels": 1,
       "bad_stuff_script": "scripts/modify_levels.lua"
-    }
-  },
-  {
-    "script": "scripts/card/monster.lua",
-    "name": "Generic Monster",
-    "description": "Generic description.",
-    "play_stages": [],
-    "category": "dungeon",
-    "properties": {
-      "power": 15,
-      "treasures": 3,
-      "levels": 2,
-      "bad_stuff_script": "scripts/modify_levels.lua"
-    }
+    },
+    "front_texture": "textures/test-card.png"
   },
   {
     "script": "scripts/card/add_level.lua",
@@ -178,5 +166,19 @@
     "properties": {
       "power_to_add": 10
     }
+  },
+  {
+    "script": "scripts/card/monster.lua",
+    "name": "Generic Monster",
+    "description": "Generic description.",
+    "play_stages": [],
+    "category": "dungeon",
+    "properties": {
+      "power": 15,
+      "treasures": 3,
+      "levels": 2,
+      "bad_stuff_script": "scripts/modify_levels.lua"
+    },
+    "front_texture": "textures/test-card.png"
   }
 ]

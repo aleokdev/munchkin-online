@@ -21,9 +21,8 @@ namespace renderer {
 
 CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card)
 {
-    // TODO: Get texture filename from card
-    back_texture = renderer::load_texture(card->get_def().category == DeckType::dungeon ? "data/cardpacks/default/textures/dungeon-back.png" : "data/cardpacks/default/textures/treasure-back.png");
-    front_texture = renderer::load_texture(card->get_def().category == DeckType::dungeon ? "data/cardpacks/default/textures/dungeon-front.png" : "data/cardpacks/default/textures/treasure-front.png");
+    back_texture = renderer::load_texture(card->get_def().back_texture_path.c_str());
+    front_texture = renderer::load_texture(card->get_def().front_texture_path.c_str());
 }
 
 void CardSprite::set_target_pos(math::Vec2D target)
