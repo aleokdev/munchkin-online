@@ -40,7 +40,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "should_borrow_facing_up", &State::should_borrow_facing_up,
 
         "start_battle", &State::start_battle,
-        "current_battle", &State::current_battle,
+        "current_battle", sol::readonly_property(&State::get_current_battle),
         "end_current_battle", &State::end_current_battle,
 
         "get_player", &State::get_player,
@@ -86,7 +86,8 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "add_card", &Battle::add_card,
         "remove_card", &Battle::remove_card,
         "modify_card", &Battle::modify_card,
-        "get_cards_played", &Battle::get_cards_played
+        "get_cards_played", &Battle::get_cards_played,
+        "get_card_power", &Battle::get_card_power
     );
 
     lua.new_enum<Card::CardVisibility>("card_visibility",
@@ -106,8 +107,23 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
             {"table_center", Card::CardLocation::table_center}
         });
 
+    lua.new_enum<DeckType>("munchkin_deck_type",
+        {
+            {"dungeon", DeckType::dungeon},
+            {"treasure", DeckType::treasure},
+            {"null", DeckType::null}
+        });
+
+    lua.new_usertype<CardDef>("munchkin_card_def",
+        "name", &CardDef::name,
+        "description", &CardDef::description,
+        "category", &CardDef::category,
+        "play_stages", &CardDef::play_stages
+        );
+
     lua.new_usertype<Card>("munchkin_card",
         "get_id", &Card::get_id,
+        "get_def", &Card::api_get_def,
         "visibility", &Card::visibility,
         "get_location", &Card::get_location,
         "move_to", &Card::move_to,
@@ -168,7 +184,7 @@ void State::start_battle()
     if (current_battle)
         return;
 
-    current_battle = Battle(*this, get_current_player());
+    current_battle = std::make_unique<Battle>(*this, get_current_player());
 }
 
 void State::end_current_battle()
