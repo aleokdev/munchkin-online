@@ -29,7 +29,7 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
        else
            std::cerr << "Card has unknown category! Will default to null; This means that it won't be introduced to the game decks and will have strange behaviour" << std::endl;
 
-       // TODO: Do not hardcode default textures
+       // @todo: Do not hardcode default textures
        std::string front_texture_path = card_json.contains("front_texture") ? (basepath/ std::filesystem::path((std::string)card_json["front_texture"])).generic_string() : (basepath / "textures" / (def_category == DeckType::dungeon ? "dungeon-front.png" : "treasure-front.png")).generic_string();
        std::string back_texture_path = card_json.contains("back_texture") ? (basepath/ std::filesystem::path((std::string)card_json["back_texture"])).generic_string() : (basepath / "textures" / (def_category == DeckType::dungeon ? "dungeon-back.png" : "treasure-back.png")).generic_string();
        CardDef def(lua,

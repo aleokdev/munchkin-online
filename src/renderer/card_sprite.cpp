@@ -80,7 +80,7 @@ void CardSprite::calculate_target_from_location()
         }
 
         float player_angle = ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI - M_PI / 2.f;
-        // TODO: Don't assume table radius
+        // @todo: Don't assume table radius
         // this isn't actually the table radius, it's just the radius of an imaginary circurference where all the cards are placed
         constexpr float table_radius = 750;
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
@@ -99,7 +99,7 @@ void CardSprite::calculate_target_from_location()
     {
         Player& card_owner = card.state->players[card->owner_id];
         float player_angle = ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI - M_PI / 2.f;
-        // TODO: Don't assume table radius
+        // @todo: Don't assume table radius
         // this isn't actually the table radius, it's just the radius of an imaginary circurference where all the cards are placed
         constexpr float table_radius = 450;
         math::Vec2D player_pos{ table_radius * std::cos(player_angle), table_radius * std::sin(player_angle) };
@@ -114,7 +114,7 @@ void CardSprite::calculate_target_from_location()
         else
         {
             const int battle_cards = game->state.current_battle->played_cards.size();
-            // TODO FIXME: This won't work with non-battle cards when there is a battle going on
+            // @todo FIXME: This won't work with non-battle cards when there is a battle going on
             int card_index = 0;
             for (auto& [k, v] : game->state.current_battle->played_cards) {
                 if (k == card)

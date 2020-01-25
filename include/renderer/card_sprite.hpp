@@ -62,7 +62,7 @@ private:
 	Card::CardLocation last_card_location = Card::CardLocation::invalid;
 	size_t last_cards_in_owner = 0;
 
-	// TODO: Back textures are duplicated! Do asset system and assign all textures that point to the same file to the same ID?
+	// @todo: Back textures are duplicated! Do asset system and assign all textures that point to the same file to the same ID?
 	unsigned int back_texture;
 
 	unsigned int front_texture;
