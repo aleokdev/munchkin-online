@@ -45,7 +45,7 @@ local function main()
 		else
 			wait_for_ticks(120) -- Wait for a while before giving the card to the player
 			card_ptr:get():move_to(card_location.player_hand, game:get_current_player().id)
-			card_ptr:get().visibility = card_visibility.front_visible_to_owner -- TODO FIXME: visibility doesn't change?
+			card_ptr:get().visibility = card_visibility.front_visible_to_owner
 			game.stage = "DECIDE_NOMONSTER"
 		end
 	end
@@ -82,7 +82,6 @@ local function main()
 			if game.last_event.type == event_type.clicked_dungeon_deck then
 				-- User decided to loot the room
 				game:give_dungeon(game:get_current_player())
-				print("dungeon card given")
 
 				game.stage = "CHARITY"
 				break

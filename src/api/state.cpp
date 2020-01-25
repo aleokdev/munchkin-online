@@ -147,7 +147,9 @@ void State::give_treasure(Player& player)
 
 void State::give_dungeon(Player& player)
 {
-    dungeon_deck.back()->move_to(Card::CardLocation::player_hand, player.id);
+    CardPtr ptr = dungeon_deck.back();
+    ptr->move_to(Card::CardLocation::player_hand, player.id);
+    ptr->visibility = Card::CardVisibility::front_visible_to_owner;
 }
 
 void State::start_battle()
