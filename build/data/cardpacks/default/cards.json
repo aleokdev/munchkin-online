@@ -47,6 +47,7 @@
     "description": "Go up one level.",
     "category": "treasure"
   },
+
   {
     "script": "scripts/card/monster.lua",
     "name": "Vulkan",
@@ -118,6 +119,20 @@
     }
   },
   {
+    "script": "scripts/card/monster.lua",
+    "name": "Generic Monster",
+    "description": "Generic description.",
+    "play_stages": [],
+    "category": "dungeon",
+    "properties": {
+      "power": 15,
+      "treasures": 3,
+      "levels": 2,
+      "bad_stuff_script": "scripts/modify_levels.lua"
+    },
+    "front_texture": "textures/test-card.png"
+  },
+  {
     "script": "scripts/card/modify_monster.lua",
     "name": "Ancient 5",
     "description": "Adds 10 to the monster's power.",
@@ -166,19 +181,5 @@
     "properties": {
       "power_to_add": 10
     }
-  },
-  {
-    "script": "scripts/card/monster.lua",
-    "name": "Generic Monster",
-    "description": "Generic description.",
-    "play_stages": [],
-    "category": "dungeon",
-    "properties": {
-      "power": 15,
-      "treasures": 3,
-      "levels": 2,
-      "bad_stuff_script": "scripts/modify_levels.lua"
-    },
-    "front_texture": "textures/test-card.png"
   }
 ]
