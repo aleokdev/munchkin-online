@@ -72,7 +72,7 @@ int main() try {
 	ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 4, 3);
+	munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 3, 2);
 	wrapper.game.get_state().add_cardpack("data/cardpacks/default/cards.json");
 	std::cout << "Cards loaded: " << wrapper.game.get_state().all_cards.size() << std::endl;
 	wrapper.renderer.update_sprite_vector();

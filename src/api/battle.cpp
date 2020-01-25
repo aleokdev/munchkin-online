@@ -1,5 +1,7 @@
 #include "api/battle.hpp"
 
+#include <iostream>
+
 namespace munchkin {
 
 	int Battle::get_total_player_power() {
@@ -28,8 +30,8 @@ namespace munchkin {
 	}
 
 	void Battle::add_card(int id) {
-		CardPtr(*state, id)->location = Card::CardLocation::table_center;
-		played_cards.insert(std::pair<CardPtr, int>(CardPtr(*state, id), 0));
+		CardPtr(*state, id)->move_to(Card::CardLocation::table_center);
+		played_cards[CardPtr(*state, id)] = 0;
 	}
 
 	void Battle::remove_card(int id) {
@@ -38,5 +40,16 @@ namespace munchkin {
 
 	void Battle::modify_card(int id, int power) {
 		played_cards[CardPtr(*state, id)] += power;
+	}
+	int Battle::get_card_power(CardPtr cardptr)
+	{
+		return played_cards[cardptr];
+	}
+	std::vector<CardPtr> Battle::get_cards_played()
+	{
+		std::vector<CardPtr> ret;
+		for (auto& [card, power] : played_cards)
+			ret.emplace_back(card);
+		return ret;
 	}
 }

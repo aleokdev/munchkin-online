@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <sol/sol.hpp>
+#include <optional>
 
 namespace munchkin
 {
@@ -15,13 +16,23 @@ namespace munchkin
 
 	struct CardDef
 	{
-		CardDef(sol::state& state, std::string const& script_path, std::string _name, std::string _description, DeckType _category = DeckType::null);
+		CardDef(sol::state& state,
+			std::string const& script_path,
+			std::string name,
+			std::string description,
+			DeckType category,
+			std::string front_texture_path,
+			std::string back_texture_path
+		);
 
 		std::string name;
 		std::string description;
 		sol::table metatable;
 		std::vector<std::string> play_stages;
 		DeckType category;
+
+		std::string front_texture_path;
+		std::string back_texture_path;
 	};
 }
 

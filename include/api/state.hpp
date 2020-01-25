@@ -18,12 +18,16 @@
 namespace munchkin {
 struct FlowEvent {
     enum class EventType {
+        // Pushed at the end of every tick
         tick,
-        clicked_dungeon_deck,
+        // Pushed when any card is discarded
         card_discarded,
-        card_played
+        // Pushed when any card is clicked
+        card_clicked
     };
     EventType type;
+    std::optional<CardPtr> card_involved;
+    std::optional<size_t> player_involved;
 };
 
 class State {
@@ -34,6 +38,7 @@ public:
     // More information in scripting_api.md
 
     int get_ticks() const;
+    void add_coroutine(sol::function);
 
     void give_treasure(Player& player);
     void give_dungeon(Player& player);
@@ -54,7 +59,11 @@ public:
     sol::state lua;
     sol::table game_api;
     bool should_borrow_facing_up;
-    std::string game_stage;
+
+    std::string get_last_game_stage();
+    std::string get_game_stage();
+    void set_game_stage(std::string);
+
     size_t turn_number = 1;
     size_t tick = 0;
 
@@ -71,27 +80,27 @@ public:
     Card& add_card(CardDef& def);
     std::vector<Card> all_cards;
 
-    std::queue<CardPtr> dungeon_deck;
-    std::queue<CardPtr> dungeon_discard_deck;
-    std::queue<CardPtr> treasure_deck;
-    std::queue<CardPtr> treasure_discard_deck;
+    std::vector<CardPtr> dungeon_deck;
+    std::vector<CardPtr> dungeon_discard_deck;
+    std::vector<CardPtr> treasure_deck;
+    std::vector<CardPtr> treasure_discard_deck;
 
     // Dumb lua API wrappers for decks
-    CardPtr get_dungeon_deck_front() { return dungeon_deck.front(); }
+    CardPtr get_dungeon_deck_front() { return dungeon_deck.back(); }
     int get_dungeon_deck_size() { return dungeon_deck.size(); }
-    void dungeon_deck_pop() { return dungeon_deck.pop(); }
+    void dungeon_deck_pop() { return dungeon_deck.pop_back(); }
 
-    CardPtr get_dungeon_discard_deck_front() { return dungeon_discard_deck.front(); }
+    CardPtr get_dungeon_discard_deck_front() { return dungeon_discard_deck.back(); }
     int get_dungeon_discard_deck_size() { return dungeon_discard_deck.size(); }
-    void dungeon_discard_deck_pop() { return dungeon_discard_deck.pop(); }
+    void dungeon_discard_deck_pop() { return dungeon_discard_deck.pop_back(); }
 
-    CardPtr get_treasure_deck_front() { return treasure_deck.front(); }
+    CardPtr get_treasure_deck_front() { return treasure_deck.back(); }
     int get_treasure_deck_size() { return treasure_deck.size(); }
-    void treasure_deck_pop() { return treasure_deck.pop(); }
+    void treasure_deck_pop() { return treasure_deck.pop_back(); }
 
-    CardPtr get_treasure_discard_deck_front() { return treasure_discard_deck.front(); }
+    CardPtr get_treasure_discard_deck_front() { return treasure_discard_deck.back(); }
     int get_treasure_discard_deck_size() { return treasure_discard_deck.size(); }
-    void treasure_discard_deck_pop() { return treasure_discard_deck.pop(); }
+    void treasure_discard_deck_pop() { return treasure_discard_deck.pop_back(); }
 
     std::queue<FlowEvent> event_queue;
     FlowEvent last_event;
@@ -100,7 +109,14 @@ public:
     size_t default_hand_max_cards;
 
     // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
-    std::optional<Battle> current_battle;
+    std::unique_ptr<Battle> current_battle;
+
+    // TODO FIXME: THIS WILL CRASH IF CURRENT_BATTLE IS NOT SET
+    Battle& get_current_battle() { return *current_battle; }
+
+private:
+    std::string last_game_stage;
+    std::string game_stage;
 };
 
 }

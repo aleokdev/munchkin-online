@@ -80,6 +80,22 @@ namespace math
 			ret.y = std::abs(y);
 			return ret;
 		}
+
+		static Vec2D lerp(Vec2D const& a, Vec2D const& b, float factor)
+		{
+			return Vec2D{
+				(1-factor) * a.x + factor * b.x,
+				(1-factor) * a.y + factor * b.y
+			};
+		}
+
+		Vec2D normalized()
+		{
+			const float mag = get_length();
+			if (mag == 0)
+				return Vec2D{ 0,0 };
+			return Vec2D{ x / mag, y / mag };
+		}
 	};
 
 #define DEFINE_OPERATOR(op)\
@@ -122,8 +138,8 @@ inline Vec2D operator op (Vec2D lhs, const Vec2D& rhs) {\
 		inline static constexpr Vec2D down = Vec2D{ 0, 1 };
 		inline static constexpr Vec2D y_axis = Vec2D{ 0, 1 };
 		inline static constexpr Vec2D x_axis = Vec2D{ 1, 0 };
-		inline static constexpr Vec2D left = Vec2D{ 0, -1 };
-		inline static constexpr Vec2D right = Vec2D{ 0, 1 };
+		inline static constexpr Vec2D left = Vec2D{ -1, 0 };
+		inline static constexpr Vec2D right = Vec2D{ 1, 0 };
 		inline static constexpr Vec2D zero = Vec2D{ 0, 0 };
 	}
 

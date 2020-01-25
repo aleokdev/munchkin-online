@@ -48,6 +48,76 @@
     "category": "treasure"
   },
   {
+    "script": "scripts/card/add_level.lua",
+    "name": "1,000 Gold Pieces",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Boil an Anthill",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Bribe GM With Food",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Convenient Addition Error",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Invoke Obscure Rules",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Mutilate the Bodies",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Potion of General Studliness",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "Whine at the GM",
+    "description": "Go up one level.",
+    "category": "treasure"
+  },
+
+
+  {
+    "script": "scripts/card/monster.lua",
+    "name": "Vulkan",
+    "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
+    "play_stages": [],
+    "category": "dungeon",
+    "properties": {
+      "power": 10,
+      "treasures": 2,
+      "levels": 1,
+      "bad_stuff_script": "scripts/modify_levels.lua"
+    },
+    "front_texture": "textures/test-card.png"
+  },
+  {
+    "script": "scripts/card/add_level.lua",
+    "name": "TEST CARD",
+    "description": "Go up one level.",
+    "category": "dungeon"
+  },
+  {
     "script": "scripts/card/modify_monster.lua",
     "name": "Enraged",
     "description": "Adds 5 to the monster's power.",
@@ -99,19 +169,6 @@
   },
   {
     "script": "scripts/card/monster.lua",
-    "name": "Vulkan",
-    "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
-    "play_stages": [],
-    "category": "dungeon",
-    "properties": {
-      "power": 10,
-      "treasures": 2,
-      "levels": 1,
-      "bad_stuff_script": "scripts/modify_levels.lua"
-    }
-  },
-  {
-    "script": "scripts/card/monster.lua",
     "name": "Generic Monster",
     "description": "Generic description.",
     "play_stages": [],
@@ -121,6 +178,192 @@
       "treasures": 3,
       "levels": 2,
       "bad_stuff_script": "scripts/modify_levels.lua"
+    },
+    "front_texture": "textures/test-card.png"
+  },
+  {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 5",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
     }
-  }
+  },
+  {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 6",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
+    }
+  },
+  {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 7",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
+    }
+  },
+  {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 8",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
+    }
+  },
+  {
+    "script": "scripts/card/modify_monster.lua",
+    "name": "Ancient 9",
+    "description": "Adds 10 to the monster's power.",
+    "play_stages": [ "FIGHT_MONSTER" ],
+    "category": "dungeon",
+    "properties": {
+      "power_to_add": 10
+    }
+  },
+
+    {
+      "script": "scripts/card/monster.lua",
+      "name": "Vulkan",
+      "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
+      "play_stages": [],
+      "category": "dungeon",
+      "properties": {
+        "power": 10,
+        "treasures": 2,
+        "levels": 1,
+        "bad_stuff_script": "scripts/modify_levels.lua"
+      },
+      "front_texture": "textures/test-card.png"
+    },
+    {
+      "script": "scripts/card/add_level.lua",
+      "name": "TEST CARD",
+      "description": "Go up one level.",
+      "category": "dungeon"
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Enraged",
+      "description": "Adds 5 to the monster's power.",
+      "category": "dungeon",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "properties": {
+        "power_to_add": 5
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 2",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 3",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 4",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/monster.lua",
+      "name": "Generic Monster",
+      "description": "Generic description.",
+      "play_stages": [],
+      "category": "dungeon",
+      "properties": {
+        "power": 15,
+        "treasures": 3,
+        "levels": 2,
+        "bad_stuff_script": "scripts/modify_levels.lua"
+      },
+      "front_texture": "textures/test-card.png"
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 5",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 6",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 7",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 8",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    },
+    {
+      "script": "scripts/card/modify_monster.lua",
+      "name": "Ancient 9",
+      "description": "Adds 10 to the monster's power.",
+      "play_stages": [ "FIGHT_MONSTER" ],
+      "category": "dungeon",
+      "properties": {
+        "power_to_add": 10
+      }
+    }
 ]

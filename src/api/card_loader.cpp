@@ -20,13 +20,26 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
     for (auto& card_json : j) {
        std::string script_path = (basepath/std::filesystem::path((std::string)card_json["script"])).generic_string();
        DeckType def_category(DeckType::null);
-       if (card_json["category"] == "dungeon")
+       if(!card_json.contains("category"))
+           std::cerr << "Card has no category! Will default to null; This means that it won't be introduced to the game decks and will have strange behaviour" << std::endl;
+       else if (card_json["category"] == "dungeon")
            def_category = DeckType::dungeon;
        else if (card_json["category"] == "treasure")
            def_category = DeckType::treasure;
        else
-           std::cerr << "Card has no category! Will default to null; This means that it won't be introduced to the game decks" << std::endl;
-       CardDef def(lua, script_path, card_json["name"], card_json["description"], def_category);
+           std::cerr << "Card has unknown category! Will default to null; This means that it won't be introduced to the game decks and will have strange behaviour" << std::endl;
+
+       // TODO: Do not hardcode default textures
+       std::string front_texture_path = card_json.contains("front_texture") ? (basepath/ std::filesystem::path((std::string)card_json["front_texture"])).generic_string() : (basepath / "textures" / (def_category == DeckType::dungeon ? "dungeon-front.png" : "treasure-front.png")).generic_string();
+       std::string back_texture_path = card_json.contains("back_texture") ? (basepath/ std::filesystem::path((std::string)card_json["back_texture"])).generic_string() : (basepath / "textures" / (def_category == DeckType::dungeon ? "dungeon-back.png" : "treasure-back.png")).generic_string();
+       CardDef def(lua,
+           script_path,
+           card_json["name"],
+           card_json["description"],
+           def_category,
+           front_texture_path,
+           back_texture_path);
+
        for (auto& play_stage : card_json["play_stages"])
            def.play_stages.emplace_back(play_stage);
 

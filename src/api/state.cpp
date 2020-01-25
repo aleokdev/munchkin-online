@@ -18,27 +18,29 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
     lua.new_enum<FlowEvent::EventType>("event_type",
         { {"tick", FlowEvent::EventType::tick},
-        {"clicked_dungeon_deck", FlowEvent::EventType::clicked_dungeon_deck},
         {"card_discarded", FlowEvent::EventType::card_discarded},
-        {"card_played", FlowEvent::EventType::card_played} });
+        {"card_clicked", FlowEvent::EventType::card_clicked} });
 
     // register types in lua api
     lua.new_usertype<FlowEvent>("flow_event",
-        "type", &FlowEvent::type);
+        "type", &FlowEvent::type,
+        "card_involved", &FlowEvent::card_involved,
+        "player_involved", &FlowEvent::player_involved);
 
     // TODO: Rename to munchkin_game OR rename game to state
     sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",
         "last_event", &State::last_event,
         "get_ticks", &State::get_ticks,
-        "stage", &State::game_stage,
+        "stage", sol::property(&State::get_game_stage, &State::set_game_stage),
         "turn_number", &State::turn_number,
+        "add_coroutine", &State::add_coroutine,
 
         "give_treasure", &State::give_treasure,
         "give_dungeon", &State::give_dungeon,
         "should_borrow_facing_up", &State::should_borrow_facing_up,
 
         "start_battle", &State::start_battle,
-        "current_battle", &State::current_battle,
+        "current_battle", sol::readonly_property(&State::get_current_battle),
         "end_current_battle", &State::end_current_battle,
 
         "get_player", &State::get_player,
@@ -47,6 +49,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "set_current_player", &State::set_current_player,
         // next_player_turn defined in api_wrapper
         "get_visible_cards", &State::get_visible_cards,
+        "all_cards", &State::all_cards,
 
         "get_dungeon_deck_front", &State::get_dungeon_deck_front,
         "get_dungeon_deck_size", &State::get_dungeon_deck_size,
@@ -82,7 +85,9 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "get_total_monster_power", &Battle::get_total_monster_power,
         "add_card", &Battle::add_card,
         "remove_card", &Battle::remove_card,
-        "modify_card", &Battle::modify_card
+        "modify_card", &Battle::modify_card,
+        "get_cards_played", &Battle::get_cards_played,
+        "get_card_power", &Battle::get_card_power
     );
 
     lua.new_enum<Card::CardVisibility>("card_visibility",
@@ -102,12 +107,30 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
             {"table_center", Card::CardLocation::table_center}
         });
 
+    lua.new_enum<DeckType>("munchkin_deck_type",
+        {
+            {"dungeon", DeckType::dungeon},
+            {"treasure", DeckType::treasure},
+            {"null", DeckType::null}
+        });
+
+    lua.new_usertype<CardDef>("munchkin_card_def",
+        "name", &CardDef::name,
+        "description", &CardDef::description,
+        "category", &CardDef::category,
+        "play_stages", &CardDef::play_stages
+        );
+
     lua.new_usertype<Card>("munchkin_card",
         "get_id", &Card::get_id,
+        "get_def", &Card::get_def,
         "visibility", &Card::visibility,
-        "location", &Card::location,
+        "get_location", &Card::get_location,
+        "move_to", &Card::move_to,
         "owner_id", &Card::owner_id,
-        sol::meta_function::index, &Card::get_data_variable);
+        sol::meta_function::index, &Card::get_data_variable,
+        sol::meta_function::new_index, &Card::set_data_variable);
+
     lua.new_usertype<CardPtr>("munchkin_card_ptr",
         "id", &CardPtr::card_id,
         "get", &CardPtr::get);
@@ -140,20 +163,20 @@ int State::get_ticks() const
 
 void State::give_treasure(Player& player)
 {
-    player.hand.emplace_back(treasure_deck.front());
-    treasure_deck.front()->location = Card::CardLocation::player_hand;
-    treasure_deck.front()->owner_id = player.id;
-    treasure_deck.front()->visibility = Card::CardVisibility::front_visible_to_owner;
-    treasure_deck.pop();
+    if (treasure_deck.size() == 0)
+        return;
+    CardPtr ptr = treasure_deck.back();
+    ptr->move_to(Card::CardLocation::player_hand, player.id);
+    ptr->visibility = Card::CardVisibility::front_visible_to_owner;
 }
 
 void State::give_dungeon(Player& player)
 {
-    player.hand.emplace_back(dungeon_deck.front());
-    dungeon_deck.front()->location = Card::CardLocation::player_hand;
-    dungeon_deck.front()->owner_id = player.id;
-    dungeon_deck.front()->visibility = Card::CardVisibility::front_visible_to_owner;
-    dungeon_deck.pop();
+    if (dungeon_deck.size() == 0)
+        return;
+    CardPtr ptr = dungeon_deck.back();
+    ptr->move_to(Card::CardLocation::player_hand, player.id);
+    ptr->visibility = Card::CardVisibility::front_visible_to_owner;
 }
 
 void State::start_battle()
@@ -161,7 +184,7 @@ void State::start_battle()
     if (current_battle)
         return;
 
-    current_battle = Battle(*this, get_current_player());
+    current_battle = std::make_unique<Battle>(*this, get_current_player());
 }
 
 void State::end_current_battle()
@@ -209,6 +232,22 @@ std::vector<CardPtr> State::get_visible_cards()
     return result;
 }
 
+std::string State::get_last_game_stage()
+{
+    return last_game_stage;
+}
+
+std::string State::get_game_stage()
+{
+    return game_stage;
+}
+
+void State::set_game_stage(std::string s)
+{
+    last_game_stage = game_stage;
+    game_stage = s;
+}
+
 void State::add_cardpack(std::string path)
 {
     std::vector<CardDef> new_carddefs = load_cards(path, lua);
@@ -222,13 +261,11 @@ Card& State::add_card(CardDef& def)
     Card& result = all_cards.emplace_back(std::move(card));
     switch (def.category) {
         case DeckType::dungeon:
-            dungeon_deck.push(result);
-            result.location = Card::CardLocation::dungeon_deck;
+            result.move_to(Card::CardLocation::dungeon_deck);
             break;
 
         case DeckType::treasure:
-            treasure_deck.push(result);
-            result.location = Card::CardLocation::treasure_deck;
+            result.move_to(Card::CardLocation::treasure_deck);
             break;
 
         default: break;
@@ -239,6 +276,10 @@ Card& State::add_card(CardDef& def)
 
 size_t State::get_player_count() const {
     return player_count;
+}
+
+void State::add_coroutine(sol::function coro) {
+    active_coroutines.emplace_back(coro);
 }
 
 }

@@ -23,9 +23,13 @@ struct Battle {
 	// to keep track of each card's individual power.
 	std::unordered_map<CardPtr, int> played_cards;
 
+	// API Functions
+	// TODO: Change to CardPtr instead of ID
 	void add_card(int id);
 	void remove_card(int id);
 	void modify_card(int id, int power);
+	int get_card_power(CardPtr);
+	std::vector<CardPtr> get_cards_played();
 
 	// The offset for the total monsters' power. Can be negative.
 	int monster_power_offset;
