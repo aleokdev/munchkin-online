@@ -37,7 +37,6 @@ public:
 
     ~Card() = default;
 
-    CardDef& get_def() { return def; }
     CardDef const& get_def() const { return def; }
 
     template<typename... Args>

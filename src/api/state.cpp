@@ -123,7 +123,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
     lua.new_usertype<Card>("munchkin_card",
         "get_id", &Card::get_id,
-        "get_def", &Card::api_get_def,
+        "get_def", &Card::get_def,
         "visibility", &Card::visibility,
         "get_location", &Card::get_location,
         "move_to", &Card::move_to,
