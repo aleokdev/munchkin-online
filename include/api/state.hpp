@@ -54,7 +54,11 @@ public:
     sol::state lua;
     sol::table game_api;
     bool should_borrow_facing_up;
-    std::string game_stage;
+
+    std::string get_last_game_stage();
+    std::string get_game_stage();
+    void set_game_stage(std::string);
+
     size_t turn_number = 1;
     size_t tick = 0;
 
@@ -101,6 +105,10 @@ public:
 
     // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
     std::optional<Battle> current_battle;
+
+private:
+    std::string last_game_stage;
+    std::string game_stage;
 };
 
 }

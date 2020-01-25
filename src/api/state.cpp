@@ -30,7 +30,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",
         "last_event", &State::last_event,
         "get_ticks", &State::get_ticks,
-        "stage", &State::game_stage,
+        "stage", sol::property(&State::get_game_stage, &State::set_game_stage),
         "turn_number", &State::turn_number,
 
         "give_treasure", &State::give_treasure,
@@ -209,6 +209,22 @@ std::vector<CardPtr> State::get_visible_cards()
     }
 
     return result;
+}
+
+std::string State::get_last_game_stage()
+{
+    return last_game_stage;
+}
+
+std::string State::get_game_stage()
+{
+    return game_stage;
+}
+
+void State::set_game_stage(std::string s)
+{
+    last_game_stage = game_stage;
+    game_stage = s;
 }
 
 void State::add_cardpack(std::string path)

@@ -169,7 +169,7 @@ void StateDebugger::render() {
 			ImGui::Text("Current user playing: %zu", game->state.current_player_id);
 			ImGui::Text("Number of active coroutines: %zu", game->state.active_coroutines.size());
 			ImGui::Text("Should borrow facing up: %s", game->state.should_borrow_facing_up ? "true" : "false");
-			ImGui::Text("Game stage: %s", game->state.game_stage.c_str());
+			ImGui::Text("Game stage: %s", game->state.get_game_stage().c_str());
 			ImGui::TreePop();
 		}
 
