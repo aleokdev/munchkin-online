@@ -26,7 +26,8 @@ void InputBinder::tick() {
 			sprite.is_being_hovered = true;
 			if (input::has_mousebutton_been_clicked(input::MouseButton::left))
 			{
-				game->push_event(FlowEvent{ FlowEvent::EventType::card_clicked, sprite_card, game->local_player_id });				
+				game->push_event(FlowEvent{ FlowEvent::EventType::card_clicked, sprite_card, game->local_player_id });		
+				break;
 			}
 		}
 		else
