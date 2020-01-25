@@ -21,6 +21,24 @@ local function wait_for_ticks_or_event(ev, ticks)
 	return game:get_ticks() >= (game:get_ticks() + ticks)
 end
 
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Returns true if the event given is authorized (Is in its play stages and involves a player's card)
+local function is_playermove_allowed(event)
+	return event.card_involved ~= nil
+	and event.card_involved:get():get_location() == card_location.player_hand
+	and event.card_involved:get().owner_id == game:get_current_player().id
+	and has_value(event.card_involved:get():get_def().play_stages, game.stage)
+end
+
 local function stage_equip_stuff()
 	repeat wait_for_event(event_type.card_clicked)
 	until game.last_event.card_involved:get():get_location() == card_location.dungeon_deck
@@ -56,8 +74,8 @@ local function stage_fight_monster()
 		coroutine.yield()
 		if game.last_event.type == event_type.card_clicked then
 			-- Calculate if the card clicked can be played or not
-			local c = game.last_event.card_involved:get()
-			if c:get_location() == card_location.player_hand then -- TODO: Check for allowed play stages
+			if is_playermove_allowed(game.last_event) then
+				local c = game.last_event.card_involved:get()
 				c["on_play"](c)
 			end
 		end
