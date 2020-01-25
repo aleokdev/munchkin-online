@@ -1,10 +1,21 @@
 local card = {}
 
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
 function card.on_play(self)
-    print("on_play started!")
     local function selection_filter(card)
-        local is_present_in_battle = game.current_battle:get_cards_played()[card] ~= nil
-        if not is_present_in_battle then return false end
+        local cards_played = game.current_battle:get_cards_played()
+        print(#cards_played)
+        local is_present_in_battle = has_value(cards_played, card)
+        if not is_present_in_battle then print("not present in battle") return false end
 
         local is_monster = game.current_battle:get_card_power(card) > 0
         return is_monster
