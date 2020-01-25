@@ -24,7 +24,7 @@ struct Battle {
 	std::unordered_map<CardPtr, int> played_cards;
 
 	// API Functions
-	// TODO: Change to CardPtr instead of ID
+	// @todo: Change to CardPtr instead of ID
 	void add_card(int id);
 	void remove_card(int id);
 	void modify_card(int id, int power);
