@@ -18,9 +18,9 @@ namespace card_sprite {
 	inline static constexpr float movement_slowness = 16;
 	inline static constexpr float rotation_slowness = 16;
 	inline static constexpr float flip_slowness = 16;
-	inline static constexpr float scale_slowness = 16;
+	inline static constexpr float scale_slowness = 8;
 	inline static constexpr float texture_scale = 0.2f;
-	inline static constexpr float texture_hovered_scale = 0.25f;
+	inline static constexpr float texture_hovered_scale = 0.22f;
 	inline static constexpr float texture_width = 454;
 	inline static constexpr float texture_height = 704;
 }
