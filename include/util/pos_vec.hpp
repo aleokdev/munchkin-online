@@ -138,8 +138,8 @@ inline Vec2D operator op (Vec2D lhs, const Vec2D& rhs) {\
 		inline static constexpr Vec2D down = Vec2D{ 0, 1 };
 		inline static constexpr Vec2D y_axis = Vec2D{ 0, 1 };
 		inline static constexpr Vec2D x_axis = Vec2D{ 1, 0 };
-		inline static constexpr Vec2D left = Vec2D{ 0, -1 };
-		inline static constexpr Vec2D right = Vec2D{ 0, 1 };
+		inline static constexpr Vec2D left = Vec2D{ -1, 0 };
+		inline static constexpr Vec2D right = Vec2D{ 1, 0 };
 		inline static constexpr Vec2D zero = Vec2D{ 0, 0 };
 	}
 
