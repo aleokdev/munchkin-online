@@ -26,32 +26,7 @@ void InputBinder::tick() {
 			sprite.is_being_hovered = true;
 			if (input::has_mousebutton_been_clicked(input::MouseButton::left))
 			{
-				switch (sprite_card.get_location())
-				{
-				case(Card::CardLocation::dungeon_deck):
-					game->push_event(FlowEvent{ FlowEvent::EventType::card_clicked, sprite_card, game->local_player_id });
-					break;
-
-				case(Card::CardLocation::player_hand):
-				{
-					// Do not allow interacting with card if it is not owned by the local player or it is not on an allowed play stage
-					if (game->local_player_id != sprite_card.owner_id ||
-						std::find(sprite_card.get_def().play_stages.begin(), sprite_card.get_def().play_stages.end(), game->state.get_game_stage()) == sprite_card.get_def().play_stages.end())
-						break;
-
-					// TODO: Check for current stage, current player and most importantly: PUSH THIS TO ACTIVE_COROUTINES (doesn't work right now for some reason)
-					sol::object on_play = sprite_card.get_data_variable("on_play");
-					if (on_play == sol::lua_nil)
-						break;
-					on_play.as<sol::function>()();
-					sprite_card.move_to(sprite_card.get_def().category == DeckType::dungeon ? Card::CardLocation::dungeon_discard_deck : Card::CardLocation::treasure_discard_deck);
-					
-					break;
-				}
-
-				default: break;
-				}
-				
+				game->push_event(FlowEvent{ FlowEvent::EventType::card_clicked, sprite_card, game->local_player_id });				
 			}
 		}
 		else

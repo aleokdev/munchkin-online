@@ -49,6 +49,10 @@ public:
         return data[name];
     }
 
+    void set_data_variable(std::string key, sol::object obj) {
+        data[key] = obj;
+    }
+
     size_t get_id() const {
         return id;
     }

@@ -39,4 +39,15 @@ namespace munchkin {
 	void Battle::modify_card(int id, int power) {
 		played_cards[CardPtr(*state, id)] += power;
 	}
+	int Battle::get_card_power(CardPtr cardptr)
+	{
+		return played_cards[cardptr];
+	}
+	std::vector<CardPtr> Battle::get_cards_played()
+	{
+		std::vector<CardPtr> ret;
+		for (auto& [card, power] : played_cards)
+			ret.emplace_back(card);
+		return ret;
+	}
 }

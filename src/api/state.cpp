@@ -33,6 +33,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "get_ticks", &State::get_ticks,
         "stage", sol::property(&State::get_game_stage, &State::set_game_stage),
         "turn_number", &State::turn_number,
+        "add_coroutine", &State::add_coroutine,
 
         "give_treasure", &State::give_treasure,
         "give_dungeon", &State::give_dungeon,
@@ -48,6 +49,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "set_current_player", &State::set_current_player,
         // next_player_turn defined in api_wrapper
         "get_visible_cards", &State::get_visible_cards,
+        "all_cards", &State::all_cards,
 
         "get_dungeon_deck_front", &State::get_dungeon_deck_front,
         "get_dungeon_deck_size", &State::get_dungeon_deck_size,
@@ -83,7 +85,8 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "get_total_monster_power", &Battle::get_total_monster_power,
         "add_card", &Battle::add_card,
         "remove_card", &Battle::remove_card,
-        "modify_card", &Battle::modify_card
+        "modify_card", &Battle::modify_card,
+        "get_cards_played", &Battle::get_cards_played
     );
 
     lua.new_enum<Card::CardVisibility>("card_visibility",
@@ -109,7 +112,8 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "get_location", &Card::get_location,
         "move_to", &Card::move_to,
         "owner_id", &Card::owner_id,
-        sol::meta_function::index, &Card::get_data_variable);
+        sol::meta_function::index, &Card::get_data_variable,
+        sol::meta_function::new_index, &Card::set_data_variable);
 
     lua.new_usertype<CardPtr>("munchkin_card_ptr",
         "id", &CardPtr::card_id,
@@ -256,6 +260,10 @@ Card& State::add_card(CardDef& def)
 
 size_t State::get_player_count() const {
     return player_count;
+}
+
+void State::add_coroutine(sol::function coro) {
+    active_coroutines.emplace_back(coro);
 }
 
 }

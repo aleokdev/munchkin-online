@@ -51,7 +51,17 @@ local function stage_equip_stuff()
 end
 
 local function stage_fight_monster()
-	wait_for_event(event_type.clicked_stop_battle_button)
+	print("stage_fight_monster")
+	repeat
+		coroutine.yield()
+		if game.last_event.type == event_type.card_clicked then
+			-- Calculate if the card clicked can be played or not
+			local c = game.last_event.card_involved:get()
+			if c:get_location() == card_location.player_hand then -- TODO: Check for allowed play stages
+				c["on_play"](c)
+			end
+		end
+	until false -- Replace with <when player wants to end battle>
 		
 	local ticks_to_wait = 2.6 * 60 -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
 

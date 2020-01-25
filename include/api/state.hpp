@@ -38,6 +38,7 @@ public:
     // More information in scripting_api.md
 
     int get_ticks() const;
+    void add_coroutine(sol::function);
 
     void give_treasure(Player& player);
     void give_dungeon(Player& player);
