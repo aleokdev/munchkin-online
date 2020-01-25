@@ -126,7 +126,10 @@ void CardSprite::draw(SpriteRenderer& spr)
     current_pos += (target_pos - current_pos) / movement_slowness;
     current_rotation += (target_rotation - current_rotation) / rotation_slowness;
     const bool is_card_visible = card->visibility == Card::CardVisibility::front_visible || (card->visibility == Card::CardVisibility::front_visible_to_owner && card->owner_id == game->local_player_id);
-    current_size += math::vectors::x_axis * ((is_card_visible ? (-texture_width * texture_scale) : (texture_width * texture_scale)) - current_size.x) / flip_slowness;
+    
+    current_size += math::vectors::x_axis * ((is_card_visible ? -texture_width : texture_width) - current_size.x) / flip_slowness;
+    current_scale += ((is_being_hovered? texture_hovered_scale : texture_scale) - current_scale) / scale_slowness;
+
 
     // Set draw data
     if (current_size.x > 0)
@@ -134,7 +137,7 @@ void CardSprite::draw(SpriteRenderer& spr)
     else
         spr.set_texture(front_texture);
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
-    spr.set_scale(glm::vec2(std::abs(current_size.x), current_size.y));
+    spr.set_scale(glm::vec2(std::abs(current_size.x) * current_scale, current_size.y * current_scale));
     spr.set_rotation(current_rotation);
     if (is_being_hovered)
         spr.set_color(1.1f, 1.1f, 1.1f, 1);
@@ -144,7 +147,8 @@ void CardSprite::draw(SpriteRenderer& spr)
 
 math::Rect2D CardSprite::get_rect()
 {
-    return math::Rect2D{ current_pos - current_size.abs()/2.f, current_size.abs() };
+    math::Vec2D rect_size = current_size * texture_scale;
+    return math::Rect2D{ current_pos - rect_size.abs()/2.f, rect_size.abs() };
 }
 
 }
