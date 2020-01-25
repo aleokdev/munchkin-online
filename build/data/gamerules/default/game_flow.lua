@@ -55,11 +55,7 @@ local function main()
 		
 		local ticks_to_wait = 2.6 * 60 -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
 
-		::wait_again::
-		if not wait_for_ticks_or_event(event_type.card_played, ticks_to_wait) then
-			-- Some player added another card to the monster or did something, wait again.
-			goto wait_again
-		end
+		while wait_for_ticks_or_event(event_type.card_played, ticks_to_wait) do end
 
 		-- People have stopped playing cards, so we can continue.
 		-- Check if the user(s) have won the battle.
