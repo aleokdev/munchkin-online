@@ -18,13 +18,14 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
     lua.new_enum<FlowEvent::EventType>("event_type",
         { {"tick", FlowEvent::EventType::tick},
-        {"clicked_dungeon_deck", FlowEvent::EventType::clicked_dungeon_deck},
         {"card_discarded", FlowEvent::EventType::card_discarded},
-        {"card_played", FlowEvent::EventType::card_played} });
+        {"card_clicked", FlowEvent::EventType::card_clicked} });
 
     // register types in lua api
     lua.new_usertype<FlowEvent>("flow_event",
-        "type", &FlowEvent::type);
+        "type", &FlowEvent::type,
+        "card_involved", &FlowEvent::card_involved,
+        "player_involved", &FlowEvent::player_involved);
 
     // TODO: Rename to munchkin_game OR rename game to state
     sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",

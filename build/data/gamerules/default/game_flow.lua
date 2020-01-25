@@ -22,7 +22,8 @@ local function wait_for_ticks_or_event(ev, ticks)
 end
 
 local function stage_equip_stuff()
-	wait_for_event(event_type.clicked_dungeon_deck)
+	repeat wait_for_event(event_type.card_clicked)
+	until game.last_event.card_involved:get():get_location() == card_location.dungeon_deck
 		
 	if game:get_dungeon_deck_size() == 0 then
 		print("Out of cards to draw!")
@@ -68,13 +69,12 @@ local function stage_fight_monster()
 end
 
 local function stage_decide_nomonster()
-	print("ok")
 	while true do
 		if game.current_battle ~= nil then
 			-- User decided to play a monster of their own
 			game.stage = "FIGHT_MONSTER"
 		end
-		if game.last_event.type == event_type.clicked_dungeon_deck then
+		if game.last_event.type == event_type.card_clicked and game.last_event.card_involved:get():get_location() == card_location.dungeon_deck then
 			-- User decided to loot the room
 			game:give_dungeon(game:get_current_player())
 
@@ -84,7 +84,6 @@ local function stage_decide_nomonster()
 
 		coroutine.yield()
 	end
-	print("aight im outta here")
 end
 
 local function stage_get_treasure()
@@ -125,6 +124,7 @@ local function main()
 	end
 
 	while true do
+		print("Stage: " .. game.stage)
 		stages[game.stage]()
 	end
 end

@@ -18,12 +18,16 @@
 namespace munchkin {
 struct FlowEvent {
     enum class EventType {
+        // Pushed at the end of every tick
         tick,
-        clicked_dungeon_deck,
+        // Pushed when any card is discarded
         card_discarded,
-        card_played
+        // Pushed when any card is clicked
+        card_clicked
     };
     EventType type;
+    std::optional<CardPtr> card_involved;
+    std::optional<size_t> player_involved;
 };
 
 class State {

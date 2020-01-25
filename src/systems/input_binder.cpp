@@ -29,7 +29,7 @@ void InputBinder::tick() {
 				switch (sprite_card.get_location())
 				{
 				case(Card::CardLocation::dungeon_deck):
-					game->push_event(FlowEvent{ FlowEvent::EventType::clicked_dungeon_deck });
+					game->push_event(FlowEvent{ FlowEvent::EventType::card_clicked, sprite_card, game->local_player_id });
 					break;
 
 				case(Card::CardLocation::player_hand):
