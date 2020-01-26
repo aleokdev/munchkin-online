@@ -9,6 +9,10 @@
 
 namespace munchkin {
 
+namespace renderer {
+inline static constexpr float table_radius = 700;
+}
+
 class Game {
 public:
     Game(size_t player_count,

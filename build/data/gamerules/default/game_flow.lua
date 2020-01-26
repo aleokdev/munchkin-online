@@ -31,54 +31,57 @@ local function has_value (tab, val)
     return false
 end
 
-local function discard(cardptr)
-	cardptr:get().visibility = card_visibility.front_visible
-	if cardptr:get():get_def().category == munchkin_deck_type.dungeon then
-		cardptr:get():move_to(card_location.dungeon_discard_deck, 0)
-		print("moved to dungeon discard deck, location now: " .. cardptr:get():get_location())
+local function discard(card)
+	card.visibility = card_visibility.front_visible
+	if card:get_def().category == munchkin_deck_type.dungeon then
+		card:move_to(card_location.dungeon_discard_deck, 0)
+		print("moved to dungeon discard deck, location now: " .. card:get_location())
 	else
-		cardptr:get():move_to(card_location.treasure_discard_deck, 0)
-		print("moved to treasure discard deck, location now: " .. cardptr:get():get_location())
+		card:move_to(card_location.treasure_discard_deck, 0)
+		print("moved to treasure discard deck, location now: " .. card:get_location())
 	end
 end
 
 -- Returns true if the event given is authorized (Is in its play stages and involves a player's card)
 local function is_playermove_allowed(event)
-print("Event type: " .. tostring(event.type))
-print("Card involved: " .. tostring(event.card_involved))
-print("Card owner: ".. tostring(event.card_involved:get().owner_id))
-print("Player ID involved: " .. tostring(event.player_id_involved))
 	return event.card_involved ~= nil
-	and event.card_involved:get():get_location() == card_location.player_hand
-	and event.card_involved:get().owner_id == event.player_id_involved
-	and has_value(event.card_involved:get():get_def().play_stages, game.stage)
+	and event.card_involved:get_location() == card_location.player_hand
+	and event.card_involved.owner_id == event.player_id_involved
+	and has_value(event.card_involved:get_def().play_stages, game.stage)
 end
+
+------------
+-- STAGES --
+------------
 
 local function stage_equip_stuff()
 	repeat wait_for_event(event_type.card_clicked)
-	until game.last_event.card_involved:get():get_location() == card_location.dungeon_deck
+		if is_playermove_allowed(game.last_event) then
+			game.last_event.card_involved["on_play"](game.last_event.card_involved)
+		end
+	until game.last_event.card_involved:get_location() == card_location.dungeon_deck
 		
 	if game:get_dungeon_deck_size() == 0 then
 		print("Out of cards to draw!")
 		return -- end the game
 	end
 
-	card_ptr = game:get_dungeon_deck_front()
-	card_ptr:get():move_to(card_location.table_center, 0)
-	card_ptr:get().visibility = card_visibility.front_visible
-	on_reveal = card_ptr:get()["on_reveal"]
+	card = game:get_dungeon_deck_front()
+	card:move_to(card_location.table_center, 0)
+	card.visibility = card_visibility.front_visible
+	on_reveal = card["on_reveal"]
 
 	if on_reveal ~= nil then
 		print("Found on_reveal...")
-		on_reveal(card_ptr)
+		on_reveal(card)
 	end
 		
 	if game.current_battle ~= nil then
 		game.stage = "FIGHT_MONSTER"
 	else
 		wait_for_ticks(120) -- Wait for a while before giving the card to the player
-		card_ptr:get():move_to(card_location.player_hand, game:get_current_player().id)
-		card_ptr:get().visibility = card_visibility.front_visible_to_owner
+		card:move_to(card_location.player_hand, game:get_current_player().id)
+		card.visibility = card_visibility.front_visible_to_owner
 		game.stage = "DECIDE_NOMONSTER"
 	end
 end
@@ -91,7 +94,7 @@ local function stage_fight_monster()
 			print("clicked!")
 			-- Calculate if the card clicked can be played or not
 			if is_playermove_allowed(game.last_event) then
-				local c = game.last_event.card_involved:get()
+				local c = game.last_event.card_involved
 				c["on_play"](c)
 				if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
 					break
@@ -134,7 +137,7 @@ local function stage_decide_nomonster()
 			-- User decided to play a monster of their own
 			game.stage = "FIGHT_MONSTER"
 		end
-		if game.last_event.type == event_type.card_clicked and game.last_event.card_involved:get():get_location() == card_location.dungeon_deck then
+		if game.last_event.type == event_type.card_clicked and game.last_event.card_involved:get_location() == card_location.dungeon_deck then
 			-- User decided to loot the room
 			game:give_dungeon(game:get_current_player())
 
@@ -153,9 +156,9 @@ local function stage_get_treasure()
 	end
 
 	-- Discard all cards on battle
-	for k, card_ptr in pairs(game.current_battle:get_cards_played()) do
-		print(card_ptr:get().id)
-		discard(card_ptr)
+	for k, card in pairs(game.current_battle:get_cards_played()) do
+		print(card.id)
+		discard(card)
 	end
 	-- End the battle
 	game:end_current_battle()
@@ -166,8 +169,10 @@ end
 local function stage_charity()
 	while #game:get_current_player().hand > game:get_current_player().hand_max_cards do
 		wait_for_event(event_type.card_clicked)
-		if game.last_event.player_id_involved == game:get_current_player().id and game.last_event.card_involved:get().owner_id == game:get_current_player().id then
-			discard(game.last_event.card_involved)
+		if  game.last_event.card_involved:get_location() == card_location.player_hand and
+			game.last_event.player_id_involved == game:get_current_player().id and
+			game.last_event.card_involved.owner_id == game:get_current_player().id then
+				discard(game.last_event.card_involved)
 		end
 	end
 	game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"

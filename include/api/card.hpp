@@ -63,6 +63,7 @@ public:
 
     void move_to(CardLocation, int owner_id = 0);
     CardLocation get_location();
+    bool is_on_current_battle();
     bool is_being_owned_by_player() {
         return (int)location &
                ((int)CardLocation::player_equipped | (int)CardLocation::player_hand);
@@ -96,21 +97,30 @@ private:
 // CardPtrs refer to the ID of a card. This is basically a safer version of Card*, because addresses
 // aren't involved.
 struct CardPtr {
-    CardPtr(Card& card);
-    CardPtr(State& _state, size_t cardID);
+    State* state;
+    size_t card_id;
+
+    CardPtr(nullptr_t) : state(nullptr), card_id(0){};
+    CardPtr(Card& card) : state(&card.get_state()), card_id(card.get_id()){};
+    CardPtr(State& _state, size_t cardID) : state(&_state), card_id(cardID){};
     CardPtr(CardPtr&) = default;
     CardPtr(CardPtr const&) = default;
     CardPtr& operator=(CardPtr const&) = default;
     CardPtr& operator=(CardPtr&&) = default;
+    CardPtr& operator=(nullptr_t) {
+        state = nullptr;
+        return *this;
+    }
 
-    operator Card*() const;
+    void reset() { state = nullptr; }
+
     Card* operator->() const;
-    Card& get() { return **this; }
+    Card& operator*() const { return *this->operator->(); }
+    Card* get() const { return this->operator->(); }
 
-    State* state;
-    size_t card_id;
-
-    bool operator==(CardPtr const& b) { return card_id == b.card_id; }
+    operator bool() const { return *this == nullptr; }
+    bool operator==(CardPtr const& b) const { return card_id == b.card_id; }
+    bool operator==(nullptr_t) const { return state == nullptr; }
 };
 
 } // namespace munchkin
@@ -118,9 +128,20 @@ struct CardPtr {
 namespace std {
 template<> struct hash<munchkin::CardPtr> {
     size_t operator()(const munchkin::CardPtr& cardptr) const {
-        return reinterpret_cast<std::uintptr_t>((munchkin::Card*)cardptr);
+        return reinterpret_cast<std::uintptr_t>(cardptr.get());
     }
 };
 } // namespace std
+
+namespace sol {
+template<> struct unique_usertype_traits<munchkin::CardPtr> {
+    typedef munchkin::Card type;
+    typedef munchkin::CardPtr actual_type;
+    static const bool value = true;
+
+    static bool is_null(const actual_type& ptr) { return ptr == nullptr; }
+    static type* get(const actual_type& ptr) { return ptr.get(); }
+};
+} // namespace sol
 
 #endif

@@ -53,6 +53,7 @@ public:
     // next_player_turn() defined in api_wrapper.lua
 
     std::vector<CardPtr> get_visible_cards();
+    std::vector<CardPtr> get_all_cards();
 
     // data
 

@@ -48,7 +48,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "set_current_player", &State::set_current_player,
         // next_player_turn defined in api_wrapper
         "get_visible_cards", &State::get_visible_cards,
-        "all_cards", &State::all_cards,
+        "all_cards", sol::readonly_property(&State::get_all_cards),
 
         "get_dungeon_deck_front", &State::get_dungeon_deck_front,
         "get_dungeon_deck_size", &State::get_dungeon_deck_size,
@@ -125,7 +125,6 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         sol::meta_function::index, &Card::get_data_variable,
         sol::meta_function::new_index, &Card::set_data_variable);
 
-    lua.new_usertype<CardPtr>("munchkin_card_ptr", "id", &CardPtr::card_id, "get", &CardPtr::get);
     /* clang-format on */
 
     lua.open_libraries(sol::lib::coroutine);
@@ -202,6 +201,12 @@ std::vector<CardPtr> State::get_visible_cards() {
     }
 
     return result;
+}
+
+std::vector<CardPtr> State::get_all_cards() {
+    std::vector<CardPtr> cards;
+    for (auto& card : all_cards) cards.emplace_back(&card);
+    return cards;
 }
 
 std::string State::get_last_game_stage() { return last_game_stage; }

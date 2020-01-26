@@ -23,16 +23,16 @@ int Battle::get_total_monster_power() {
     return ret;
 }
 
-void Battle::add_card(int id) {
-    CardPtr(*state, id)->move_to(Card::CardLocation::table_center);
-    played_cards[CardPtr(*state, id)] = 0;
+void Battle::add_card(CardPtr ptr) {
+    ptr->move_to(Card::CardLocation::table_center);
+    played_cards[ptr] = 0;
 }
 
-void Battle::remove_card(int id) { played_cards.erase(CardPtr(*state, id)); }
+void Battle::remove_card(CardPtr ptr) { played_cards.erase(ptr); }
 
-void Battle::modify_card(int id, int power) { played_cards[CardPtr(*state, id)] += power; }
+void Battle::modify_card(CardPtr ptr, int power) { played_cards[ptr] += power; }
 
-int Battle::get_card_power(CardPtr cardptr) { return played_cards[cardptr]; }
+int Battle::get_card_power(CardPtr ptr) { return played_cards[ptr]; }
 
 std::vector<CardPtr> Battle::get_cards_played() {
     std::vector<CardPtr> ret;

@@ -12,8 +12,8 @@ function card.on_reveal(self)
 	end
 	print("power = " .. tostring(card.properties.power))
 	game:start_battle()
-	game.current_battle:add_card(self.id)
-	game.current_battle:modify_card(self.id, card.properties.power)
+	game.current_battle:add_card(self)
+	game.current_battle:modify_card(self, card.properties.power)
 end
 
 function card.battle_end(self)
