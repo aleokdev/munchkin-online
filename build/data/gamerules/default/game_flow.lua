@@ -44,19 +44,21 @@ end
 
 -- Returns true if the event given is authorized (Is in its play stages and involves a player's card)
 local function is_playermove_allowed(event)
-print("Event type: " .. tostring(event.type))
-print("Card involved: " .. tostring(event.card_involved))
-print("Card owner: ".. tostring(event.card_involved.owner_id))
-print("Player ID involved: " .. tostring(event.player_id_involved))
 	return event.card_involved ~= nil
 	and event.card_involved:get_location() == card_location.player_hand
 	and event.card_involved.owner_id == event.player_id_involved
 	and has_value(event.card_involved:get_def().play_stages, game.stage)
 end
 
+------------
+-- STAGES --
+------------
+
 local function stage_equip_stuff()
 	repeat wait_for_event(event_type.card_clicked)
-		print(game.last_event.card_involved:get_location())
+		if is_playermove_allowed(game.last_event) then
+			game.last_event.card_involved["on_play"](game.last_event.card_involved)
+		end
 	until game.last_event.card_involved:get_location() == card_location.dungeon_deck
 		
 	if game:get_dungeon_deck_size() == 0 then
