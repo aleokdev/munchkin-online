@@ -1,9 +1,9 @@
 #ifndef MUNCHKIN_FONT_HPP_
 #define MUNCHKIN_FONT_HPP_
 
+#include <filesystem>
 #include <glm/glm.hpp>
 #include <unordered_map>
-#include <filesystem>
 
 namespace munchkin {
 namespace renderer {
@@ -31,7 +31,7 @@ public:
     void swap(Font& other);
 };
 
-}
-}
+} // namespace renderer
+} // namespace munchkin
 
 #endif

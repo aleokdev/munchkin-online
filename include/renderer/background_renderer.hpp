@@ -2,7 +2,6 @@
 #define MUNCHKIN_RENDERER_BACKGROUND_RENDERER_HPP_
 
 namespace munchkin {
-
 namespace renderer {
 
 struct Background {
@@ -13,6 +12,7 @@ struct Background {
     unsigned int shader;
 
     float scroll_speed = 0;
+
 private:
     float scroll = 0;
 
@@ -28,9 +28,7 @@ void render_background(Background const& bg);
 
 void free_background(Background& bg);
 
-}
-
-}
-
+} // namespace renderer
+} // namespace munchkin
 
 #endif

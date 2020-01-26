@@ -18,6 +18,6 @@ public:
     size_t hand_max_cards;
 };
 
-}
+} // namespace munchkin
 
 #endif

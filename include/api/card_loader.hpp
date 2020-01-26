@@ -4,14 +4,13 @@
 #include "carddef.hpp"
 
 #include <sol/sol.hpp>
-#include <vector>
 #include <string_view>
+#include <vector>
 
 namespace munchkin {
 
 std::vector<CardDef> load_cards(std::string_view path, sol::state& lua);
 
 }
-
 
 #endif

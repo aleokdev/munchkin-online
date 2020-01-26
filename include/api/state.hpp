@@ -1,16 +1,16 @@
 #ifndef MUNCHKIN_STATE_HPP_
 #define MUNCHKIN_STATE_HPP_
 
+#include "gamerules.hpp"
+#include <optional>
+#include <queue>
 #include <sol/sol.hpp>
 #include <string_view>
-#include <queue>
-#include <optional>
-#include "gamerules.hpp"
 
-#include "player.hpp"
-#include "carddef.hpp"
-#include "card.hpp"
 #include "battle.hpp"
+#include "card.hpp"
+#include "carddef.hpp"
+#include "player.hpp"
 
 #define STATE_API_WRAPPER_FILE_PATH "data/generic/api_wrapper.lua"
 #define STATE_API_RULES_FILE_NAME "rules.lua"
@@ -27,7 +27,7 @@ struct FlowEvent {
     };
     EventType type;
     std::optional<CardPtr> card_involved;
-    std::optional<size_t> player_involved;
+    size_t player_id_involved = 0;
 };
 
 class State {
@@ -67,9 +67,7 @@ public:
     size_t turn_number = 1;
     size_t tick = 0;
 
-    size_t generate_id() {
-        return last_id++;
-    }
+    size_t generate_id() { return last_id++; }
     size_t last_id = 0;
 
     std::vector<Player> players;
@@ -108,17 +106,15 @@ public:
 
     size_t default_hand_max_cards;
 
-    // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
-    std::unique_ptr<Battle> current_battle;
+    std::shared_ptr<Battle> current_battle;
 
-    // @todo FIXME: THIS WILL CRASH IF CURRENT_BATTLE IS NOT SET
-    Battle& get_current_battle() { return *current_battle; }
+    std::shared_ptr<Battle> get_current_battle() { return current_battle; }
 
 private:
     std::string last_game_stage;
     std::string game_stage;
 };
 
-}
+} // namespace munchkin
 
 #endif

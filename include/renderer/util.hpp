@@ -9,8 +9,8 @@ unsigned int load_texture(const char* path);
 
 unsigned int load_shader(const char* vtx_path, const char* frag_path);
 
-}
+} // namespace renderer
 
-}
+} // namespace munchkin
 
 #endif

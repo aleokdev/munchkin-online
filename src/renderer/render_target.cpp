@@ -1,7 +1,7 @@
 #include <renderer/render_target.hpp>
 
-#include <glad/glad.h>
 #include <cassert>
+#include <glad/glad.h>
 #include <utility>
 
 #include <iostream>
@@ -9,7 +9,8 @@
 namespace munchkin::renderer {
 
 RenderTarget::RenderTarget(CreateInfo const& info) {
-    assert(info.width > 0 && info.height > 0 && "RenderTarget::RenderTarget(): Size cannot be zero.");
+    assert(info.width > 0 && info.height > 0 &&
+           "RenderTarget::RenderTarget(): Size cannot be zero.");
 
     width = info.width;
     height = info.height;
@@ -63,7 +64,7 @@ RenderTarget& RenderTarget::operator=(RenderTarget&& rhs) {
     std::swap(rbo, rhs.rbo);
 
     std::swap(width, rhs.width);
-    std::swap(height, rhs.height); 
+    std::swap(height, rhs.height);
 
     return *this;
 }
@@ -74,9 +75,7 @@ RenderTarget::~RenderTarget() {
     }
 }
 
-void RenderTarget::bind(RenderTarget& target) {
-    glBindFramebuffer(GL_FRAMEBUFFER, target.fbo);
-}
+void RenderTarget::bind(RenderTarget& target) { glBindFramebuffer(GL_FRAMEBUFFER, target.fbo); }
 
 bool RenderTarget::valid() const {
     return texture != 0 && fbo != 0 && rbo != 0 && width != 0 && height != 0;
@@ -87,25 +86,15 @@ void RenderTarget::clear(float r, float b, float g, float a, unsigned int flags)
     glClear(flags);
 }
 
-size_t RenderTarget::get_width() const {
-    return width;
-}
+size_t RenderTarget::get_width() const { return width; }
 
-size_t RenderTarget::get_height() const {
-    return height;
-}
+size_t RenderTarget::get_height() const { return height; }
 
-void RenderTarget::resize(size_t w, size_t h) {
-    *this = RenderTarget(CreateInfo{w, h});
-}
+void RenderTarget::resize(size_t w, size_t h) { *this = RenderTarget(CreateInfo{w, h}); }
 
-size_t RenderTarget::handle() {
-    return fbo;
-}
+size_t RenderTarget::handle() { return fbo; }
 
-size_t RenderTarget::texture_handle() {
-    return texture;
-}
+size_t RenderTarget::texture_handle() { return texture; }
 
 void RenderTarget::destroy() {
     assert(valid() && "RenderTarget::destroy() called on invalid render target.");
@@ -118,5 +107,4 @@ void RenderTarget::destroy() {
     height = 0;
 }
 
-
-}
+} // namespace munchkin::renderer

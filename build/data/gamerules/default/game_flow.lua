@@ -31,11 +31,26 @@ local function has_value (tab, val)
     return false
 end
 
+local function discard(cardptr)
+	cardptr:get().visibility = card_visibility.front_visible
+	if cardptr:get():get_def().category == munchkin_deck_type.dungeon then
+		cardptr:get():move_to(card_location.dungeon_discard_deck, 0)
+		print("moved to dungeon discard deck, location now: " .. cardptr:get():get_location())
+	else
+		cardptr:get():move_to(card_location.treasure_discard_deck, 0)
+		print("moved to treasure discard deck, location now: " .. cardptr:get():get_location())
+	end
+end
+
 -- Returns true if the event given is authorized (Is in its play stages and involves a player's card)
 local function is_playermove_allowed(event)
+print("Event type: " .. tostring(event.type))
+print("Card involved: " .. tostring(event.card_involved))
+print("Card owner: ".. tostring(event.card_involved:get().owner_id))
+print("Player ID involved: " .. tostring(event.player_id_involved))
 	return event.card_involved ~= nil
 	and event.card_involved:get():get_location() == card_location.player_hand
-	and event.card_involved:get().owner_id == game:get_current_player().id
+	and event.card_involved:get().owner_id == event.player_id_involved
 	and has_value(event.card_involved:get():get_def().play_stages, game.stage)
 end
 
@@ -70,24 +85,41 @@ end
 
 local function stage_fight_monster()
 	print("stage_fight_monster")
-	repeat
+	while true do
 		coroutine.yield()
 		if game.last_event.type == event_type.card_clicked then
+			print("clicked!")
 			-- Calculate if the card clicked can be played or not
 			if is_playermove_allowed(game.last_event) then
 				local c = game.last_event.card_involved:get()
 				c["on_play"](c)
+				if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
+					break
+				end
+			else
+				print("but the playermove wasn't allowed...")
 			end
 		end
-	until false -- Replace with <when player wants to end battle>
+	end
+	print("Ok, monster should be defeated by now!")
 		
 	local ticks_to_wait = 2.6 * 60 -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
+	local ticks_waited = 0
+	while ticks_waited < ticks_to_wait do
+		coroutine.yield()
 
-	while wait_for_ticks_or_event(event_type.card_played, ticks_to_wait) do end
+		if game.last_event.type == event_type.tick then
+			ticks_waited = ticks_waited + 1
+		elseif game.last_event.type == event_type.card_clicked and is_playermove_allowed(game.last_event) then
+			-- Someone used a card, apply it and wait another 2.6 seconds
+			event_type.card_involved["on_play"](event_type.card_involved)
+			ticks_waited = 0
+		end
+	end
 
 	-- People have stopped playing cards, so we can continue.
 	-- Check if the user(s) have won the battle.
-	if game.current_battle.get_total_player_power() > game.current_battle.get_total_monster_power() then
+	if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
 		-- Players have won, woo!
 		game.stage = "GET_TREASURE"
 	else
@@ -115,18 +147,28 @@ local function stage_decide_nomonster()
 end
 
 local function stage_get_treasure()
-	for i=0, game.current_battle.treasures_to_draw do
-		wait_for_event(event_type.treasure_card_drawn)
+	for i=1, game.current_battle.treasures_to_draw do
+		game:give_treasure(game:get_current_player())
+		wait_for_ticks(10)
 	end
 
-	game.end_current_battle()
+	-- Discard all cards on battle
+	for k, card_ptr in pairs(game.current_battle:get_cards_played()) do
+		print(card_ptr:get().id)
+		discard(card_ptr)
+	end
+	-- End the battle
+	game:end_current_battle()
 
 	game.stage = "CHARITY"
 end
 
 local function stage_charity()
 	while #game:get_current_player().hand > game:get_current_player().hand_max_cards do
-		wait_for_event(event_type.card_discarded)
+		wait_for_event(event_type.card_clicked)
+		if game.last_event.player_id_involved == game:get_current_player().id and game.last_event.card_involved:get().owner_id == game:get_current_player().id then
+			discard(game.last_event.card_involved)
+		end
 	end
 	game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
 	game:next_player_turn()

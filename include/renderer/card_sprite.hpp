@@ -9,66 +9,67 @@
 #include "util/pos_vec.hpp"
 
 namespace munchkin {
-	class Game;
+class Game;
 
 namespace renderer {
 
 namespace internal {
 namespace card_sprite {
-	inline static constexpr float movement_slowness = 16;
-	inline static constexpr float rotation_slowness = 16;
-	inline static constexpr float flip_slowness = 16;
-	inline static constexpr float scale_slowness = 8;
-	inline static constexpr float texture_scale = 0.2f;
-	inline static constexpr float texture_hovered_scale = 0.22f;
-	inline static constexpr float texture_width = 454;
-	inline static constexpr float texture_height = 704;
-}
-}
+inline static constexpr float movement_slowness = 16;
+inline static constexpr float rotation_slowness = 16;
+inline static constexpr float flip_slowness = 16;
+inline static constexpr float scale_slowness = 8;
+inline static constexpr float texture_scale = 0.2f;
+inline static constexpr float texture_hovered_scale = 0.22f;
+inline static constexpr float texture_width = 454;
+inline static constexpr float texture_height = 704;
+} // namespace card_sprite
+} // namespace internal
 
 class SpriteRenderer;
 
 class CardSprite {
 public:
-	CardSprite(Game&, CardPtr);
+    CardSprite(Game&, CardPtr);
 
-	void set_target_pos(math::Vec2D target);
-	math::Vec2D get_current_pos();
-	void instantly_set_pos(math::Vec2D target);
-	void calculate_target_from_location();
+    void set_target_pos(math::Vec2D target);
+    math::Vec2D get_current_pos();
+    void instantly_set_pos(math::Vec2D target);
+    void calculate_target_from_location();
 
-	void draw(SpriteRenderer&);
+    void draw(SpriteRenderer&);
 
-	math::Rect2D get_rect();
+    math::Rect2D get_rect();
 
-	bool is_being_hovered = false;
+    bool is_being_hovered = false;
 
-	CardPtr get_card_ptr() { return card; }
+    CardPtr get_card_ptr() { return card; }
 
 private:
-	Game* const game;
+    Game* const game;
 
-	math::Vec2D target_pos = { 0,0 };
-	math::Vec2D current_pos = { 0,0 };
-	float target_rotation = 0;
-	float current_rotation = 0;
+    math::Vec2D target_pos = {0, 0};
+    math::Vec2D current_pos = {0, 0};
+    float target_rotation = 0;
+    float current_rotation = 0;
 
-	math::Vec2D current_size = { internal::card_sprite::texture_width,
-							     internal::card_sprite::texture_height };
+    math::Vec2D current_size = {internal::card_sprite::texture_width,
+                                internal::card_sprite::texture_height};
 
-	float current_scale = internal::card_sprite::texture_scale;
+    float current_scale = internal::card_sprite::texture_scale;
 
-	CardPtr card;
-	Card::CardLocation last_card_location = Card::CardLocation::invalid;
-	size_t last_cards_in_owner = 0;
+    CardPtr card;
+    Card::CardLocation last_card_location = Card::CardLocation::invalid;
+    size_t last_cards_in_owner = 0;
 
-	// @todo: Back textures are duplicated! Do asset system and assign all textures that point to the same file to the same ID?
-	unsigned int back_texture;
+    // @todo: Back textures are duplicated! Do asset system and assign all textures that point to
+    // the same file to the same ID?
+    unsigned int back_texture;
 
-	unsigned int front_texture;
+    unsigned int front_texture;
 };
 
-}
-}
+} // namespace renderer
+} // namespace munchkin
 
 #endif

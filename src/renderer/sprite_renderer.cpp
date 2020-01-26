@@ -6,25 +6,15 @@
 
 namespace munchkin::renderer {
 
-SpriteRenderer::SpriteRenderer() {
-    setup_for_render();
-}
+SpriteRenderer::SpriteRenderer() { setup_for_render(); }
 
-void SpriteRenderer::set_camera_drag(bool drag) {
-    glUniform1i(1, (int)drag);
-}
+void SpriteRenderer::set_camera_drag(bool drag) { glUniform1i(1, (int)drag); }
 
-void SpriteRenderer::set_position(glm::vec2 pos) {
-    position = glm::vec3(pos, 0);
-}
+void SpriteRenderer::set_position(glm::vec2 pos) { position = glm::vec3(pos, 0); }
 
-void SpriteRenderer::set_scale(glm::vec2 multiplier) {
-    scale = glm::vec3(multiplier, 0);
-}
+void SpriteRenderer::set_scale(glm::vec2 multiplier) { scale = glm::vec3(multiplier, 0); }
 
-void SpriteRenderer::set_rotation(float radians) {
-    rotation = radians;
-}
+void SpriteRenderer::set_rotation(float radians) { rotation = radians; }
 
 void SpriteRenderer::set_texture(unsigned int texture) {
     glActiveTexture(GL_TEXTURE0);
@@ -62,15 +52,9 @@ void SpriteRenderer::deallocate() {
 }
 
 void SpriteRenderer::init() {
-    static float vertices[] = {
-        // positions    texcoords
-        -.5f, -.5f,         0, 0,
-        -.5, .5,          0, 1,
-        .5, -.5,          1, 0,
-        -.5, .5,          0, 1,
-        .5, -.5,          1, 0,
-        .5, .5,           1, 1                
-    };
+    static float vertices[] = {// positions    texcoords
+                               -.5f, -.5f, 0, 0, -.5, .5,  0, 1, .5, -.5, 1, 0,
+                               -.5,  .5,   0, 1, .5,  -.5, 1, 0, .5, .5,  1, 1};
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -103,4 +87,4 @@ void SpriteRenderer::setup_for_render() {
     glBindVertexArray(vao);
 }
 
-}
+} // namespace munchkin::renderer

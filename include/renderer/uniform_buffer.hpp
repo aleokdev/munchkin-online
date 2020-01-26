@@ -26,8 +26,8 @@ private:
     size_t binding = 0;
 };
 
-}
+} // namespace renderer
 
-}
+} // namespace munchkin
 
 #endif
