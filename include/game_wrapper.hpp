@@ -10,6 +10,7 @@
 #include "systems/game_renderer.hpp"
 #include "systems/input_binder.hpp"
 #include "systems/state_debugger.hpp"
+#include "systems/debug_terminal.hpp"
 
 #include <iostream>
 #include <numeric>
@@ -39,6 +40,7 @@ public:
     systems::GameRenderer renderer;
     systems::InputBinder input_binder;
     systems::StateDebugger state_debugger;
+    systems::DebugTerminal debug_terminal;
 
     games::AIManager ai_manager;
 };
