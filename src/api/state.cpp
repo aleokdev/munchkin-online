@@ -21,38 +21,46 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
                                         {"card_clicked", FlowEvent::EventType::card_clicked}});
 
     // register types in lua api
-    lua.new_usertype<FlowEvent>("flow_event", "type", &FlowEvent::type, "card_involved",
-                                &FlowEvent::card_involved, "player_involved",
-                                &FlowEvent::player_involved);
+    lua.new_usertype<FlowEvent>("flow_event",
+        "type", &FlowEvent::type,
+        "card_involved", &FlowEvent::card_involved,
+        "player_involved", &FlowEvent::player_involved);
 
     // @todo: Rename to munchkin_game OR rename game to state
-    sol::usertype<State> state_type = lua.new_usertype<State>(
-        "munchkin_state", "last_event", &State::last_event, "get_ticks", &State::get_ticks, "stage",
-        sol::property(&State::get_game_stage, &State::set_game_stage), "turn_number",
-        &State::turn_number, "add_coroutine", &State::add_coroutine,
+    sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",
+        "last_event", &State::last_event,
+        "get_ticks", &State::get_ticks,
+        "stage", sol::property(&State::get_game_stage, &State::set_game_stage),
+        "turn_number", &State::turn_number,
+        "add_coroutine", &State::add_coroutine,
 
-        "give_treasure", &State::give_treasure, "give_dungeon", &State::give_dungeon,
+        "give_treasure", &State::give_treasure,
+        "give_dungeon", &State::give_dungeon,
         "should_borrow_facing_up", &State::should_borrow_facing_up,
 
-        "start_battle", &State::start_battle, "current_battle",
-        sol::readonly_property(&State::get_current_battle), "end_current_battle",
-        &State::end_current_battle,
+        "start_battle", &State::start_battle,
+        "current_battle", sol::readonly_property(&State::get_current_battle),
+        "end_current_battle", &State::end_current_battle,
 
-        "get_player", &State::get_player, "get_player_count", &State::get_player_count,
-        "get_current_player", &State::get_current_player, "set_current_player",
-        &State::set_current_player,
+        "get_player", &State::get_player,
+        "get_player_count", &State::get_player_count,
+        "get_current_player", &State::get_current_player,
+        "set_current_player", &State::set_current_player,
         // next_player_turn defined in api_wrapper
-        "get_visible_cards", &State::get_visible_cards, "all_cards", &State::all_cards,
+        "get_visible_cards", &State::get_visible_cards,
+        "all_cards", &State::all_cards,
 
-        "get_dungeon_deck_front", &State::get_dungeon_deck_front, "get_dungeon_deck_size",
-        &State::get_dungeon_deck_size, "dungeon_deck_pop", &State::dungeon_deck_pop,
+        "get_dungeon_deck_front", &State::get_dungeon_deck_front,
+        "get_dungeon_deck_size", &State::get_dungeon_deck_size,
+        "dungeon_deck_pop", &State::dungeon_deck_pop,
 
         "get_dungeon_discard_deck_front", &State::get_dungeon_discard_deck_front,
         "get_dungeon_discard_deck_size", &State::get_dungeon_discard_deck_size,
         "dungeon_discard_deck_pop", &State::dungeon_discard_deck_pop,
 
-        "get_treasure_deck_front", &State::get_treasure_deck_front, "get_treasure_deck_size",
-        &State::get_treasure_deck_size, "treasure_deck_pop", &State::treasure_deck_pop,
+        "get_treasure_deck_front", &State::get_treasure_deck_front,
+        "get_treasure_deck_size", &State::get_treasure_deck_size,
+        "treasure_deck_pop", &State::treasure_deck_pop,
 
         "get_treasure_discard_deck_front", &State::get_treasure_discard_deck_front,
         "get_treasure_discard_deck_size", &State::get_treasure_discard_deck_size,
@@ -60,17 +68,23 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
         "default_hand_max_cards", &State::default_hand_max_cards);
 
-    lua.new_usertype<Player>("munchkin_player", "level", &Player::level, "id", &Player::id, "hand",
-                             &Player::hand, "hand_max_cards", &Player::hand_max_cards, "equipped",
-                             &Player::equipped);
+    lua.new_usertype<Player>("munchkin_player",
+        "level", &Player::level,
+        "id", &Player::id,
+        "hand", &Player::hand,
+        "hand_max_cards", &Player::hand_max_cards,
+        "equipped", &Player::equipped);
 
-    lua.new_usertype<Battle>("munchkin_battle", "player_power_offset", &Battle::player_power_offset,
-                             "monster_power_offset", &Battle::monster_power_offset,
-                             "get_total_player_power", &Battle::get_total_player_power,
-                             "get_total_monster_power", &Battle::get_total_monster_power,
-                             "add_card", &Battle::add_card, "remove_card", &Battle::remove_card,
-                             "modify_card", &Battle::modify_card, "get_cards_played",
-                             &Battle::get_cards_played, "get_card_power", &Battle::get_card_power);
+    lua.new_usertype<Battle>("munchkin_battle",
+        "player_power_offset", &Battle::player_power_offset,
+        "monster_power_offset", &Battle::monster_power_offset,
+        "get_total_player_power", &Battle::get_total_player_power,
+        "get_total_monster_power", &Battle::get_total_monster_power,
+        "add_card", &Battle::add_card,
+        "remove_card", &Battle::remove_card,
+        "modify_card", &Battle::modify_card,
+        "get_cards_played", &Battle::get_cards_played,
+        "get_card_power", &Battle::get_card_power);
 
     lua.new_enum<Card::CardVisibility>(
         "card_visibility",
@@ -92,15 +106,21 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
                                                   {"treasure", DeckType::treasure},
                                                   {"null", DeckType::null}});
 
-    lua.new_usertype<CardDef>("munchkin_card_def", "name", &CardDef::name, "description",
-                              &CardDef::description, "category", &CardDef::category, "play_stages",
-                              &CardDef::play_stages);
+    lua.new_usertype<CardDef>("munchkin_card_def",
+        "name", &CardDef::name,
+        "description", &CardDef::description,
+        "category", &CardDef::category,
+        "play_stages", &CardDef::play_stages);
 
-    lua.new_usertype<Card>("munchkin_card", "get_id", &Card::get_id, "get_def", &Card::get_def,
-                           "visibility", &Card::visibility, "get_location", &Card::get_location,
-                           "move_to", &Card::move_to, "owner_id", &Card::owner_id,
-                           sol::meta_function::index, &Card::get_data_variable,
-                           sol::meta_function::new_index, &Card::set_data_variable);
+    lua.new_usertype<Card>("munchkin_card",
+        "get_id", &Card::get_id,
+        "get_def", &Card::get_def,
+        "visibility", &Card::visibility,
+        "get_location", &Card::get_location,
+        "move_to", &Card::move_to,
+        "owner_id", &Card::owner_id,
+        sol::meta_function::index, &Card::get_data_variable,
+        sol::meta_function::new_index, &Card::set_data_variable);
 
     lua.new_usertype<CardPtr>("munchkin_card_ptr", "id", &CardPtr::card_id, "get", &CardPtr::get);
     /* clang-format on */
