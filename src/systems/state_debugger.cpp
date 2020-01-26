@@ -171,6 +171,7 @@ void StateDebugger::render() {
         ImGui::SetNextItemOpen(true, ImGuiCond_Appearing);
         if (ImGui::TreeNode("Game information")) {
             ImGui::Text("Number of sprites: %zu", game->card_sprites.size());
+            ImGui::Text("Local Player ID: %zu", game->local_player_id);
             ImGui::TreePop();
         }
     }

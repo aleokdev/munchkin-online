@@ -27,7 +27,7 @@ struct FlowEvent {
     };
     EventType type;
     std::optional<CardPtr> card_involved;
-    std::optional<size_t> player_involved;
+    size_t player_id_involved = 0;
 };
 
 class State {

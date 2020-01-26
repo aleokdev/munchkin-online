@@ -13,10 +13,16 @@ struct Battle {
     Battle(State& s, Player& source) : state(&s), source_player(&source) {}
     Battle() : state(nullptr), source_player(nullptr) {}
     Battle(const Battle&) = default;
+    Battle& operator=(const Battle&) = default;
 
     State* state;
     Player* source_player;
     std::vector<Player*> helpers;
+    
+    // The number of treasures to draw at the end of the battle (int because sol2)
+    int treasures_to_draw = 0;
+    // The number of levels to obtain at the end of the battle (int because sol2)
+    int levels_to_obtain = 0;
     // The offset for the total players' power. Can be negative.
     int player_power_offset;
     int get_total_player_power();

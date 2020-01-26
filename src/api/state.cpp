@@ -24,7 +24,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
     lua.new_usertype<FlowEvent>("flow_event",
         "type", &FlowEvent::type,
         "card_involved", &FlowEvent::card_involved,
-        "player_involved", &FlowEvent::player_involved);
+        "player_id_involved", &FlowEvent::player_id_involved);
 
     // @todo: Rename to munchkin_game OR rename game to state
     sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",
@@ -84,7 +84,10 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "remove_card", &Battle::remove_card,
         "modify_card", &Battle::modify_card,
         "get_cards_played", &Battle::get_cards_played,
-        "get_card_power", &Battle::get_card_power);
+        "get_card_power", &Battle::get_card_power,
+        
+        "treasures_to_draw", &Battle::treasures_to_draw,
+        "levels_to_obtain", &Battle::levels_to_obtain);
 
     lua.new_enum<Card::CardVisibility>(
         "card_visibility",
