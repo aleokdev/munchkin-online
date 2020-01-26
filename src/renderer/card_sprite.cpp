@@ -134,7 +134,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
     if (card->is_being_owned_by_player() &&
         card.state->get_game_stage() != card.state->get_last_game_stage()) {
         render_darker =
-            card->owner_id == card.state->current_player_id &&
+            card->owner_id == game->local_player_id &&
             std::find(card->get_def().play_stages.begin(), card->get_def().play_stages.end(),
                       card.state->get_game_stage()) == card->get_def().play_stages.end();
     }
