@@ -109,7 +109,6 @@ public:
     // current_battle is not a pointer because i couldn't get std::unique_ptr to work with sol :(
     std::shared_ptr<Battle> current_battle;
 
-    // @todo FIXME: THIS WILL CRASH IF CURRENT_BATTLE IS NOT SET
     std::shared_ptr<Battle> get_current_battle() { return current_battle; }
 
 private:
