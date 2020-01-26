@@ -3,25 +3,14 @@
 #include "api/player.hpp"
 #include "api/state.hpp"
 #include <algorithm>
+#include <exception>
 #include <iostream>
 
 namespace munchkin {
 
-Card::Card(State& st, CardDef& def, ConstructorKey) :
-    state(&st), def(def), data(sol::state_view(def.metatable.lua_state()).create_table()) {
-    id = st.generate_id();
-
-    // @todo: Replace with metatables (HOW?)
-    for (auto& [key, val] : def.metatable) { data[key] = val; }
-
-    data["id"] = id;
-}
-
-CardPtr::CardPtr(Card& card) : state(&card.get_state()), card_id(card.get_id()) {}
-
-CardPtr::CardPtr(State& _state, size_t cardID) : state(&_state), card_id(cardID) {}
-
-CardPtr::operator Card*() const {
+Card* CardPtr::operator->() const {
+    if (state == nullptr)
+        throw std::runtime_error("Tried to index null CardPtr!");
     Card* retval = nullptr;
     for (auto& card : state->all_cards) {
         if (card.get_id() == card_id) {
@@ -32,7 +21,15 @@ CardPtr::operator Card*() const {
     return retval;
 }
 
-Card* CardPtr::operator->() const { return *this; }
+Card::Card(State& st, CardDef& def, ConstructorKey) :
+    state(&st), def(def), data(sol::state_view(def.metatable.lua_state()).create_table()) {
+    id = st.generate_id();
+
+    // @todo: Replace with metatables (HOW?)
+    for (auto& [key, val] : def.metatable) { data[key] = val; }
+
+    data["id"] = id;
+}
 
 CardPtr Card::operator&() { return CardPtr(*this); }
 
