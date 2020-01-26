@@ -25,8 +25,8 @@ function card.on_play(self)
     selection = selection.choose_card(selection_filter)
     print("card selected...")
     if selection ~= nil then
-        game.current_battle:add_card(self.id)
-        game.current_battle:modify_card(selection.id, card.properties.power_to_add)
+        game.current_battle:add_card(self)
+        game.current_battle:modify_card(selection, card.properties.power_to_add)
         self.target_monster = selection
     end
 end
