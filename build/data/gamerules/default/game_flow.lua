@@ -167,8 +167,10 @@ end
 local function stage_charity()
 	while #game:get_current_player().hand > game:get_current_player().hand_max_cards do
 		wait_for_event(event_type.card_clicked)
-		if game.last_event.player_id_involved == game:get_current_player().id and game.last_event.card_involved.owner_id == game:get_current_player().id then
-			discard(game.last_event.card_involved)
+		if  game.last_event.card_involved:get_location() == card_location.player_hand and
+			game.last_event.player_id_involved == game:get_current_player().id and
+			game.last_event.card_involved.owner_id == game:get_current_player().id then
+				discard(game.last_event.card_involved)
 		end
 	end
 	game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
