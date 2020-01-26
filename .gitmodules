@@ -13,3 +13,6 @@
 [submodule "lib/freetype"]
 	path = lib/freetype
 	url = https://github.com/aseprite/freetype2.git
+[submodule "lib/sol2"]
+	path = lib/sol2
+	url = https://github.com/ThePhD/sol2
