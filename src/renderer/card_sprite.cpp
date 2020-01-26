@@ -29,6 +29,8 @@ math::Vec2D CardSprite::get_current_pos() { return current_pos; }
 void CardSprite::instantly_set_pos(math::Vec2D target) { target_pos = current_pos = target; }
 
 void CardSprite::calculate_target_from_location() {
+    constexpr float space_between_cards = texture_width * texture_scale / 2.f + 35.f;
+
     switch (card->get_location()) {
         case munchkin::Card::CardLocation::invalid:
             target_pos = {0, 100}; // test value
@@ -73,13 +75,12 @@ void CardSprite::calculate_target_from_location() {
             math::Vec2D player_pos{table_radius * std::cos(player_angle),
                                    table_radius * std::sin(player_angle)};
 
-            constexpr float space_between_cards = texture_width * texture_scale / 2.f + 50.f;
             math::Vec2D move_axis = math::Vec2D{std::cos(player_angle - (float)M_PI / 2.f),
                                                 std::sin(player_angle - (float)M_PI / 2.f)};
-            math::Vec2D card_pos =
-                math::Vec2D::lerp(player_pos - move_axis * hand_size * space_between_cards / 2.f,
-                                  player_pos + move_axis * hand_size * space_between_cards / 2.f,
-                                  (float)hand_index / (float)hand_size);
+            math::Vec2D card_pos = math::Vec2D::lerp(
+                player_pos - move_axis * hand_size * space_between_cards / 2.f,
+                player_pos + move_axis * hand_size * space_between_cards / 2.f,
+                (hand_size == 1) ? .5f : (float)hand_index / (float)(hand_size - 1));
             target_pos = card_pos;
             target_rotation = player_angle + M_PI / 2.f;
             break;
@@ -114,13 +115,12 @@ void CardSprite::calculate_target_from_location() {
                         break;
                     card_index++;
                 }
-                constexpr float space_between_cards = texture_width * texture_scale / 2.f + 50.f;
 
                 math::Vec2D base_pos{0, -texture_height * texture_scale * 1.6f};
                 target_pos = math::Vec2D::lerp(
                     base_pos + math::vectors::left * space_between_cards * battle_cards / 2.f,
                     base_pos + math::vectors::right * space_between_cards * battle_cards / 2.f,
-                    (float)card_index / (float)battle_cards);
+                    (battle_cards == 1) ? .5f : ((float)card_index / (float)(battle_cards - 1)));
             }
             break;
 
