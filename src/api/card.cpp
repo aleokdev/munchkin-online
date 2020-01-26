@@ -118,4 +118,11 @@ void Card::move_to(Card::CardLocation loc, int _owner_id) {
 
 Card::CardLocation Card::get_location() { return location; }
 
+bool Card::is_on_current_battle() {
+    if (!state->current_battle)
+        return false;
+    return state->current_battle->played_cards.find(&*this) !=
+           state->current_battle->played_cards.end();
+}
+
 } // namespace munchkin

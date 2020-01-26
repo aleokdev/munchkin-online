@@ -63,6 +63,7 @@ public:
 
     void move_to(CardLocation, int owner_id = 0);
     CardLocation get_location();
+    bool is_on_current_battle();
     bool is_being_owned_by_player() {
         return (int)location &
                ((int)CardLocation::player_equipped | (int)CardLocation::player_hand);

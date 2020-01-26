@@ -103,12 +103,8 @@ void CardSprite::calculate_target_from_location() {
         }
 
         case munchkin::Card::CardLocation::table_center:
-            if (!game->state.current_battle)
-                target_pos = {0, -texture_height * texture_scale * 1.6f};
-            else {
+            if (card->is_on_current_battle()) {
                 const int battle_cards = game->state.current_battle->played_cards.size();
-                // @todo FIXME: This won't work with non-battle cards when there is a
-                // battle going on
                 int card_index = 0;
                 for (auto& [k, v] : game->state.current_battle->played_cards) {
                     if (k == card)
@@ -121,6 +117,8 @@ void CardSprite::calculate_target_from_location() {
                     base_pos + math::vectors::left * space_between_cards * battle_cards / 2.f,
                     base_pos + math::vectors::right * space_between_cards * battle_cards / 2.f,
                     (battle_cards == 1) ? .5f : ((float)card_index / (float)(battle_cards - 1)));
+            } else {
+                target_pos = {0, -texture_height * texture_scale * 1.6f};
             }
             break;
 
