@@ -145,7 +145,7 @@ void State::start_battle() {
     if (current_battle)
         return;
 
-    current_battle = std::make_unique<Battle>(*this, get_current_player());
+    current_battle = std::make_shared<Battle>(*this, get_current_player());
 }
 
 void State::end_current_battle() {
