@@ -68,7 +68,8 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
                 throw std::runtime_error(
                     "load_cards doesn't allow JSON objects or arrays as card properties");
             else if (v.is_string())
-                def.metatable[sol::create_if_nil]["properties"][k] = (std::string)v;
+                def.metatable[sol::create_if_nil]["properties"][k] =
+                    (std::string)v;
         }
         result.emplace_back(def);
     }

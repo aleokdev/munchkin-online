@@ -12,6 +12,7 @@ namespace munchkin {
 struct Battle {
     Battle(State& s, Player& source) : state(&s), source_player(&source) {}
     Battle() : state(nullptr), source_player(nullptr) {}
+    Battle(const Battle&) = default;
 
     State* state;
     Player* source_player;
