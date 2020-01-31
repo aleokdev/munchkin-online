@@ -25,7 +25,7 @@ public:
         GamePlaying
     };
 
-    GameRenderer(Game& game);
+    GameRenderer(Game& game, GameWrapper& wrapper);
     ~GameRenderer();
 
     void render_frame();
@@ -40,6 +40,7 @@ private:
 
     // Game-related data
     Game* game;
+    GameWrapper* wrapper;
 
     input::MouseState last_mouse;
     input::MouseState cur_mouse;

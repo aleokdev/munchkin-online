@@ -43,6 +43,8 @@ public:
     systems::DebugTerminal debug_terminal;
 
     AIManager ai_manager;
+
+    bool done = false;
 };
 
 } // namespace munchkin
