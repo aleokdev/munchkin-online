@@ -6,7 +6,7 @@ set(CMAKE_CXX_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (WIN32)
+if (WIN32 AND NOT ${CMAKE_RC_COMPILER} STREQUAL rc)
     enable_language(RC)
     set(CMAKE_RC_FLAGS ${CMAKE_RC_FLAGS} 
         "/i \"${WINDOWS_H_INCLUDE_DIR}\" /i \"${WINDOWS_SHARED_INCLUDE_DIR}\"")
@@ -30,7 +30,7 @@ set(MUNCHKIN_SOURCES
     "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
     "src/renderer/title_screen_renderer.cpp"
     "src/renderer/sprite_renderer.cpp" "src/api/ai_player.cpp" "src/api/ai_manager.cpp"
-    "src/input/input.cpp" "src/renderer/card_sprite.cpp"
+    "src/input/input.cpp" "src/renderer/card_sprite.cpp" "src/renderer/asset_loaders.cpp"
     "src/systems/input_binder.cpp"
     "src/systems/state_debugger.cpp"
     "src/renderer/font_renderer.cpp"

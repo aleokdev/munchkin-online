@@ -6,6 +6,7 @@
 #include "renderer/render_target.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/uniform_buffer.hpp"
+#include "renderer/assets.hpp"
 
 #include <glm/mat4x4.hpp>
 
@@ -43,11 +44,11 @@ private:
     // Render data
     renderer::RenderTarget framebuf;
     renderer::UniformBuffer camera_buffer;
-    unsigned int table_texture;
 
     // Assets
     renderer::Background background;
-    unsigned int sprite_shader;
+    assets::Handle<renderer::Shader> sprite_shader;
+    assets::Handle<renderer::Texture> table_texture;
 
     // Functions
     void update_camera();

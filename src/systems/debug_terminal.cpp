@@ -18,6 +18,7 @@ void DebugTerminal::log_lua(sol::this_state state, sol::object obj) {
         case (sol::type::string): terminal_log.emplace_back(obj.as<std::string>()); break;
 
         case (sol::type::number): terminal_log.emplace_back(std::to_string(obj.as<int>())); break;
+        // TODO: Handle all switch cases
     }
 }
 

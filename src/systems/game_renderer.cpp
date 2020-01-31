@@ -22,11 +22,25 @@ GameRenderer::GameRenderer(Game& g) :
     info.height = game->window_h;
 
     framebuf = renderer::RenderTarget(info);
-    background = renderer::create_background("data/generic/bg.png");
+
+    auto& texture_manager = assets::get_manager<renderer::Texture>();
+    auto& shader_manager = assets::get_manager<renderer::Shader>();
+
+    assets::loaders::LoadParams<renderer::Texture> bg_params;
+    bg_params.path = "data/generic/bg.png";
+    background = renderer::create_background(texture_manager.load_asset("bg", bg_params));
     //    background.scroll_speed = 0.002f;
 
-    sprite_shader = renderer::load_shader("data/shaders/sprite.vert", "data/shaders/sprite.frag");
-    table_texture = renderer::load_texture("data/generic/table.png");
+    assets::loaders::LoadParams<renderer::Shader> sprite_shader_params {
+        "data/shaders/sprite.vert", "data/shaders/sprite.frag"
+    };
+
+    assets::loaders::LoadParams<renderer::Texture> table_texture_params {
+        "data/generic/table.png"
+    };
+
+    sprite_shader = shader_manager.load_asset("sprite_shader", sprite_shader_params);
+    table_texture = texture_manager.load_asset("table", table_texture_params);
 
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -44,7 +58,6 @@ GameRenderer::GameRenderer(Game& g) :
 
 GameRenderer::~GameRenderer() {
     renderer::free_background(background);
-    glDeleteProgram(sprite_shader);
 }
 
 void GameRenderer::render_frame() {
@@ -69,17 +82,22 @@ void GameRenderer::render_frame() {
     // Render the background
     renderer::render_background(background);
 
+    auto& texture_manager = assets::get_manager<renderer::Texture>();
+    auto& shader_manager = assets::get_manager<renderer::Shader>();
+
     // Render sprites. Inside block for structure + limiting scope of sprite_renderer
     {
         renderer::SpriteRenderer sprite_renderer;
         // Bind a shader
-        glUseProgram(sprite_shader);
+        auto& shader = shader_manager.get_asset(sprite_shader);
+        glUseProgram(shader.handle);
 
         glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(projection));
 
         // Set draw data
         sprite_renderer.set_camera_drag(true);
-        sprite_renderer.set_texture(table_texture);
+        auto& tex = texture_manager.get_asset(table_texture);
+        sprite_renderer.set_texture(tex.handle);
         constexpr float table_size = renderer::table_radius * 2.f;
         // Calculate position for lower left corner for the table to be centered
         sprite_renderer.set_position(glm::vec2(0, 0));
