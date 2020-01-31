@@ -36,12 +36,22 @@ void load(Shader& shader, LoadParams<Shader> const& params) {
     );
 }
 
+void load(Font& font, LoadParams<Font> const& params) {
+    // Load and swap
+    Font f(params.path);
+    font.swap(f);
+}
+
 void free(Texture& texture) {
     glDeleteTextures(1, &texture.handle);
 }
 
 void free(Shader& shader) {
     glDeleteProgram(shader.handle);
+}
+
+void free(Font&) {
+    // This is taken care of by the Font destructor
 }
 
 }

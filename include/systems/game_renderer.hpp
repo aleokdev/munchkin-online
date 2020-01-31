@@ -7,18 +7,25 @@
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/uniform_buffer.hpp"
 #include "renderer/assets.hpp"
+#include "systems/title_screen_renderer.hpp"
 
 #include <glm/mat4x4.hpp>
 
 namespace munchkin {
 
 class Game;
+class GameWrapper;
 
 namespace systems {
 
 class GameRenderer {
 public:
-    GameRenderer(Game&);
+    enum class State {
+        TitleScreen,
+        GamePlaying
+    };
+
+    GameRenderer(Game& game);
     ~GameRenderer();
 
     void render_frame();
@@ -45,14 +52,19 @@ private:
     renderer::RenderTarget framebuf;
     renderer::UniformBuffer camera_buffer;
 
+    TitleScreenRenderer title_screen_renderer;
+
     // Assets
     renderer::Background background;
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Texture> table_texture;
 
+    State state = State::TitleScreen;
+
     // Functions
     void update_camera();
     void update_input();
+    void game_playing_frame();
     void draw_cards(renderer::SpriteRenderer&);
 };
 

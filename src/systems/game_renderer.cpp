@@ -22,24 +22,18 @@ GameRenderer::GameRenderer(Game& g) :
     info.height = game->window_h;
 
     framebuf = renderer::RenderTarget(info);
+    title_screen_renderer.set_render_target(&framebuf);
 
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
 
-    assets::loaders::LoadParams<renderer::Texture> bg_params;
-    bg_params.path = "data/generic/bg.png";
-    background = renderer::create_background(texture_manager.load_asset("bg", bg_params));
-    //    background.scroll_speed = 0.002f;
-
-    assets::loaders::LoadParams<renderer::Shader> sprite_shader_params {
-        "data/shaders/sprite.vert", "data/shaders/sprite.frag"
-    };
+    background = renderer::create_background(texture_manager.get_asset_handle("bg"));
 
     assets::loaders::LoadParams<renderer::Texture> table_texture_params {
         "data/generic/table.png"
     };
 
-    sprite_shader = shader_manager.load_asset("sprite_shader", sprite_shader_params);
+    sprite_shader = shader_manager.get_asset_handle("sprite_shader");
     table_texture = texture_manager.load_asset("table", table_texture_params);
 
     glDisable(GL_CULL_FACE);
@@ -65,12 +59,7 @@ void GameRenderer::render_frame() {
     delta_time = frame_time - last_frame_time;
     last_frame_time = frame_time;
 
-    // Update stuff
     update_input();
-
-    renderer::update_background_scroll(background, delta_time);
-
-    update_camera();
 
     // Set viewport to full window
     glViewport(0, 0, framebuf.get_width(), framebuf.get_height());
@@ -78,6 +67,62 @@ void GameRenderer::render_frame() {
     renderer::RenderTarget::bind(framebuf);
 
     framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    TitleScreenRenderer::Status status = TitleScreenRenderer::Status::None;
+    switch(state) {
+        case State::TitleScreen:
+            status = title_screen_renderer.frame(delta_time);
+            if (status == TitleScreenRenderer::Status::EnterGamePlaying) {
+                state = State::GamePlaying;
+            }
+            break;
+        case State::GamePlaying:
+            game_playing_frame();
+            break;
+    }
+
+    // Swap current and last mouse
+    last_mouse = cur_mouse;
+}
+
+void GameRenderer::blit(unsigned int target_framebuf) {
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target_framebuf);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuf.handle());
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glBlitFramebuffer(0, 0, framebuf.get_width(), framebuf.get_height(), 0, 0, framebuf.get_width(),
+                      framebuf.get_height(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+}
+
+void GameRenderer::on_resize(size_t w, size_t h) {
+    game->window_w = w;
+    game->window_h = h;
+    framebuf.resize(w, h);
+}
+
+void GameRenderer::update_sprite_vector() {
+    game->card_sprites.clear();
+    for (auto& card : game->get_state().all_cards) {
+        game->card_sprites.emplace_back(*game, &card);
+    }
+}
+
+void GameRenderer::update_input() {
+    // update mouse state
+    cur_mouse = input::get_current_mouse_state();
+}
+
+void GameRenderer::update_camera() {
+    // update uniform buffer data
+    renderer::UniformBuffer::bind(camera_buffer);
+    camera_buffer.write_data(&game->camera.offset.x, sizeof(float), 0);
+    camera_buffer.write_data(&game->camera.offset.y, sizeof(float), sizeof(float));
+}
+
+void GameRenderer::game_playing_frame() {
+
+    renderer::update_background_scroll(background, delta_time);
+
+    update_camera();
 
     // Render the background
     renderer::render_background(background);
@@ -108,42 +153,6 @@ void GameRenderer::render_frame() {
         draw_cards(sprite_renderer);
     }
 
-    // Swap current and last mouse
-    last_mouse = cur_mouse;
-}
-
-void GameRenderer::blit(unsigned int target_framebuf) {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target_framebuf);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuf.handle());
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glBlitFramebuffer(0, 0, framebuf.get_width(), framebuf.get_height(), 0, 0, framebuf.get_width(),
-                      framebuf.get_height(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
-}
-
-void GameRenderer::on_resize(size_t w, size_t h) {
-    game->window_w = w;
-    game->window_h = h;
-
-    framebuf.resize(w, h);
-}
-
-void GameRenderer::update_sprite_vector() {
-    game->card_sprites.clear();
-    for (auto& card : game->get_state().all_cards) {
-        game->card_sprites.emplace_back(*game, &card);
-    }
-}
-
-void GameRenderer::update_input() {
-    // update mouse state
-    cur_mouse = input::get_current_mouse_state();
-}
-
-void GameRenderer::update_camera() {
-    // update uniform buffer data
-    renderer::UniformBuffer::bind(camera_buffer);
-    camera_buffer.write_data(&game->camera.offset.x, sizeof(float), 0);
-    camera_buffer.write_data(&game->camera.offset.y, sizeof(float), sizeof(float));
 }
 
 void GameRenderer::draw_cards(renderer::SpriteRenderer& spr) {

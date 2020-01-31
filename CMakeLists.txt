@@ -28,7 +28,7 @@ set(MUNCHKIN_SOURCES
     "src/api/card_loader.cpp" "src/api/gamerules.cpp" "src/api/battle.cpp"
     "src/systems/game_renderer.cpp" "src/renderer/render_target.cpp" "src/renderer/background_renderer.cpp"
     "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
-    "src/renderer/title_screen_renderer.cpp"
+    "src/systems/title_screen_renderer.cpp"
     "src/renderer/sprite_renderer.cpp" "src/api/ai_player.cpp" "src/api/ai_manager.cpp"
     "src/input/input.cpp" "src/renderer/card_sprite.cpp" "src/renderer/asset_loaders.cpp"
     "src/systems/input_binder.cpp"
