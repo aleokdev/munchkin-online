@@ -17,7 +17,7 @@ Game::Game(size_t player_count, size_t w, size_t h, std::string gamerules_path) 
 
 void Game::turn() {
     std::cout << "Turn " << state.turn_number << "\n"
-              << "Player " << state.get_current_player().id << "'s turn\n"
+              << "Player " << state.get_current_player()->id << "'s turn\n"
               << "Stage: " << state.get_game_stage() << "\n"
               << "Active coroutines: " << state.active_coroutines.size() << std::endl;
 

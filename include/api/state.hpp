@@ -47,8 +47,8 @@ public:
     void end_current_battle();
 
     Player& get_player(size_t id);
+    PlayerPtr get_current_player() { return PlayerPtr(*this, current_player_id); }
     size_t get_player_count() const;
-    Player& get_current_player();
     void set_current_player(size_t id);
     // next_player_turn() defined in api_wrapper.lua
 
