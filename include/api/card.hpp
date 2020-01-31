@@ -100,6 +100,7 @@ struct CardPtr {
     State* state;
     size_t card_id;
 
+    CardPtr() : state(nullptr), card_id(0){};
     CardPtr(nullptr_t) : state(nullptr), card_id(0){};
     CardPtr(Card& card) : state(&card.get_state()), card_id(card.get_id()){};
     CardPtr(State& _state, size_t cardID) : state(&_state), card_id(cardID){};
