@@ -38,6 +38,9 @@ private:
 
     std::vector<std::string> options;
     std::vector<OptionCallbackT> option_callbacks;
+    std::vector<glm::vec3> option_colors;
+
+    static constexpr glm::vec3 default_option_color = glm::vec3(0.53, 0.53, 0.53);
 
     float text_spacing;
     glm::vec2 text_base_position;

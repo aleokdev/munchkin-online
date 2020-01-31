@@ -51,6 +51,8 @@ TitleScreenRenderer::TitleScreenRenderer() {
         option_callbacks::quit
     };
 
+    option_colors = std::vector<glm::vec3>(options.size(), default_option_color);
+
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.05f, 0.2f);
 }
@@ -80,17 +82,18 @@ void TitleScreenRenderer::render_menu_options() {
     renderer::FontRenderer renderer;
     float yoffset = 0.0f;
 
-    renderer.set_color(glm::vec3(1, 1, 1));
     renderer.set_size(text_scale);
     renderer.set_window_size(target->get_width(), target->get_height());
 
-    auto render_option = [this, &renderer, &yoffset](std::string const& text) {
+    auto render_option = [this, &renderer, &yoffset](size_t i) {
+        std::string const& text = options[i];
+        renderer.set_color(option_colors[i]);
         renderer.set_position(glm::vec2(text_base_position.x, text_base_position.y + yoffset));
         renderer.render_text(font, text);
         yoffset += text_spacing;
     };
 
-    for (auto const& opt : options) { render_option(opt); }
+    for (size_t i = 0; i < options.size(); ++i) { render_option(i); }
 }
 
 TitleScreenRenderer::Status TitleScreenRenderer::update_status() {
@@ -105,10 +108,13 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status() {
         mouse_pos.x /= target->get_width();
         mouse_pos.y /= target->get_height();
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
+            option_colors[opt_index] = glm::vec3(1, 1, 1);
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
                 status = option_callbacks[opt_index](*this);
                 return status;
             }
+        } else {
+            option_colors[opt_index] = default_option_color;
         }
     }
 
