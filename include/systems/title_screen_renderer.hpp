@@ -36,11 +36,18 @@ private:
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Font> font;
 
-    std::vector<std::string> options;
-    std::vector<OptionCallbackT> option_callbacks;
-    std::vector<glm::vec3> option_colors;
+    struct MenuOption {
+        std::string name;
+        OptionCallbackT callback;
+        glm::vec3 color;
+        // When selected, a menu option is assigned an offset so it appears selected
+        float offset = 0.0f;
+    };
+
+    std::vector<MenuOption> options;
 
     static constexpr glm::vec3 default_option_color = glm::vec3(0.53, 0.53, 0.53);
+    static constexpr float selected_option_offset = 30.0f;
 
     float text_spacing;
     glm::vec2 text_base_position;

@@ -44,14 +44,9 @@ TitleScreenRenderer::TitleScreenRenderer() {
     font_params.path = "data/generic/quasimodo_regular.ttf";
     font = font_manager.load_asset("main_font", font_params);
 
-    options = {"Local game", "Credits", "Exit"};
-    option_callbacks = {
-        option_callbacks::local_game, 
-        option_callbacks::credits,
-        option_callbacks::quit
-    };
-
-    option_colors = std::vector<glm::vec3>(options.size(), default_option_color);
+    options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
+    options.push_back({"Credits", option_callbacks::quit, default_option_color});
+    options.push_back({"Exit", option_callbacks::quit, default_option_color});
 
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.05f, 0.2f);
@@ -86,9 +81,9 @@ void TitleScreenRenderer::render_menu_options() {
     renderer.set_window_size(target->get_width(), target->get_height());
 
     auto render_option = [this, &renderer, &yoffset](size_t i) {
-        std::string const& text = options[i];
-        renderer.set_color(option_colors[i]);
-        renderer.set_position(glm::vec2(text_base_position.x, text_base_position.y + yoffset));
+        std::string const& text = options[i].name;
+        renderer.set_color(options[i].color);
+        renderer.set_position(glm::vec2(text_base_position.x + options[i].offset, text_base_position.y + yoffset));
         renderer.render_text(font, text);
         yoffset += text_spacing;
     };
@@ -100,7 +95,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status() {
     for (size_t opt_index = 0; opt_index < options.size(); ++opt_index) {
         // Compute bounding box
         glm::vec2 top_left = text_base_position + glm::vec2(0, get_menu_option_y_offset(opt_index));
-        glm::vec2 bottom_right = top_left + glm::vec2(calculate_text_width(options[opt_index]),
+        glm::vec2 bottom_right = top_left + glm::vec2(calculate_text_width(options[opt_index].name),
                                                       base_point_size / target->get_height());
         BoundingBox bbox{top_left, bottom_right};
         auto mouse_pos = input::get_mouse_pos();
@@ -108,13 +103,15 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status() {
         mouse_pos.x /= target->get_width();
         mouse_pos.y /= target->get_height();
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
-            option_colors[opt_index] = glm::vec3(1, 1, 1);
+            options[opt_index].color = glm::vec3(1, 1, 1);
+            options[opt_index].offset = selected_option_offset / target->get_width();;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
-                status = option_callbacks[opt_index](*this);
+                status = options[opt_index].callback(*this);
                 return status;
             }
         } else {
-            option_colors[opt_index] = default_option_color;
+            options[opt_index].color = default_option_color;
+            options[opt_index].offset = 0;
         }
     }
 
