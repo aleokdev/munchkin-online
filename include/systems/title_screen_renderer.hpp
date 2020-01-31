@@ -1,13 +1,14 @@
 #ifndef MUNCHKIN_TITLE_SCREEN_RENDERER_HPP_
 #define MUNCHKIN_TITLE_SCREEN_RENDERER_HPP_
 
-#include "renderer/render_target.hpp"
-#include "renderer/background_renderer.hpp"
 #include "renderer/assets.hpp"
+#include "renderer/background_renderer.hpp"
+#include "renderer/render_target.hpp"
 
 #include <functional>
 
-namespace munchkin::systems {
+namespace munchkin {
+namespace systems {
 
 class TitleScreenRenderer {
 public:
@@ -45,10 +46,12 @@ private:
         // When selected, a menu option is assigned an offset so it appears selected
         float offset = 0.0f;
     };
+
 public:
     std::vector<MenuOption> options;
 
     static constexpr glm::vec3 default_option_color = glm::vec3(0.53, 0.53, 0.53);
+
 private:
     static constexpr float selected_option_offset = 20.0f;
     static constexpr float offset_animate_slowness = 8.0f;
@@ -70,6 +73,7 @@ private:
     Status update_status(float delta_time);
 };
 
-} // namespace munchkin::renderer
+} // namespace systems
+} // namespace munchkin
 
 #endif

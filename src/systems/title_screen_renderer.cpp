@@ -5,7 +5,8 @@
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 
-namespace munchkin::systems {
+namespace munchkin {
+namespace systems {
 
 namespace option_callbacks {
 
@@ -13,7 +14,6 @@ TitleScreenRenderer::Status quit(TitleScreenRenderer&);
 TitleScreenRenderer::Status local_game(TitleScreenRenderer&);
 TitleScreenRenderer::Status credits(TitleScreenRenderer& tr);
 TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr);
-
 
 TitleScreenRenderer::Status quit(TitleScreenRenderer&) {
     return TitleScreenRenderer::Status::QuitApp;
@@ -78,7 +78,7 @@ void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
 TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
     renderer::render_background(background);
 
-    if (status == Status::None) { 
+    if (status == Status::None) {
         render_menu_options();
     } else if (status == Status::Credits) {
         render_credits();
@@ -163,4 +163,5 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
     return Status::None;
 }
 
-} // namespace munchkin::systems
+} // namespace systems
+} // namespace munchkin
