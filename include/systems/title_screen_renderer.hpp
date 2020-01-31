@@ -18,6 +18,8 @@ public:
         TransitionGamePlaying,
         // Signals that the title screen ends, enter the GamePlaying state
         EnterGamePlaying,
+        // Signals that we are displaying the credits screen
+        Credits,
         // Signals that the application should quit
         QuitApp
     };
@@ -43,13 +45,15 @@ private:
         // When selected, a menu option is assigned an offset so it appears selected
         float offset = 0.0f;
     };
-
+public:
     std::vector<MenuOption> options;
 
     static constexpr glm::vec3 default_option_color = glm::vec3(0.53, 0.53, 0.53);
+    // Maximum indentation for currently hovered option
     static constexpr float selected_option_offset = 30.0f;
+    // Animation speed in pixels/second
     static constexpr float offset_animate_speed = 300.0f;
-
+private:
     float text_spacing;
     glm::vec2 text_base_position;
     glm::vec2 text_scale;
@@ -57,11 +61,12 @@ private:
     static constexpr float spacing = 20.0f;
 
     void render_menu_options();
+    void render_credits();
 
     float get_menu_option_y_offset(size_t opt_index);
     float calculate_text_width(std::string const& text);
 
-    Status status;
+    Status status = Status::None;
 
     Status update_status(float delta_time);
 };

@@ -9,6 +9,12 @@ namespace munchkin::systems {
 
 namespace option_callbacks {
 
+TitleScreenRenderer::Status quit(TitleScreenRenderer&);
+TitleScreenRenderer::Status local_game(TitleScreenRenderer&);
+TitleScreenRenderer::Status credits(TitleScreenRenderer& tr);
+TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr);
+
+
 TitleScreenRenderer::Status quit(TitleScreenRenderer&) {
     return TitleScreenRenderer::Status::QuitApp;
 }
@@ -17,7 +23,19 @@ TitleScreenRenderer::Status local_game(TitleScreenRenderer&) {
     return TitleScreenRenderer::Status::EnterGamePlaying;
 }
 
-TitleScreenRenderer::Status credits(TitleScreenRenderer&) {
+TitleScreenRenderer::Status credits(TitleScreenRenderer& tr) {
+    // Prepare option list for credits menu
+    tr.options.clear();
+    tr.options.push_back({"Back", option_callbacks::exit_credits, tr.default_option_color});
+    return TitleScreenRenderer::Status::Credits;
+}
+
+TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr) {
+    // Prepare option list for main menu
+    tr.options.clear();
+    tr.options.push_back({"Local Game", option_callbacks::local_game, tr.default_option_color});
+    tr.options.push_back({"Credits", option_callbacks::credits, tr.default_option_color});
+    tr.options.push_back({"Exit", option_callbacks::quit, tr.default_option_color});
     return TitleScreenRenderer::Status::None;
 }
 
@@ -43,12 +61,13 @@ TitleScreenRenderer::TitleScreenRenderer() {
     font_params.path = "data/generic/quasimodo_regular.ttf";
     font = font_manager.load_asset("main_font", font_params);
 
+    text_scale = glm::vec2(1, 1);
+    text_base_position = glm::vec2(0.05f, 0.2f);
+
+    // We're in the main menu state by default
     options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
     options.push_back({"Credits", option_callbacks::credits, default_option_color});
     options.push_back({"Exit", option_callbacks::quit, default_option_color});
-
-    text_scale = glm::vec2(1, 1);
-    text_base_position = glm::vec2(0.05f, 0.2f);
 }
 
 void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
@@ -59,7 +78,11 @@ void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
 TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
     renderer::render_background(background);
 
-    render_menu_options();
+    if (status == Status::None) { 
+        render_menu_options();
+    } else if (status == Status::Credits) {
+        render_credits();
+    }
 
     return update_status(delta_time);
 }
@@ -73,6 +96,25 @@ float TitleScreenRenderer::calculate_text_width(std::string const& text) {
 }
 
 void TitleScreenRenderer::render_menu_options() {
+    renderer::FontRenderer renderer;
+    float yoffset = 0.0f;
+
+    renderer.set_size(text_scale);
+    renderer.set_window_size(target->get_width(), target->get_height());
+
+    auto render_option = [this, &renderer, &yoffset](size_t i) {
+        std::string const& text = options[i].name;
+        renderer.set_color(options[i].color);
+        float xoffset = options[i].offset / target->get_width();
+        renderer.set_position(
+            glm::vec2(text_base_position.x + xoffset, text_base_position.y + yoffset));
+        renderer.render_text(font, text);
+        yoffset += text_spacing;
+    };
+
+    for (size_t i = 0; i < options.size(); ++i) { render_option(i); }
+}
+void TitleScreenRenderer::render_credits() {
     renderer::FontRenderer renderer;
     float yoffset = 0.0f;
 
