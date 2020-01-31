@@ -4,6 +4,7 @@
 local ai = {}
 
 function ai.on_turn(self)
+	print("AI start!")
 	wait_for_ticks(60)
 
 	while game:get_current_player().id == self.player.id do
@@ -11,7 +12,7 @@ function ai.on_turn(self)
 			game:push_event(flow_event.card_clicked, game:get_dungeon_deck_front(), self.player.id)
 			
 			wait_for_ticks(1) -- Wait for the game_flow to process the card_clicked event
-		else if game.state == "FIGHT_MONSTER" then
+		elseif game.state == "FIGHT_MONSTER" then
 			-- Try throwing any random card
 			game:push_event(flow_event.card_clicked, self.player.hand[math.random(1, #self.player.hand)], self.player.id)
 
@@ -21,7 +22,7 @@ function ai.on_turn(self)
 			else
 				wait_for_ticks(30) -- Wait for a while before sending another card
 			end
-		else if game.state == "CHARITY" then
+		elseif game.state == "CHARITY" then
 			-- Discard any random cards until the charity stage ends
 			game:push_event(flow_event.card_clicked, self.player.hand[math.random(1, #self.player.hand)], self.player.id)
 			
