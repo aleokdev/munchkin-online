@@ -5,6 +5,10 @@
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 
+#include <imgui.h>
+
+#include "game_wrapper.hpp"
+
 namespace munchkin {
 namespace systems {
 
@@ -19,8 +23,9 @@ TitleScreenRenderer::Status quit(TitleScreenRenderer&) {
     return TitleScreenRenderer::Status::QuitApp;
 }
 
-TitleScreenRenderer::Status local_game(TitleScreenRenderer&) {
-    return TitleScreenRenderer::Status::EnterGamePlaying;
+TitleScreenRenderer::Status local_game(TitleScreenRenderer& tr) {
+    tr.game_settings_opened = true;
+    return TitleScreenRenderer::Status::None;
 }
 
 TitleScreenRenderer::Status credits(TitleScreenRenderer& tr) {
@@ -41,7 +46,7 @@ TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr) {
 
 } // namespace option_callbacks
 
-TitleScreenRenderer::TitleScreenRenderer() {
+TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) : wrapper(&_wrapper) {
 
     // Load assets
 
@@ -82,6 +87,51 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
         render_menu_options();
     } else if (status == Status::Credits) {
         render_credits();
+    }
+
+    if (game_settings_opened) // OpenPopup needs to be used before the popup window and there can't
+                              // be a new frame in between both
+        ImGui::OpenPopup("Setup Game...");
+
+    if (ImGui::BeginPopupModal("Setup Game...", &game_settings_opened, ImGuiWindowFlags_AlwaysAutoResize)) {
+        int total_players = wrapper->game.state.players.size();
+        ImGui::InputInt("Total players", &total_players);
+        total_players = std::max(0, total_players);
+        if (total_players != wrapper->game.state.players.size()) {
+            wrapper->game.state.players.clear();
+
+            for (int i = 0; i < total_players; i++)
+                wrapper->game.state.players.emplace_back(wrapper->game.state, i);
+        }
+
+        int ai_players = wrapper->ai_manager.get_total_players_controlled();
+        ImGui::InputInt("AI Players", &ai_players);
+        ai_players = std::max(0, std::min(ai_players, total_players));
+        if (ai_players != wrapper->ai_manager.get_total_players_controlled()) {
+            std::vector<PlayerPtr> players_to_control;
+
+            for (int i = 0; i < ai_players; i++)
+                players_to_control.emplace_back(wrapper->game.state.players[i]);
+
+            wrapper->ai_manager =
+                AIManager(wrapper->game.state, players_to_control,
+                          "data/ai/default"); // @todo: Don't hardcode default AI path
+        }
+
+        if (ImGui::Button("Back"))
+            game_settings_opened = false;
+
+        ImGui::SameLine();
+        if (ImGui::Button("OK")) {
+                game_settings_opened = false;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return TitleScreenRenderer::Status::EnterGamePlaying;
+            }
+
+        if (!game_settings_opened)
+            ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
     }
 
     return update_status(delta_time);

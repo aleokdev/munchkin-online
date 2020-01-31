@@ -11,6 +11,8 @@ AIManager::AIManager(State& s, std::vector<PlayerPtr> _pl, std::string ai_path) 
     for (auto& player : _pl) { players_controlled[player] = s.lua.script_file(fspath.string()); }
 }
 
+size_t AIManager::get_total_players_controlled() { return players_controlled.size(); }
+
 void AIManager::tick() {
     if (last_player_playing_id != state->current_player_id) {
         for (auto& [player, ai_table] : players_controlled) {
@@ -18,8 +20,8 @@ void AIManager::tick() {
                  sol::coroutine coro = ;
                  coro(player);*/
                 sol::coroutine coro = ai_table["on_turn"];
-                for (int i = 0; i < 10;i++) { coro(); }
-                //state->active_coroutines.emplace_back(ai_table["on_turn"]);
+                for (int i = 0; i < 10; i++) { coro(); }
+                // state->active_coroutines.emplace_back(ai_table["on_turn"]);
             }
         }
         last_player_playing_id = state->current_player_id;

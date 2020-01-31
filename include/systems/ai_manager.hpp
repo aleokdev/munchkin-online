@@ -17,6 +17,8 @@ public:
 
     void tick();
 
+    size_t get_total_players_controlled();
+
 private:
     State* state;
     std::unordered_map<PlayerPtr, sol::table> players_controlled;

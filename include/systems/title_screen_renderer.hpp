@@ -8,6 +8,8 @@
 #include <functional>
 
 namespace munchkin {
+class GameWrapper;
+
 namespace systems {
 
 class TitleScreenRenderer {
@@ -25,7 +27,7 @@ public:
         QuitApp
     };
 
-    TitleScreenRenderer();
+    TitleScreenRenderer(::munchkin::GameWrapper& wrapper);
     void set_render_target(renderer::RenderTarget* tg);
 
     Status frame(float delta_time);
@@ -38,7 +40,7 @@ private:
     renderer::Background background;
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Font> font;
-
+    ::munchkin::GameWrapper* wrapper;
     struct MenuOption {
         std::string name;
         OptionCallbackT callback;
@@ -51,6 +53,8 @@ public:
     std::vector<MenuOption> options;
 
     static constexpr glm::vec3 default_option_color = glm::vec3(0.53, 0.53, 0.53);
+
+    bool game_settings_opened = false;
 
 private:
     static constexpr float selected_option_offset = 20.0f;

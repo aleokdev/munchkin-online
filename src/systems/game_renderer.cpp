@@ -1,8 +1,8 @@
 #include "systems/game_renderer.hpp"
 #include "api/state.hpp"
 #include "game.hpp"
-#include "renderer/sprite_renderer.hpp"
 #include "game_wrapper.hpp"
+#include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
 
 #include <glad/glad.h>
@@ -16,7 +16,8 @@ namespace munchkin {
 namespace systems {
 
 GameRenderer::GameRenderer(Game& g, GameWrapper& wrapper) :
-    game(&g), wrapper(&wrapper), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW) {
+    game(&g), wrapper(&wrapper), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW),
+    title_screen_renderer(wrapper) {
 
     renderer::RenderTarget::CreateInfo info;
     info.width = game->window_w;
@@ -28,14 +29,14 @@ GameRenderer::GameRenderer(Game& g, GameWrapper& wrapper) :
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
 
-    texture_manager.load_asset("data/cardpacks/default/treasure-back.png", {"data/cardpacks/default/treasure-back.png"});
-    texture_manager.load_asset("data/cardpacks/default/dungeon-back.png", {"data/cardpacks/default/dungeon-back.png"});
+    texture_manager.load_asset("data/cardpacks/default/treasure-back.png",
+                               {"data/cardpacks/default/treasure-back.png"});
+    texture_manager.load_asset("data/cardpacks/default/dungeon-back.png",
+                               {"data/cardpacks/default/dungeon-back.png"});
 
     background = renderer::create_background(texture_manager.get_asset_handle("bg"));
 
-    assets::loaders::LoadParams<renderer::Texture> table_texture_params {
-        "data/generic/table.png"
-    };
+    assets::loaders::LoadParams<renderer::Texture> table_texture_params{"data/generic/table.png"};
 
     sprite_shader = shader_manager.get_asset_handle("sprite_shader");
     table_texture = texture_manager.load_asset("table", table_texture_params);
@@ -54,9 +55,7 @@ GameRenderer::GameRenderer(Game& g, GameWrapper& wrapper) :
     update_sprite_vector();
 }
 
-GameRenderer::~GameRenderer() {
-    renderer::free_background(background);
-}
+GameRenderer::~GameRenderer() { renderer::free_background(background); }
 
 void GameRenderer::render_frame() {
     float frame_time = (float)SDL_GetTicks() / 1000.0f;
@@ -73,19 +72,18 @@ void GameRenderer::render_frame() {
     framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     TitleScreenRenderer::Status status = TitleScreenRenderer::Status::None;
-    switch(state) {
+    switch (state) {
         case State::TitleScreen:
             status = title_screen_renderer.frame(delta_time);
             if (status == TitleScreenRenderer::Status::EnterGamePlaying) {
                 state = State::GamePlaying;
+                wrapper->do_tick = true;
             }
             if (status == TitleScreenRenderer::Status::QuitApp) {
                 wrapper->done = true;
             }
             break;
-        case State::GamePlaying:
-            game_playing_frame();
-            break;
+        case State::GamePlaying: game_playing_frame(); break;
     }
 
     // Swap current and last mouse
@@ -159,7 +157,6 @@ void GameRenderer::game_playing_frame() {
 
         draw_cards(sprite_renderer);
     }
-
 }
 
 void GameRenderer::draw_cards(renderer::SpriteRenderer& spr) {

@@ -44,6 +44,7 @@ public:
 
     AIManager ai_manager;
 
+    bool do_tick = false;
     bool done = false;
 };
 

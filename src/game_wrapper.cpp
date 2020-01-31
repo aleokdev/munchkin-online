@@ -76,9 +76,11 @@ void GameWrapper::main_loop(SDL_Window* window) {
         SDL_GL_SwapWindow(window);
 
         input::update();
-        input_binder.tick();
-        ai_manager.tick();
-        game.tick();
+        if (do_tick) {
+            input_binder.tick();
+            ai_manager.tick();
+            game.tick();
+        }
     } while (!done);
 
     std::cout << std::boolalpha;
