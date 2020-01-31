@@ -162,6 +162,24 @@ void StateDebugger::render() {
             ImGui::Text("Turn number: %zu", game->state.turn_number);
             ImGui::Text("Current user playing: %zu", game->state.current_player_id);
             ImGui::Text("Number of active coroutines: %zu", game->state.active_coroutines.size());
+            if (ImGui::TreeNode("Active coroutines")) {
+                int i = 0;
+                for (auto& coro : game->state.active_coroutines) {
+                    const char* status_txt;
+                    switch (coro.status()) {
+                        case (sol::call_status::ok): status_txt = "ok"; break;
+                        case (sol::call_status::file): status_txt = "file"; break;
+                        case (sol::call_status::gc): status_txt = "gc"; break;
+                        case (sol::call_status::handler): status_txt = "handler"; break;
+                        case (sol::call_status::memory): status_txt = "memory"; break;
+                        case (sol::call_status::runtime): status_txt = "runtime"; break;
+                        case (sol::call_status::yielded): status_txt = "yielded"; break;
+                    }
+                    ImGui::Text("[%i] Status: %s", i, status_txt);
+                    i++;
+                }
+                ImGui::TreePop();
+            }
             ImGui::Text("Should borrow facing up: %s",
                         game->state.should_borrow_facing_up ? "true" : "false");
             ImGui::Text("Game stage: %s", game->state.get_game_stage().c_str());
