@@ -178,8 +178,6 @@ void State::end_current_battle() {
 
 Player& State::get_player(size_t id) { return players.at(id); }
 
-Player& State::get_current_player() { return players[current_player_id]; }
-
 void State::set_current_player(size_t id) { current_player_id = id; }
 
 std::vector<CardPtr> State::get_visible_cards() {

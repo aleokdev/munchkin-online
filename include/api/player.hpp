@@ -8,6 +8,7 @@ namespace munchkin {
 
 class State;
 struct CardPtr;
+struct PlayerPtr;
 
 class Player {
 public:
@@ -19,6 +20,8 @@ public:
     int get_power() { return level; }
     State& get_state() { return *state; }
 
+    PlayerPtr operator&();
+
     std::vector<CardPtr> hand;
     std::vector<CardPtr> equipped;
     size_t hand_max_cards;
@@ -27,11 +30,11 @@ private:
     State* state;
 };
 
-struct PlayerPtr;
 struct PlayerPtr {
     State* state;
     size_t player_id;
 
+    PlayerPtr() : state(nullptr), player_id(0){};
     PlayerPtr(nullptr_t) : state(nullptr), player_id(0){};
     PlayerPtr(Player& player) : state(&player.get_state()), player_id(player.id){};
     PlayerPtr(State& _state, size_t playerID) : state(&_state), player_id(playerID){};

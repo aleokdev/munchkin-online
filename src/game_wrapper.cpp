@@ -93,7 +93,7 @@ void GameWrapper::main_loop(SDL_Window* window) {
     munchkin::renderer::FontRenderer::deallocate();
 }
 
-games::AIManager GameWrapper::create_ai_manager(size_t players_count, size_t ai_count) {
+AIManager GameWrapper::create_ai_manager(size_t players_count, size_t ai_count) {
     if (ai_count > players_count)
         throw std::runtime_error("More AI given than players available");
     else if (ai_count == players_count) {
@@ -101,17 +101,19 @@ games::AIManager GameWrapper::create_ai_manager(size_t players_count, size_t ai_
         game.local_player_id = -1;
 
         // Add AIs
-        std::vector<size_t> ais(players_count);
-        std::iota(ais.begin(), ais.end(), 0);
-        return games::AIManager(game.state, ais);
+        std::vector<PlayerPtr> ais;
+        for (int i = 0; i < players_count; i++) ais.emplace_back(game.state, i);
+        return AIManager(game.state, ais,
+                         "data/ai/default"); // @todo: Don't hardcode default AI path
     } else {
         // Local player is the 0th player (Assuming not online play)
         game.local_player_id = 0;
 
         // Add AIs
-        std::vector<size_t> ais(players_count - 1);
-        std::iota(ais.begin(), ais.end(), 1);
-        return games::AIManager(game.state, ais);
+        std::vector<PlayerPtr> ais;
+        for (int i = 1; i < players_count; i++) ais.emplace_back(game.state, i);
+        return AIManager(game.state, ais,
+                         "data/ai/default"); // @todo: Don't hardcode default AI path
     }
 }
 
