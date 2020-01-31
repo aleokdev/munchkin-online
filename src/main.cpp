@@ -13,8 +13,7 @@
 #include "systems/game_renderer.hpp"
 #include "systems/input_binder.hpp"
 #include "systems/state_debugger.hpp"
-
-#include "api/ai_manager.hpp"
+#include "systems/ai_manager.hpp"
 
 #include "input/input.hpp"
 
@@ -80,4 +79,4 @@ int main() try {
     wrapper.main_loop(window);
 
     return 0;
-} catch (std::exception const& e) { std::cerr << e.what() << std::endl; }
+} catch (int) {}
