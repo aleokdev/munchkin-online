@@ -26,6 +26,11 @@ public:
     }
 
     Handle<A> load_asset(std::string const& str_id, loaders::LoadParams<A> const& params) {
+        // check if the asset is already loaded
+        if (auto it = str_id_map.find(str_id); it != str_id_map.end()) {
+            return { it->second };
+        }
+
         size_t id = id_generator.next();
         // Create new value
         A& a = assets[id];

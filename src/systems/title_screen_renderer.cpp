@@ -45,7 +45,7 @@ TitleScreenRenderer::TitleScreenRenderer() {
     font = font_manager.load_asset("main_font", font_params);
 
     options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
-    options.push_back({"Credits", option_callbacks::quit, default_option_color});
+    options.push_back({"Credits", option_callbacks::credits, default_option_color});
     options.push_back({"Exit", option_callbacks::quit, default_option_color});
 
     text_scale = glm::vec2(1, 1);
@@ -62,7 +62,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
 
     render_menu_options();
 
-    return update_status();
+    return update_status(delta_time);
 }
 
 float TitleScreenRenderer::get_menu_option_y_offset(size_t opt_index) {
@@ -83,7 +83,8 @@ void TitleScreenRenderer::render_menu_options() {
     auto render_option = [this, &renderer, &yoffset](size_t i) {
         std::string const& text = options[i].name;
         renderer.set_color(options[i].color);
-        renderer.set_position(glm::vec2(text_base_position.x + options[i].offset, text_base_position.y + yoffset));
+        float xoffset = options[i].offset / target->get_width();
+        renderer.set_position(glm::vec2(text_base_position.x + xoffset, text_base_position.y + yoffset));
         renderer.render_text(font, text);
         yoffset += text_spacing;
     };
@@ -91,7 +92,7 @@ void TitleScreenRenderer::render_menu_options() {
     for (size_t i = 0; i < options.size(); ++i) { render_option(i); }
 }
 
-TitleScreenRenderer::Status TitleScreenRenderer::update_status() {
+TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time) {
     for (size_t opt_index = 0; opt_index < options.size(); ++opt_index) {
         // Compute bounding box
         glm::vec2 top_left = text_base_position + glm::vec2(0, get_menu_option_y_offset(opt_index));
@@ -104,7 +105,8 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status() {
         mouse_pos.y /= target->get_height();
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
             options[opt_index].color = glm::vec3(1, 1, 1);
-            options[opt_index].offset = selected_option_offset / target->get_width();;
+            options[opt_index].offset += offset_animate_speed * delta_time;
+            options[opt_index].offset = std::min(options[opt_index].offset, selected_option_offset);
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
                 status = options[opt_index].callback(*this);
                 return status;

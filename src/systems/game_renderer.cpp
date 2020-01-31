@@ -28,6 +28,9 @@ GameRenderer::GameRenderer(Game& g, GameWrapper& wrapper) :
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
 
+    texture_manager.load_asset("data/cardpacks/default/treasure-back.png", {"data/cardpacks/default/treasure-back.png"});
+    texture_manager.load_asset("data/cardpacks/default/dungeon-back.png", {"data/cardpacks/default/dungeon-back.png"});
+
     background = renderer::create_background(texture_manager.get_asset_handle("bg"));
 
     assets::loaders::LoadParams<renderer::Texture> table_texture_params {

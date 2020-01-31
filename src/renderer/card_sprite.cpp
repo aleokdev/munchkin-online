@@ -11,15 +11,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <sdl/SDL.h>
+#include <filesystem>
 
 using namespace munchkin::renderer::internal::card_sprite;
+
+namespace fs = std::filesystem;
 
 namespace munchkin {
 namespace renderer {
 
 CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card) {
-    back_texture = renderer::load_texture(card->get_def().back_texture_path.c_str());
-    front_texture = renderer::load_texture(card->get_def().front_texture_path.c_str());
+    auto& texture_manager = assets::get_manager<Texture>();
+    back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path, {card->get_def().back_texture_path});
+    assets::loaders::LoadParams<Texture> params;
+    params.path = fs::path(card->get_def().front_texture_path);
+    front_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path, params);
 }
 
 void CardSprite::set_target_pos(math::Vec2D target) { target_pos = target; }
@@ -154,11 +160,15 @@ void CardSprite::draw(SpriteRenderer& spr) {
          current_scale) /
         scale_slowness;
 
+    auto& texture_manager = assets::get_manager<Texture>();
     // Set draw data
-    if (current_size.x > 0)
-        spr.set_texture(back_texture);
-    else
-        spr.set_texture(front_texture);
+    if (current_size.x > 0) {
+        auto& back_texture = texture_manager.get_asset(back_texture_handle);
+        spr.set_texture(back_texture.handle);
+    } else {
+        auto& front_texture = texture_manager.get_asset(front_texture_handle);
+        spr.set_texture(front_texture.handle);
+    }
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
     spr.set_scale(
         glm::vec2(std::abs(current_size.x) * current_scale, current_size.y * current_scale));
