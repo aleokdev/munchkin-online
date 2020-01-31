@@ -24,7 +24,7 @@ TitleScreenRenderer::TitleScreenRenderer() {
     sprite_shader = shader_manager.load_asset("sprite_shader", sprite_shader_params);
 
     assets::loaders::LoadParams<renderer::Font> font_params;
-    font_params.path = "data/generic/arial.ttf"; // TODO Add good font
+    font_params.path = "data/generic/quasimodo_regular.ttf";
     font = font_manager.load_asset("main_font", font_params);
 }
 
