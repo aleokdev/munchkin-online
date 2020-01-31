@@ -10,8 +10,7 @@ namespace munchkin {
 
 State::State(size_t player_count, std::string gamerule_path) : player_count(player_count) {
     // create players
-    players.resize(player_count);
-    for (int i = 0; i < player_count; ++i) { players[i].id = i; }
+    for (int i = 0; i < player_count; ++i) { players.emplace_back(*this, i); }
     current_player_id = 0;
 
     /* clang-format off */
