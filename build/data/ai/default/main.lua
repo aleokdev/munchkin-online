@@ -6,7 +6,7 @@ local ai = {}
 function ai.on_turn(self)
 	wait_for_ticks(60)
 
-	while game:get_current_player().id ~= self.player.id do
+	while game:get_current_player().id == self.player.id do
 		if game.state == "EQUIP_STUFF_AND_OPEN_DUNGEON" then
 			game:push_event(flow_event.card_clicked, game:get_dungeon_deck_front(), self.player.id)
 			
