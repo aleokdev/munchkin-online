@@ -1,11 +1,17 @@
-﻿cmake_minimum_required (VERSION 3.8.2)
+﻿cmake_minimum_required (VERSION 3.12)
 
 set(CMAKE_C_COMPILER clang)
-set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (WIN32)
+    enable_language(RC)
+    set(CMAKE_RC_FLAGS ${CMAKE_RC_FLAGS} 
+        "/i \"${WINDOWS_H_INCLUDE_DIR}\" /i \"${WINDOWS_SHARED_INCLUDE_DIR}\"")
+    set(CMAKE_RC_COMPILER rc)
+endif()
 
 foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${CONFIG} CONFIG)
