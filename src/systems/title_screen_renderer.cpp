@@ -148,17 +148,15 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
             auto& option = options[opt_index];
             option.color = glm::vec3(1, 1, 1);
-            option.offset += offset_animate_speed * delta_time;
-            option.offset = std::min(option.offset, selected_option_offset);
+            option.offset += (selected_option_offset - option.offset) / offset_animate_slowness;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
                 status = options[opt_index].callback(*this);
                 return status;
             }
         } else {
             auto& option = options[opt_index];
+            option.offset += (0 - option.offset) / offset_animate_slowness;
             option.color = default_option_color;
-            option.offset -= offset_animate_speed * delta_time;
-            option.offset = std::max(option.offset, 0.0f);
         }
     }
 

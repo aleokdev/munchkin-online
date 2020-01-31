@@ -49,11 +49,10 @@ public:
     std::vector<MenuOption> options;
 
     static constexpr glm::vec3 default_option_color = glm::vec3(0.53, 0.53, 0.53);
-    // Maximum indentation for currently hovered option
-    static constexpr float selected_option_offset = 30.0f;
-    // Animation speed in pixels/second
-    static constexpr float offset_animate_speed = 300.0f;
 private:
+    static constexpr float selected_option_offset = 20.0f;
+    static constexpr float offset_animate_slowness = 8.0f;
+
     float text_spacing;
     glm::vec2 text_base_position;
     glm::vec2 text_scale;
