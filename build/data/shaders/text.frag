@@ -2,8 +2,9 @@
 
 in vec2 TexCoords;
 
-layout(location = 5) uniform sampler2D glyph;
 layout(location = 3) uniform vec3 text_color;
+layout(location = 5) uniform sampler2D glyph;
+
 
 out vec4 FragColor;
 

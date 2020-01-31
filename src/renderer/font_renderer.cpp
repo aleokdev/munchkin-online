@@ -41,10 +41,7 @@ void FontRenderer::init() {
         1.0f,  1.0f,  1.0f, 1.0f, // TR
     };
 
-    static unsigned int elements[] = {
-        0, 1, 2,
-        0, 2, 3
-    };
+    static unsigned int elements[] = {0, 1, 2, 0, 2, 3};
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -79,7 +76,6 @@ void FontRenderer::init() {
     shader = shader_manager.load_asset("text_shader", params);
 }
 
-
 void FontRenderer::set_window_size(size_t w, size_t h) {
     window_w = w;
     window_h = h;
@@ -89,8 +85,10 @@ void FontRenderer::set_size(glm::vec2 size) { text_size = size; }
 
 void FontRenderer::set_position(glm::vec2 position) { text_position = position; }
 
-void FontRenderer::set_color(glm::vec3 color) {
-    text_color = color;
+void FontRenderer::set_color(glm::vec3 color) { text_color = color; }
+
+void FontRenderer::set_shader(assets::Handle<Shader> sh) {
+    opt_shader = sh;
 }
 
 void FontRenderer::render_char(Font::glyph_data const& data,
@@ -115,7 +113,8 @@ void FontRenderer::render_char(Font::glyph_data const& data,
 void FontRenderer::render_text(assets::Handle<Font> font, std::string const& text) {
     auto& shader_manager = assets::get_manager<Shader>();
     auto& font_manager = assets::get_manager<Font>();
-    auto& shader_program = shader_manager.get_asset(shader);
+    // If the optional shader was set, use that one. Otherwise, use default shader
+    auto& shader_program = shader_manager.get_asset(opt_shader.id ? opt_shader : shader);
     auto& font_data = font_manager.get_asset(font);
     glUseProgram(shader_program.handle);
 

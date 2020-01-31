@@ -2,6 +2,7 @@
 #include "api/state.hpp"
 #include "game.hpp"
 #include "renderer/sprite_renderer.hpp"
+#include "game_wrapper.hpp"
 #include "renderer/util.hpp"
 
 #include <glad/glad.h>
@@ -14,8 +15,8 @@ namespace munchkin {
 
 namespace systems {
 
-GameRenderer::GameRenderer(Game& g) :
-    game(&g), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW) {
+GameRenderer::GameRenderer(Game& g, GameWrapper& wrapper) :
+    game(&g), wrapper(&wrapper), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW) {
 
     renderer::RenderTarget::CreateInfo info;
     info.width = game->window_w;
@@ -74,6 +75,9 @@ void GameRenderer::render_frame() {
             status = title_screen_renderer.frame(delta_time);
             if (status == TitleScreenRenderer::Status::EnterGamePlaying) {
                 state = State::GamePlaying;
+            }
+            if (status == TitleScreenRenderer::Status::QuitApp) {
+                wrapper->done = true;
             }
             break;
         case State::GamePlaying:

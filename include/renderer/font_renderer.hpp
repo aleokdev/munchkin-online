@@ -17,6 +17,7 @@ public:
     void set_size(glm::vec2 size);
     void set_position(glm::vec2 position);
     void set_color(glm::vec3 color);
+    void set_shader(assets::Handle<Shader> sh);
 
     void render_char(Font::glyph_data const& data,
                     glm::vec2 position,
@@ -41,6 +42,8 @@ private:
     glm::vec3 text_color = glm::vec3(1, 1, 1);
     size_t window_w = 0;
     size_t window_h = 0;
+
+    assets::Handle<Shader> opt_shader = assets::Handle<Shader> { 0 };
 };
 
 } // namespace renderer
