@@ -1,6 +1,7 @@
 #include "systems/title_screen_renderer.hpp"
 
 #include "renderer/assets.hpp"
+#include "renderer/font_renderer.hpp"
 #include "input/input.hpp"
 
 namespace munchkin::systems {
@@ -33,6 +34,18 @@ void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
 
 TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
     renderer::render_background(background);
+
+    glm::vec2 pos = glm::vec2(0.5, 0.5);
+    glm::vec2 size = glm::vec2(1, 1);
+    
+    renderer::FontRenderer renderer;
+    renderer.set_window_size(target->get_width(), target->get_height());
+    renderer.set_position(pos);
+    renderer.set_size(size);
+    renderer.set_color(glm::vec3(1, 0, 0));
+    renderer.render_text(font, "Pengu is cool");
+
+
     if (input::is_key_pressed(SDLK_SPACE)) {
         return Status::EnterGamePlaying;
     }
