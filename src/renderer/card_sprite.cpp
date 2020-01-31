@@ -25,7 +25,7 @@ CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card) {
     back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path, {card->get_def().back_texture_path});
     assets::loaders::LoadParams<Texture> params;
     params.path = fs::path(card->get_def().front_texture_path);
-    front_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path, params);
+    front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path, params);
 }
 
 void CardSprite::set_target_pos(math::Vec2D target) { target_pos = target; }

@@ -5,7 +5,6 @@
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 
-
 namespace munchkin::systems {
 
 namespace option_callbacks {
@@ -22,7 +21,7 @@ TitleScreenRenderer::Status credits(TitleScreenRenderer&) {
     return TitleScreenRenderer::Status::None;
 }
 
-}
+} // namespace option_callbacks
 
 TitleScreenRenderer::TitleScreenRenderer() {
 
@@ -84,7 +83,8 @@ void TitleScreenRenderer::render_menu_options() {
         std::string const& text = options[i].name;
         renderer.set_color(options[i].color);
         float xoffset = options[i].offset / target->get_width();
-        renderer.set_position(glm::vec2(text_base_position.x + xoffset, text_base_position.y + yoffset));
+        renderer.set_position(
+            glm::vec2(text_base_position.x + xoffset, text_base_position.y + yoffset));
         renderer.render_text(font, text);
         yoffset += text_spacing;
     };
@@ -104,16 +104,19 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
         mouse_pos.x /= target->get_width();
         mouse_pos.y /= target->get_height();
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
-            options[opt_index].color = glm::vec3(1, 1, 1);
-            options[opt_index].offset += offset_animate_speed * delta_time;
-            options[opt_index].offset = std::min(options[opt_index].offset, selected_option_offset);
+            auto& option = options[opt_index];
+            option.color = glm::vec3(1, 1, 1);
+            option.offset += offset_animate_speed * delta_time;
+            option.offset = std::min(option.offset, selected_option_offset);
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
                 status = options[opt_index].callback(*this);
                 return status;
             }
         } else {
-            options[opt_index].color = default_option_color;
-            options[opt_index].offset = 0;
+            auto& option = options[opt_index];
+            option.color = default_option_color;
+            option.offset -= offset_animate_speed * delta_time;
+            option.offset = std::max(option.offset, 0.0f);
         }
     }
 
