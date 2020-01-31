@@ -1,7 +1,6 @@
 #ifndef MUNCHKIN_GAME_WRAPPER_HPP__
 #define MUNCHKIN_GAME_WRAPPER_HPP__
 
-#include "api/ai_manager.hpp"
 #include "api/gamerules.hpp"
 #include "game.hpp"
 #include "input/input.hpp"
@@ -11,6 +10,7 @@
 #include "systems/input_binder.hpp"
 #include "systems/state_debugger.hpp"
 #include "systems/debug_terminal.hpp"
+#include "systems/ai_manager.hpp"
 
 #include <iostream>
 #include <numeric>
@@ -29,7 +29,7 @@ public:
                 std::string gamerules_path = DEFAULT_GAMERULES_PATH);
 
     void main_loop(SDL_Window*);
-    games::AIManager create_ai_manager(size_t players_count, size_t ai_count);
+    AIManager create_ai_manager(size_t players_count, size_t ai_count);
 
     bool show_debugger = false;
 
@@ -42,7 +42,7 @@ public:
     systems::StateDebugger state_debugger;
     systems::DebugTerminal debug_terminal;
 
-    games::AIManager ai_manager;
+    AIManager ai_manager;
 };
 
 } // namespace munchkin
