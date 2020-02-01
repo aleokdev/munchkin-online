@@ -200,7 +200,7 @@
   {
     "script": "scripts/card/monster.lua",
     "name": "Font Rendering",
-    "description": "TODO",
+    "description": "hard",
     "play_stages": [],
     "category": "dungeon",
     "properties": {
