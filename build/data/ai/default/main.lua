@@ -21,10 +21,15 @@ function ai.on_turn(self)
 			
 			wait_for_ticks_or_turn(1) -- Wait for the game_flow to process the card_clicked event
 		elseif game.stage == "FIGHT_MONSTER" then
-			-- Try throwing any random card
+			-- Try throwing any random card until the stage changes
+			-- Simulate clicking a random hand card, then click the battle monster
+			-- @todo: [AI] This won't work with multiple monsters in one battle
 			game:push_event(event_type.card_clicked, self.hand[math.random(1, #self.hand)], self)
+			game:push_event(event_type.card_clicked, game.current_battle:get_cards_played()[1], self)
 
-			if game:get_current_battle():get_total_player_power() > game:get_current_battle():get_total_monster_power() then
+			wait_for_ticks_or_turn(1) -- Wait for game_flow to process the event
+
+			if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
 				-- Battle is won, wait for cards to be discarded
 				wait_for_ticks_or_turn(2.6 * 60) -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
 			else

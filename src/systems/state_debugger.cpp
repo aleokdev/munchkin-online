@@ -184,6 +184,17 @@ void StateDebugger::render() {
             ImGui::Text("Should borrow facing up: %s",
                         game->state.should_borrow_facing_up ? "true" : "false");
             ImGui::Text("Game stage: %s", game->state.get_game_stage().c_str());
+
+            ImGui::Text("Battle active: %s", game->state.current_battle ? "true" : "false");
+            if (game->state.current_battle && ImGui::TreeNode("Current Battle")) {
+                ImGui::Text("Number of cards played: %i",
+                            game->state.current_battle->played_cards.size());
+                ImGui::Text("Total player power: %i",
+                            game->state.current_battle->get_total_player_power());
+                ImGui::Text("Total monster power: %i",
+                            game->state.current_battle->get_total_monster_power());
+                ImGui::TreePop();
+            }
             ImGui::TreePop();
         }
 
