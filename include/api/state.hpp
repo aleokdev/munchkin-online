@@ -26,10 +26,11 @@ struct FlowEvent {
         card_clicked
     };
     EventType type;
-    std::optional<CardPtr> card_involved;
+    CardPtr card_involved;
     size_t player_id_involved = 0;
 };
 
+class State;
 class State {
 public:
     State(size_t player_count, std::string gamerule_path = DEFAULT_GAMERULES_PATH);
@@ -54,6 +55,8 @@ public:
 
     std::vector<CardPtr> get_visible_cards();
     std::vector<CardPtr> get_all_cards();
+
+    void push_event(FlowEvent::EventType type, CardPtr card_involved, PlayerPtr player_involved);
 
     // data
 

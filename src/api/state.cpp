@@ -49,6 +49,8 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         "get_visible_cards", &State::get_visible_cards,
         "all_cards", sol::readonly_property(&State::get_all_cards),
 
+        "push_event", &State::push_event,
+
         "get_dungeon_deck_front", &State::get_dungeon_deck_front,
         "get_dungeon_deck_size", &State::get_dungeon_deck_size,
         "dungeon_deck_pop", &State::dungeon_deck_pop,
@@ -128,6 +130,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
     lua.open_libraries(sol::lib::coroutine);
     lua.open_libraries(sol::lib::base);
+    lua.open_libraries(sol::lib::math);
 
     // Load the generic API wrapper
     lua["game"] = this;
@@ -204,6 +207,12 @@ std::vector<CardPtr> State::get_all_cards() {
     std::vector<CardPtr> cards;
     for (auto& card : all_cards) cards.emplace_back(&card);
     return cards;
+}
+
+void State::push_event(FlowEvent::EventType type,
+                       CardPtr card_involved,
+                       PlayerPtr player_involved) {
+    event_queue.push(FlowEvent{type, card_involved, player_involved.player_id});
 }
 
 std::string State::get_last_game_stage() { return last_game_stage; }
