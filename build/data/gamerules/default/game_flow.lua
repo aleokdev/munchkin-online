@@ -12,10 +12,8 @@ local function discard(card)
 	card.visibility = card_visibility.front_visible
 	if card:get_def().category == munchkin_deck_type.dungeon then
 		card:move_to(card_location.dungeon_discard_deck, 0)
-		print("moved to dungeon discard deck, location now: " .. card:get_location())
 	else
 		card:move_to(card_location.treasure_discard_deck, 0)
-		print("moved to treasure discard deck, location now: " .. card:get_location())
 	end
 end
 
