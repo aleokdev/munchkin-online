@@ -47,6 +47,14 @@ void Game::tick() {
                 if (!result.valid()) {
                     std::cout << "Runtime error in coroutine!!" << std::endl;
                     sol::script_throw_on_error(state.lua, result);
+                } else if (result.status() == sol::call_status::ok) {
+                    std::cout
+                        << "Encountered finished coroutine, removing it from active_coroutines..."
+                        << std::endl;
+                    state.active_coroutines.erase(std::remove(state.active_coroutines.begin(),
+                                                              state.active_coroutines.end(),
+                                                              coroutine),
+                                                  state.active_coroutines.end());
                 }
             }
         }
