@@ -34,8 +34,6 @@ Card::Card(State& st, CardDef& def, ConstructorKey) :
 CardPtr Card::operator&() { return CardPtr(*this); }
 
 void Card::move_to(Card::CardLocation loc, int _owner_id) {
-    owner_id = _owner_id;
-
     // Clean up before moving
 #define REMOVE_FROM_CONTAINER(c) c.erase(std::remove(c.begin(), c.end(), &*this), c.end())
     switch (location) {
@@ -81,6 +79,7 @@ void Card::move_to(Card::CardLocation loc, int _owner_id) {
 
     // Move to given location
     location = loc;
+    owner_id = _owner_id;
 
     switch (location) {
         case munchkin::Card::CardLocation::invalid: break;
