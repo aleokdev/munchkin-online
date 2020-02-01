@@ -103,14 +103,13 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             for (int i = 0; i < total_players; i++)
                 wrapper->game.state.players.emplace_back(wrapper->game.state, i);
         }
-
         int ai_players = wrapper->ai_manager.get_total_players_controlled();
         ImGui::InputInt("AI Players", &ai_players);
-        ai_players = std::max(0, std::min(ai_players, total_players));
+        ai_players = std::max(0, std::min(ai_players, total_players-1));
         if (ai_players != wrapper->ai_manager.get_total_players_controlled()) {
             std::vector<PlayerPtr> players_to_control;
 
-            for (int i = 0; i < ai_players; i++)
+            for (int i = 1; i < ai_players+1; i++)
                 players_to_control.emplace_back(wrapper->game.state.players[i]);
 
             wrapper->ai_manager =
