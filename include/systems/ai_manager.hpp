@@ -5,6 +5,7 @@
 #include <sol/sol.hpp>
 #include <string>
 #include <unordered_map>
+#include <optional>
 
 #define AI_MAIN_FILE_FILENAME "main.lua"
 
@@ -22,6 +23,7 @@ public:
 private:
     State* state;
     std::unordered_map<PlayerPtr, sol::table> players_controlled;
+    sol::thread ai_thread;
 
     size_t last_player_playing_id = -1;
 };
