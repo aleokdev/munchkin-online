@@ -174,6 +174,7 @@ void StateDebugger::render() {
                         case (sol::call_status::memory): status_txt = "memory"; break;
                         case (sol::call_status::runtime): status_txt = "runtime"; break;
                         case (sol::call_status::yielded): status_txt = "yielded"; break;
+                        case (sol::call_status::syntax): status_txt = "syntax"; break;
                     }
                     ImGui::Text("[%i] Status: %s", i, status_txt);
                     i++;
