@@ -8,10 +8,9 @@
 
 namespace munchkin {
 
-State::State(size_t player_count, std::string gamerule_path) : player_count(player_count) {
+State::State(size_t player_count, std::string gamerule_path) {
     // create players
-    players.resize(player_count);
-    for (int i = 0; i < player_count; ++i) { players[i].id = i; }
+    for (int i = 0; i < player_count; ++i) { players.emplace_back(*this, i); }
     current_player_id = 0;
 
     /* clang-format off */
@@ -49,6 +48,8 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
         // next_player_turn defined in api_wrapper
         "get_visible_cards", &State::get_visible_cards,
         "all_cards", sol::readonly_property(&State::get_all_cards),
+
+        "push_event", &State::push_event,
 
         "get_dungeon_deck_front", &State::get_dungeon_deck_front,
         "get_dungeon_deck_size", &State::get_dungeon_deck_size,
@@ -129,6 +130,7 @@ State::State(size_t player_count, std::string gamerule_path) : player_count(play
 
     lua.open_libraries(sol::lib::coroutine);
     lua.open_libraries(sol::lib::base);
+    lua.open_libraries(sol::lib::math);
 
     // Load the generic API wrapper
     lua["game"] = this;
@@ -179,8 +181,6 @@ void State::end_current_battle() {
 
 Player& State::get_player(size_t id) { return players.at(id); }
 
-Player& State::get_current_player() { return players[current_player_id]; }
-
 void State::set_current_player(size_t id) { current_player_id = id; }
 
 std::vector<CardPtr> State::get_visible_cards() {
@@ -207,6 +207,12 @@ std::vector<CardPtr> State::get_all_cards() {
     std::vector<CardPtr> cards;
     for (auto& card : all_cards) cards.emplace_back(&card);
     return cards;
+}
+
+void State::push_event(FlowEvent::EventType type,
+                       CardPtr card_involved,
+                       PlayerPtr player_involved) {
+    event_queue.push(FlowEvent{type, card_involved, player_involved.player_id});
 }
 
 std::string State::get_last_game_stage() { return last_game_stage; }
@@ -237,7 +243,7 @@ Card& State::add_card(CardDef& def) {
     return result;
 }
 
-size_t State::get_player_count() const { return player_count; }
+size_t State::get_player_count() const { return players.size(); }
 
 void State::add_coroutine(sol::function coro) { active_coroutines.emplace_back(coro); }
 

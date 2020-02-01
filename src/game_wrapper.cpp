@@ -18,11 +18,10 @@ GameWrapper::GameWrapper(size_t window_w,
                          size_t ai_count,
                          std::string gamerules_path) :
     game(players_count, window_w, window_h, gamerules_path),
-    renderer(game), input_binder(game), state_debugger(game),
-    ai_manager(std::move(create_ai_manager(players_count, ai_count))) {}
+    renderer(game, *this), input_binder(game), state_debugger(game), debug_terminal(game),
+    ai_manager(create_ai_manager(players_count, ai_count)) {}
 
 void GameWrapper::main_loop(SDL_Window* window) {
-    bool done = false;
     ImGuiIO& io = ImGui::GetIO();
 
     do {
@@ -66,8 +65,10 @@ void GameWrapper::main_loop(SDL_Window* window) {
         renderer.blit(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        if (show_debugger)
+        if (show_debugger) {
+            debug_terminal.render();
             state_debugger.render();
+        }
         ImGui::Render();
         // glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -75,16 +76,18 @@ void GameWrapper::main_loop(SDL_Window* window) {
         SDL_GL_SwapWindow(window);
 
         input::update();
-        input_binder.tick();
-        ai_manager.tick();
-        game.tick();
+        if (do_tick) {
+            input_binder.tick();
+            ai_manager.tick();
+            game.tick();
+        }
     } while (!done);
 
     std::cout << std::boolalpha;
     std::cout << "Game over: " << game.ended() << std::endl;
 
     std::cout << "Levels: " << std::endl;
-    for (int i = 0; i < game.get_state().player_count; ++i) {
+    for (int i = 0; i < game.get_state().players.size(); ++i) {
         std::cout << i << ": " << game.get_state().players[i].level << "\n";
     }
 
@@ -92,7 +95,7 @@ void GameWrapper::main_loop(SDL_Window* window) {
     munchkin::renderer::FontRenderer::deallocate();
 }
 
-games::AIManager GameWrapper::create_ai_manager(size_t players_count, size_t ai_count) {
+AIManager GameWrapper::create_ai_manager(size_t players_count, size_t ai_count) {
     if (ai_count > players_count)
         throw std::runtime_error("More AI given than players available");
     else if (ai_count == players_count) {
@@ -100,17 +103,19 @@ games::AIManager GameWrapper::create_ai_manager(size_t players_count, size_t ai_
         game.local_player_id = -1;
 
         // Add AIs
-        std::vector<size_t> ais(players_count);
-        std::iota(ais.begin(), ais.end(), 0);
-        return games::AIManager(game.state, ais);
+        std::vector<PlayerPtr> ais;
+        for (int i = 0; i < players_count; i++) ais.emplace_back(game.state, i);
+        return AIManager(game.state, ais,
+                         "data/ai/default"); // @todo: Don't hardcode default AI path
     } else {
         // Local player is the 0th player (Assuming not online play)
         game.local_player_id = 0;
 
         // Add AIs
-        std::vector<size_t> ais(players_count - 1);
-        std::iota(ais.begin(), ais.end(), 1);
-        return games::AIManager(game.state, ais);
+        std::vector<PlayerPtr> ais;
+        for (int i = 1; i < players_count; i++) ais.emplace_back(game.state, i);
+        return AIManager(game.state, ais,
+                         "data/ai/default"); // @todo: Don't hardcode default AI path
     }
 }
 

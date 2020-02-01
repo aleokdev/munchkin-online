@@ -10,21 +10,21 @@
 namespace munchkin {
 
 struct Battle {
-    Battle(State& s, Player& source) : state(&s), source_player(&source) {}
+    Battle(State& s, PlayerPtr source) : state(&s), source_player(source) {}
     Battle() : state(nullptr), source_player(nullptr) {}
     Battle(const Battle&) = default;
     Battle& operator=(const Battle&) = default;
 
     State* state;
-    Player* source_player;
-    std::vector<Player*> helpers;
+    PlayerPtr source_player;
+    std::vector<PlayerPtr> helpers;
     
     // The number of treasures to draw at the end of the battle (int because sol2)
     int treasures_to_draw = 0;
     // The number of levels to obtain at the end of the battle (int because sol2)
     int levels_to_obtain = 0;
     // The offset for the total players' power. Can be negative.
-    int player_power_offset;
+    int player_power_offset = 0;
     int get_total_player_power();
 
     // Map where Card is the played card and size_t is the (monster) power of that card. Needed
@@ -39,7 +39,7 @@ struct Battle {
     std::vector<CardPtr> get_cards_played();
 
     // The offset for the total monsters' power. Can be negative.
-    int monster_power_offset;
+    int monster_power_offset = 0;
     int get_total_monster_power();
 };
 

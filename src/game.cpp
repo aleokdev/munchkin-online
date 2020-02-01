@@ -17,7 +17,7 @@ Game::Game(size_t player_count, size_t w, size_t h, std::string gamerules_path) 
 
 void Game::turn() {
     std::cout << "Turn " << state.turn_number << "\n"
-              << "Player " << state.get_current_player().id << "'s turn\n"
+              << "Player " << state.get_current_player()->id << "'s turn\n"
               << "Stage: " << state.get_game_stage() << "\n"
               << "Active coroutines: " << state.active_coroutines.size() << std::endl;
 
@@ -47,6 +47,14 @@ void Game::tick() {
                 if (!result.valid()) {
                     std::cout << "Runtime error in coroutine!!" << std::endl;
                     sol::script_throw_on_error(state.lua, result);
+                } else if (result.status() == sol::call_status::ok) {
+                    std::cout
+                        << "Encountered finished coroutine, removing it from active_coroutines..."
+                        << std::endl;
+                    state.active_coroutines.erase(std::remove(state.active_coroutines.begin(),
+                                                              state.active_coroutines.end(),
+                                                              coroutine),
+                                                  state.active_coroutines.end());
                 }
             }
         }

@@ -44,10 +44,10 @@ static void create_background_buffers(Background& bg) {
     bg.texcoords_buffer = texcoords_buf;
 }
 
-Background create_background(const char* bg_image_path) {
+Background create_background(assets::Handle<Texture> texture) {
     Background bg;
 
-    bg.texture = load_texture(bg_image_path);
+    bg.texture = texture;
     create_background_buffers(bg);
     bg.shader = load_shader("data/shaders/background.vert", "data/shaders/background.frag");
 
@@ -68,8 +68,10 @@ void render_background(Background const& bg) {
     glUseProgram(bg.shader);
     glBindVertexArray(bg.vao);
 
+    auto& texture = assets::get_manager<Texture>().get_asset(bg.texture);
+
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, bg.texture);
+    glBindTexture(GL_TEXTURE_2D, texture.handle);
     glUniform1i(0, 0);
 
     glUniform1f(1, bg.scroll);
@@ -78,7 +80,6 @@ void render_background(Background const& bg) {
 }
 
 void free_background(Background& bg) {
-    glDeleteTextures(1, &bg.texture);
     glDeleteVertexArrays(1, &bg.vao);
     glDeleteBuffers(1, &bg.vbo);
     glDeleteBuffers(1, &bg.texcoords_buffer);

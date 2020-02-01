@@ -11,15 +11,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <sdl/SDL.h>
+#include <filesystem>
 
 using namespace munchkin::renderer::internal::card_sprite;
+
+namespace fs = std::filesystem;
 
 namespace munchkin {
 namespace renderer {
 
 CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card) {
-    back_texture = renderer::load_texture(card->get_def().back_texture_path.c_str());
-    front_texture = renderer::load_texture(card->get_def().front_texture_path.c_str());
+    auto& texture_manager = assets::get_manager<Texture>();
+    back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path, {card->get_def().back_texture_path});
+    assets::loaders::LoadParams<Texture> params;
+    params.path = fs::path(card->get_def().front_texture_path);
+    front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path, params);
 }
 
 void CardSprite::set_target_pos(math::Vec2D target) { target_pos = target; }
@@ -66,10 +72,10 @@ void CardSprite::calculate_target_from_location() {
             }
 
             float player_angle =
-                ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI -
+                ((float)card_owner.id) / ((float)card.state->players.size()) * 2.f * M_PI -
                 M_PI / 2.f;
             // radius of an imaginary circurference where all the player hand cards are placed
-            constexpr float distance = renderer::table_radius + 50;
+//            constexpr float distance = renderer::table_radius + 50; // unused variable
             math::Vec2D player_pos{table_radius * std::cos(player_angle),
                                    table_radius * std::sin(player_angle)};
 
@@ -87,7 +93,7 @@ void CardSprite::calculate_target_from_location() {
         case munchkin::Card::CardLocation::player_equipped: {
             Player& card_owner = card.state->players[card->owner_id];
             float player_angle =
-                ((float)card_owner.id) / ((float)card.state->player_count) * 2.f * M_PI -
+                ((float)card_owner.id) / ((float)card.state->players.size()) * 2.f * M_PI -
                 M_PI / 2.f;
             // radius of an imaginary circurference where all the equipped cards are placed
             constexpr float distance = renderer::table_radius / 3.f * 2.f;
@@ -134,7 +140,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
     if (card->is_being_owned_by_player() &&
         card.state->get_game_stage() != card.state->get_last_game_stage()) {
         render_darker =
-            card->owner_id == card.state->current_player_id &&
+            card->owner_id == game->local_player_id &&
             std::find(card->get_def().play_stages.begin(), card->get_def().play_stages.end(),
                       card.state->get_game_stage()) == card->get_def().play_stages.end();
     }
@@ -154,11 +160,15 @@ void CardSprite::draw(SpriteRenderer& spr) {
          current_scale) /
         scale_slowness;
 
+    auto& texture_manager = assets::get_manager<Texture>();
     // Set draw data
-    if (current_size.x > 0)
-        spr.set_texture(back_texture);
-    else
-        spr.set_texture(front_texture);
+    if (current_size.x > 0) {
+        auto& back_texture = texture_manager.get_asset(back_texture_handle);
+        spr.set_texture(back_texture.handle);
+    } else {
+        auto& front_texture = texture_manager.get_asset(front_texture_handle);
+        spr.set_texture(front_texture.handle);
+    }
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
     spr.set_scale(
         glm::vec2(std::abs(current_size.x) * current_scale, current_size.y * current_scale));

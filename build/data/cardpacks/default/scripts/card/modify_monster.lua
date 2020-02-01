@@ -22,12 +22,12 @@ function card.on_play(self)
     end
 
     print("select a card...")
-    selection = selection.choose_card(selection_filter)
+    selected_card = selection.choose_card(selection_filter)
     print("card selected...")
     if selection ~= nil then
         game.current_battle:add_card(self)
-        game.current_battle:modify_card(selection, card.properties.power_to_add)
-        self.target_monster = selection
+        game.current_battle:modify_card(selected_card, card.properties.power_to_add)
+        self.target_monster = selected_card
     end
 end
 
@@ -39,7 +39,7 @@ end
 
 function card.on_annihilate(self)
     if self.target_monster ~= nil then
-        self.target_monster.modify_card(selection, -card.properties.power_to_add)
+        self.target_monster.modify_card(selected_card, -card.properties.power_to_add)
     end
 end
 

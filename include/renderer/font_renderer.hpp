@@ -1,7 +1,8 @@
 #ifndef MUNCHKIN_FONT_RENDERER_HPP__
 #define MUNCHKIN_FONT_RENDERER_HPP__
 
-#include "renderer/font.hpp"
+#include "renderer/assets.hpp"
+
 #include <glm/glm.hpp>
 #include <string>
 
@@ -12,41 +13,37 @@ class FontRenderer {
 public:
     FontRenderer();
 
-    // All following functions require a bound shader
+    void set_window_size(size_t w, size_t h);
+    void set_size(glm::vec2 size);
+    void set_position(glm::vec2 position);
+    void set_color(glm::vec3 color);
+    void set_shader(assets::Handle<Shader> sh);
 
-    void set_camera_drag(bool drag) {}
-    // position in pixels from window origin (lower left corner is (0, 0)).
-    void set_position(glm::vec2 pos) {}
-    void set_scale(glm::vec2 multiplier) {}
-    void set_rotation(float radians) {}
-
-    // Issue many drawcalls with the currently bound state.
-    // Meant to be called from the render function passed in the constructor
-    // Call after calling set_x functions.
-    void render_text(Font& fnt, std::string txt) {}
-
-    // Issue a single drawcall with the currently bound state.
-    // Meant to be called from the render function passed in the constructor
-    // Call after calling set_x functions.
-    void render_glyph(Font::glyph_data const& glyph, glm::vec2 offset) {}
+    void render_char(Font::glyph_data const& data,
+                    glm::vec2 position,
+                    glm::vec2 size,
+                    glm::vec2 offset);
+    void render_text(assets::Handle<Font> font, std::string const& text);
 
     static void deallocate();
 
 private:
     // shared data for vertices
-    static inline unsigned int vao, vbo = 0;
+    static inline unsigned int vao = 0, vbo = 0, ebo = 0;
 
-    static unsigned int vert_shader, frag_shader;
+    static inline assets::Handle<Shader> shader;
 
     static void init();
 
     static void setup_for_render();
 
-    glm::vec2 position = glm::vec2(0, 0);
-    glm::vec2 scale = glm::vec2(1, 1);
+    glm::vec2 text_size = glm::vec2(1.0f, 1.0f);
+    glm::vec2 text_position;
+    glm::vec3 text_color = glm::vec3(1, 1, 1);
+    size_t window_w = 0;
+    size_t window_h = 0;
 
-    // Only Z rotation really needed
-    float rotation;
+    assets::Handle<Shader> opt_shader = assets::Handle<Shader> { 0 };
 };
 
 } // namespace renderer

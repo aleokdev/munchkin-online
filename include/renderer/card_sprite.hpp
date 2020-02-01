@@ -3,6 +3,7 @@
 
 #include "api/card.hpp"
 #include "util/pos_vec.hpp"
+#include "renderer/assets.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -62,11 +63,9 @@ private:
     Card::CardLocation last_card_location = Card::CardLocation::invalid;
     size_t last_cards_in_owner = 0;
 
-    // @todo: Back textures are duplicated! Do asset system and assign all textures that point to
-    // the same file to the same ID?
-    unsigned int back_texture;
+    assets::Handle<Texture> back_texture_handle;
 
-    unsigned int front_texture;
+    assets::Handle<Texture> front_texture_handle;
 };
 
 } // namespace renderer

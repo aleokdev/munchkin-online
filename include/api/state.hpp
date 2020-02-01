@@ -26,10 +26,11 @@ struct FlowEvent {
         card_clicked
     };
     EventType type;
-    std::optional<CardPtr> card_involved;
+    CardPtr card_involved;
     size_t player_id_involved = 0;
 };
 
+class State;
 class State {
 public:
     State(size_t player_count, std::string gamerule_path = DEFAULT_GAMERULES_PATH);
@@ -47,13 +48,15 @@ public:
     void end_current_battle();
 
     Player& get_player(size_t id);
+    PlayerPtr get_current_player() { return PlayerPtr(*this, current_player_id); }
     size_t get_player_count() const;
-    Player& get_current_player();
     void set_current_player(size_t id);
     // next_player_turn() defined in api_wrapper.lua
 
     std::vector<CardPtr> get_visible_cards();
     std::vector<CardPtr> get_all_cards();
+
+    void push_event(FlowEvent::EventType type, CardPtr card_involved, PlayerPtr player_involved);
 
     // data
 
@@ -73,7 +76,6 @@ public:
 
     std::vector<Player> players;
     size_t current_player_id;
-    size_t player_count;
 
     void add_cardpack(std::string path);
     Card& add_card(CardDef& def);

@@ -34,3 +34,28 @@ function selection.choose_card(filter)
 
     return game.last_event.card_involved
 end
+
+-- Utils
+
+function wait_for_event(ev)
+	repeat
+		coroutine.yield()
+	until game.last_event.type == ev
+end
+
+function wait_for_ticks(ticks)
+	local ticks_before = game:get_ticks()
+	repeat
+		coroutine.yield()
+	until game:get_ticks() >= (ticks_before + ticks)
+end
+
+-- Waits for a number or ticks, or until an event has happened.
+-- Returns true if waited for all the ticks, false if the event happened first.
+function wait_for_ticks_or_event(ev, ticks)
+	local ticks_before = game:get_ticks()
+	repeat
+		coroutine.yield()
+	until game:get_ticks() >= (game:get_ticks() + ticks) or game.last_event.type == ev
+	return game:get_ticks() >= (game:get_ticks() + ticks)
+end

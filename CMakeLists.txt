@@ -1,11 +1,17 @@
-﻿cmake_minimum_required (VERSION 3.8.2)
+﻿cmake_minimum_required (VERSION 3.12)
 
 set(CMAKE_C_COMPILER clang)
-set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (WIN32 AND NOT ${CMAKE_RC_COMPILER} STREQUAL rc)
+    enable_language(RC)
+    set(CMAKE_RC_FLAGS ${CMAKE_RC_FLAGS} 
+        "/i \"${WINDOWS_H_INCLUDE_DIR}\" /i \"${WINDOWS_SHARED_INCLUDE_DIR}\"")
+    set(CMAKE_RC_COMPILER rc)
+endif()
 
 foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${CONFIG} CONFIG)
@@ -22,13 +28,16 @@ set(MUNCHKIN_SOURCES
     "src/api/card_loader.cpp" "src/api/gamerules.cpp" "src/api/battle.cpp"
     "src/systems/game_renderer.cpp" "src/renderer/render_target.cpp" "src/renderer/background_renderer.cpp"
     "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
-    "src/renderer/title_screen_renderer.cpp"
-    "src/renderer/sprite_renderer.cpp" "src/api/ai_player.cpp" "src/api/ai_manager.cpp"
-    "src/input/input.cpp" "src/renderer/card_sprite.cpp"
+    "src/systems/title_screen_renderer.cpp"
+    "src/systems/ai_manager.cpp"
+    "src/renderer/sprite_renderer.cpp"
+    "src/input/input.cpp" "src/renderer/card_sprite.cpp" "src/renderer/asset_loaders.cpp"
     "src/systems/input_binder.cpp"
     "src/systems/state_debugger.cpp"
     "src/renderer/font_renderer.cpp"
     "src/renderer/font.cpp" "src/game_wrapper.cpp"
+    "src/systems/debug_terminal.cpp"
+    "src/api/player.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")
 set(MUNCHKIN_LINK_LIBRARIES "")
