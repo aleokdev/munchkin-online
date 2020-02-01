@@ -8,7 +8,7 @@
 
 namespace munchkin {
 
-State::State(size_t player_count, std::string gamerule_path) : player_count(player_count) {
+State::State(size_t player_count, std::string gamerule_path) {
     // create players
     for (int i = 0; i < player_count; ++i) { players.emplace_back(*this, i); }
     current_player_id = 0;
@@ -243,7 +243,7 @@ Card& State::add_card(CardDef& def) {
     return result;
 }
 
-size_t State::get_player_count() const { return player_count; }
+size_t State::get_player_count() const { return players.size(); }
 
 void State::add_coroutine(sol::function coro) { active_coroutines.emplace_back(coro); }
 

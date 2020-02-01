@@ -93,6 +93,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
                               // be a new frame in between both
         ImGui::OpenPopup("Setup Game...");
 
+    // TODO: Clean this up.
     if (ImGui::BeginPopupModal("Setup Game...", &game_settings_opened, ImGuiWindowFlags_AlwaysAutoResize)) {
         int total_players = wrapper->game.state.players.size();
         ImGui::InputInt("Total players", &total_players);
@@ -102,6 +103,10 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
 
             for (int i = 0; i < total_players; i++)
                 wrapper->game.state.players.emplace_back(wrapper->game.state, i);
+
+            for (auto& player : wrapper->game.state.players) {
+                player.hand_max_cards = wrapper->game.state.default_hand_max_cards;
+            }
         }
         int ai_players = wrapper->ai_manager.get_total_players_controlled();
         ImGui::InputInt("AI Players", &ai_players);

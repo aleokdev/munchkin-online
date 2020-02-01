@@ -87,7 +87,7 @@ void GameWrapper::main_loop(SDL_Window* window) {
     std::cout << "Game over: " << game.ended() << std::endl;
 
     std::cout << "Levels: " << std::endl;
-    for (int i = 0; i < game.get_state().player_count; ++i) {
+    for (int i = 0; i < game.get_state().players.size(); ++i) {
         std::cout << i << ": " << game.get_state().players[i].level << "\n";
     }
 

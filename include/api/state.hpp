@@ -76,7 +76,6 @@ public:
 
     std::vector<Player> players;
     size_t current_player_id;
-    size_t player_count;
 
     void add_cardpack(std::string path);
     Card& add_card(CardDef& def);
