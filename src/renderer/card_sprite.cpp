@@ -72,7 +72,7 @@ void CardSprite::calculate_target_from_location() {
             }
 
             float player_angle =
-                ((float)card_owner.id) / ((float)card.state->players.size()) * 2.f * M_PI -
+                ((float)card_owner.get_id()) / ((float)card.state->players.size()) * 2.f * M_PI -
                 M_PI / 2.f;
             // radius of an imaginary circurference where all the player hand cards are placed
 //            constexpr float distance = renderer::table_radius + 50; // unused variable
@@ -93,7 +93,7 @@ void CardSprite::calculate_target_from_location() {
         case munchkin::Card::CardLocation::player_equipped: {
             Player& card_owner = card.state->players[card->owner_id];
             float player_angle =
-                ((float)card_owner.id) / ((float)card.state->players.size()) * 2.f * M_PI -
+                ((float)card_owner.get_id()) / ((float)card.state->players.size()) * 2.f * M_PI -
                 M_PI / 2.f;
             // radius of an imaginary circurference where all the equipped cards are placed
             constexpr float distance = renderer::table_radius / 3.f * 2.f;

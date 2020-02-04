@@ -15,7 +15,7 @@ public:
     Player(State&, size_t id);
 
     int level = 1;
-    size_t id = 0; // TODO: Make Player::id private, add get_id
+    size_t get_id() { return id; }
 
     int get_power() { return level; }
     State& get_state() { return *state; }
@@ -27,6 +27,7 @@ public:
     size_t hand_max_cards;
 
 private:
+    size_t id;
     State* state;
 };
 
@@ -36,7 +37,7 @@ struct PlayerPtr {
 
     PlayerPtr() : state(nullptr), player_id(0){};
     PlayerPtr(nullptr_t) : state(nullptr), player_id(0){};
-    PlayerPtr(Player& player) : state(&player.get_state()), player_id(player.id){};
+    PlayerPtr(Player& player) : state(&player.get_state()), player_id(player.get_id()){};
     PlayerPtr(State& _state, size_t playerID) : state(&_state), player_id(playerID){};
     PlayerPtr(PlayerPtr&) = default;
     PlayerPtr(PlayerPtr const&) = default;

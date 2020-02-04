@@ -132,7 +132,7 @@ void StateDebugger::render() {
         ImGui::NextColumn();
 
         for (auto& player : game->state.players) {
-            ImGui::Text("%zu", player.id);
+            ImGui::Text("%zu", player.get_id());
             ImGui::NextColumn();
             ImGui::Text("%d", player.level);
             ImGui::NextColumn();

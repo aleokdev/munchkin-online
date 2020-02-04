@@ -17,7 +17,7 @@ Game::Game(size_t player_count, size_t w, size_t h, std::string gamerules_path) 
 
 void Game::turn() {
     std::cout << "Turn " << state.turn_number << "\n"
-              << "Player " << state.get_current_player()->id << "'s turn\n"
+              << "Player " << state.get_current_player()->get_id() << "'s turn\n"
               << "Stage: " << state.get_game_stage() << "\n"
               << "Active coroutines: " << state.active_coroutines.size() << std::endl;
 
@@ -26,7 +26,7 @@ void Game::turn() {
     if (result != sol::lua_nil) {
         // We have a winner!
         Player& player = result.as<Player>();
-        std::cout << "The winner is: " << player.id << "\n";
+        std::cout << "The winner is: " << player.get_id() << "\n";
     }
     tick();
 }
