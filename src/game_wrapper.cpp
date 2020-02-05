@@ -19,7 +19,9 @@ GameWrapper::GameWrapper(size_t window_w,
                          std::string gamerules_path) :
     game(players_count, window_w, window_h, gamerules_path),
     renderer(game, *this), input_binder(game), state_debugger(game), debug_terminal(game),
-    ai_manager(create_ai_manager(players_count, ai_count)) {}
+    ai_manager(create_ai_manager(players_count, ai_count)), logger(game) {
+    logger.log("Welcome to Munchkin Online!");
+}
 
 void GameWrapper::main_loop(SDL_Window* window) {
     ImGuiIO& io = ImGui::GetIO();
@@ -64,6 +66,9 @@ void GameWrapper::main_loop(SDL_Window* window) {
         renderer.render_frame();
         renderer.blit(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        if (renderer.get_state() == systems::GameRenderer::State::GamePlaying)
+            logger.render();
 
         if (show_debugger) {
             debug_terminal.render();

@@ -11,10 +11,12 @@
 #include "systems/state_debugger.hpp"
 #include "systems/debug_terminal.hpp"
 #include "systems/ai_manager.hpp"
+#include "systems/game_logger.hpp"
 
 #include <iostream>
 #include <numeric>
 #include <stdexcept>
+#include <memory>
 
 struct SDL_Window;
 
@@ -41,6 +43,7 @@ public:
     systems::InputBinder input_binder;
     systems::StateDebugger state_debugger;
     systems::DebugTerminal debug_terminal;
+    systems::GameLogger logger;
 
     AIManager ai_manager;
 

@@ -2,11 +2,11 @@
 #define MUNCHKIN_GAME_RENDERER_HPP__
 
 #include "input/input.hpp"
+#include "renderer/assets.hpp"
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/uniform_buffer.hpp"
-#include "renderer/assets.hpp"
 #include "systems/title_screen_renderer.hpp"
 
 #include <glm/mat4x4.hpp>
@@ -20,10 +20,7 @@ namespace systems {
 
 class GameRenderer {
 public:
-    enum class State {
-        TitleScreen,
-        GamePlaying
-    };
+    enum class State { TitleScreen, GamePlaying };
 
     GameRenderer(Game& game, GameWrapper& wrapper);
     ~GameRenderer();
@@ -34,6 +31,8 @@ public:
     void on_resize(size_t w, size_t h);
 
     void update_sprite_vector();
+
+    State get_state() { return state; }
 
 private:
     glm::mat4 projection;
