@@ -10,15 +10,17 @@
 
 #include "game.hpp"
 #include "game_wrapper.hpp"
+#include "systems/ai_manager.hpp"
 #include "systems/game_renderer.hpp"
 #include "systems/input_binder.hpp"
 #include "systems/state_debugger.hpp"
-#include "systems/ai_manager.hpp"
 
 #include "input/input.hpp"
 
 #include "renderer/font_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
+
+#include <audeo/audeo.hpp>
 
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
@@ -54,7 +56,12 @@ int main() try {
     bool err = gladLoadGL() == 0;
 
     if (err) {
-        std::cerr << "Failed to initialize GLAD!\n" << std::endl;
+        std::cerr << "Failed to initialize GLAD!" << std::endl;
+        return -1;
+    }
+
+    if (!audeo::init()) {
+        std::cerr << "Failed to initialize audeo!" << std::endl;
         return -1;
     }
 
