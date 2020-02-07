@@ -91,32 +91,81 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
         ImGui::OpenPopup("Setup Game...");
 
     // TODO: Clean this up.
-    if (ImGui::BeginPopupModal("Setup Game...", &game_settings_opened, ImGuiWindowFlags_AlwaysAutoResize)) {
-        int total_players = wrapper->game.state.players.size();
-        ImGui::InputInt("Total players", &total_players);
-        total_players = std::max(0, total_players);
-        if (total_players != wrapper->game.state.players.size()) {
-            wrapper->game.state.players.clear();
+    if (ImGui::BeginPopupModal("Setup Game...", &game_settings_opened,
+                               ImGuiWindowFlags_AlwaysAutoResize)) {
+        { // Total players slider
+            int total_players = game_settings.total_players;
+            ImGui::InputInt("Total players", &total_players);
+            game_settings.total_players = std::max(0, total_players);
+        }
 
-            for (int i = 0; i < total_players; i++)
-                wrapper->game.state.players.emplace_back(wrapper->game.state, i);
+        { // AI players slider
+            int ai_players = game_settings.total_ai_players;
+            ImGui::InputInt("AI Players", &ai_players);
+            game_settings.total_ai_players =
+                std::max(0, std::min(ai_players, (int)game_settings.total_players - 1));
+        }
 
-            for (auto& player : wrapper->game.state.players) {
-                player.hand_max_cards = wrapper->game.state.default_hand_max_cards;
+        { // Gamerules combo box
+            static bool update_available_vector = true;
+            static std::vector<fs::path> gamerules_available;
+
+            if (update_available_vector) {
+                gamerules_available.clear();
+                for (const auto& entry : fs::directory_iterator("data/gamerules/"))
+                    gamerules_available.emplace_back(entry);
+
+                if (gamerules_available.size() == 0)
+                    game_settings.gamerules_path.reset();
+                else
+                    game_settings.gamerules_path = gamerules_available[0];
+
+                update_available_vector = false;
+            }
+
+            std::string preview_str =
+                game_settings.gamerules_path
+                    ? game_settings.gamerules_path->filename().generic_string()
+                    : "Select one...";
+            if (ImGui::BeginCombo("Gamerules", preview_str.c_str())) {
+                for (const auto& entry : gamerules_available) {
+                    std::string entry_name = entry.filename().generic_string();
+                    if (ImGui::Selectable(entry_name.c_str(),
+                                          entry == game_settings.gamerules_path))
+                        game_settings.gamerules_path = entry;
+                }
+                ImGui::EndCombo();
             }
         }
-        int ai_players = wrapper->ai_manager.get_total_players_controlled();
-        ImGui::InputInt("AI Players", &ai_players);
-        ai_players = std::max(0, std::min(ai_players, total_players-1));
-        if (ai_players != wrapper->ai_manager.get_total_players_controlled()) {
-            std::vector<PlayerPtr> players_to_control;
 
-            for (int i = 1; i < ai_players+1; i++)
-                players_to_control.emplace_back(wrapper->game.state.players[i]);
+        { // AI combo box
+            static bool update_available_vector = true;
+            static std::vector<fs::path> ais_available;
 
-            wrapper->ai_manager =
-                AIManager(wrapper->game.state, players_to_control,
-                          "data/ai/default"); // @todo: Don't hardcode default AI path
+            if (update_available_vector) {
+                ais_available.clear();
+                for (const auto& entry : fs::directory_iterator("data/ai/"))
+                    ais_available.emplace_back(entry);
+
+                if (ais_available.size() == 0)
+                    game_settings.ai_path.reset();
+                else
+                    game_settings.ai_path = ais_available[0];
+
+                update_available_vector = false;
+            }
+
+            std::string preview_str = game_settings.ai_path
+                                          ? game_settings.ai_path->filename().generic_string()
+                                          : "Select one...";
+            if (ImGui::BeginCombo("AI Scripting", preview_str.c_str())) {
+                for (const auto& entry : ais_available) {
+                    std::string entry_name = entry.filename().generic_string();
+                    if (ImGui::Selectable(entry_name.c_str(), entry == game_settings.ai_path))
+                        game_settings.ai_path = entry;
+                }
+                ImGui::EndCombo();
+            }
         }
 
         if (ImGui::Button("Back"))
@@ -124,11 +173,39 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
 
         ImGui::SameLine();
         if (ImGui::Button("OK")) {
-                game_settings_opened = false;
-                ImGui::CloseCurrentPopup();
-                ImGui::EndPopup();
-                return TitleScreenRenderer::Status::EnterGamePlaying;
+
+            { // Update players vector
+                wrapper->game.state.players.clear();
+
+                for (int i = 0; i < game_settings.total_players; i++)
+                    wrapper->game.state.players.emplace_back(wrapper->game.state, i);
+
+                for (auto& player : wrapper->game.state.players) {
+                    player.hand_max_cards = wrapper->game.state.default_hand_max_cards;
+                }
             }
+
+            { // Update gamerules
+                wrapper->game.state.active_coroutines.clear(); // Clear the active coroutines vector because it contains the old gamerules' game_flow
+                wrapper->game.gamerules =
+                    GameRules(wrapper->game.state, game_settings.gamerules_path->string());
+            }
+
+            { // Update AI players vector
+                std::vector<PlayerPtr> players_to_control;
+
+                for (int i = 1; i < game_settings.total_ai_players + 1; i++)
+                    players_to_control.emplace_back(wrapper->game.state.players[i]);
+
+                wrapper->ai_manager = AIManager(wrapper->game.state, players_to_control,
+                                                game_settings.ai_path->generic_string());
+            }
+
+            game_settings_opened = false;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+            return TitleScreenRenderer::Status::EnterGamePlaying;
+        }
 
         if (!game_settings_opened)
             ImGui::CloseCurrentPopup();
