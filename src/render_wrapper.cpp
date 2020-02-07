@@ -36,10 +36,11 @@ void RenderWrapper::render() {
     float delta_time = frame_time - last_frame_time;
     last_frame_time = frame_time;
 
+    renderer::RenderTarget::bind(framebuf);
+
     // Set viewport to full window
     glViewport(0, 0, framebuf.get_width(), framebuf.get_height());
 
-    renderer::RenderTarget::bind(framebuf);
 
     framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

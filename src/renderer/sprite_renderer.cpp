@@ -24,7 +24,6 @@ void SpriteRenderer::set_texture(unsigned int texture) {
 
 void SpriteRenderer::set_color(float r, float g, float b, float a) {
     color = glm::vec4(r, g, b, a);
-    glUniform4fv(4, 1, glm::value_ptr(color));
 }
 
 void SpriteRenderer::do_draw() {
@@ -35,6 +34,7 @@ void SpriteRenderer::do_draw() {
     model = glm::scale(model, scale);
 
     glUniformMatrix4fv(3, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform4fv(4, 1, glm::value_ptr(color));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -52,9 +52,15 @@ void SpriteRenderer::deallocate() {
 }
 
 void SpriteRenderer::init() {
+    /* clang-format off */
     static float vertices[] = {// positions    texcoords
-                               -.5f, -.5f, 0, 0, -.5, .5,  0, 1, .5, -.5, 1, 0,
-                               -.5,  .5,   0, 1, .5,  -.5, 1, 0, .5, .5,  1, 1};
+                               -.5f, -.5f,      0, 0,
+                               -.5, .5,         0, 1,
+                               .5, -.5,         1, 0,
+                               -.5,  .5,        0, 1,
+                               .5,  -.5,        1, 0,
+                               .5, .5,          1, 1};
+    /* clang-format on */
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);

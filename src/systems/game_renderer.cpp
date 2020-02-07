@@ -22,11 +22,6 @@ GameRenderer::GameRenderer(RenderWrapper& r) :
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
 
-    texture_manager.load_asset("data/cardpacks/default/textures/treasure-back.png",
-                               {"data/cardpacks/default/textures/treasure-back.png"});
-    texture_manager.load_asset("data/cardpacks/default/textures/dungeon-back.png",
-                               {"data/cardpacks/default/textures/dungeon-back.png"});
-
     assets::loaders::LoadParams<renderer::Texture> bg_params;
     bg_params.path = "data/generic/bg.png";
     texture_manager.load_asset("bg", bg_params);
@@ -34,6 +29,8 @@ GameRenderer::GameRenderer(RenderWrapper& r) :
 
     assets::loaders::LoadParams<renderer::Texture> table_texture_params{"data/generic/table.png"};
 
+    shader_manager.load_asset("sprite_shader",
+                              {"data/shaders/sprite.vert", "data/shaders/sprite.frag"});
     sprite_shader = shader_manager.get_asset_handle("sprite_shader");
     table_texture = texture_manager.load_asset("table", table_texture_params);
 
@@ -63,9 +60,7 @@ void GameRenderer::render() {
 void GameRenderer::update_sprite_vector() {
     Game& game = wrapper->wrapper->game;
     game.card_sprites.clear();
-    for (auto& card : game.get_state().all_cards) {
-        game.card_sprites.emplace_back(game, &card);
-    }
+    for (auto& card : game.get_state().all_cards) { game.card_sprites.emplace_back(game, &card); }
 }
 
 void GameRenderer::update_input() {
