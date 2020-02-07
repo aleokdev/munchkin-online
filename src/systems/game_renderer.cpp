@@ -17,21 +17,16 @@ namespace munchkin {
 namespace systems {
 
 GameRenderer::GameRenderer(RenderWrapper& r) :
-    wrapper(&r), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW) {
+    wrapper(&r), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW),
+    background(assets::get_manager<renderer::Texture>().load_asset("bg", renderer::Background::default_load_params)) {
 
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
 
-    assets::loaders::LoadParams<renderer::Texture> bg_params;
-    bg_params.path = "data/generic/bg.png";
-    texture_manager.load_asset("bg", bg_params);
-    background = renderer::create_background(texture_manager.get_asset_handle("bg"));
-
     assets::loaders::LoadParams<renderer::Texture> table_texture_params{"data/generic/table.png"};
 
-    shader_manager.load_asset("sprite_shader",
-                              {"data/shaders/sprite.vert", "data/shaders/sprite.frag"});
-    sprite_shader = shader_manager.get_asset_handle("sprite_shader");
+    sprite_shader = shader_manager.load_asset(
+        "sprite_shader", {"data/shaders/sprite.vert", "data/shaders/sprite.frag"});
     table_texture = texture_manager.load_asset("table", table_texture_params);
 
     // Update camera data
@@ -42,8 +37,6 @@ GameRenderer::GameRenderer(RenderWrapper& r) :
 
     update_sprite_vector();
 }
-
-GameRenderer::~GameRenderer() { renderer::free_background(background); }
 
 void GameRenderer::render() {
     float frame_time = (float)SDL_GetTicks() / 1000.0f;
@@ -78,12 +71,12 @@ void GameRenderer::update_camera() {
 
 void GameRenderer::game_playing_frame() {
 
-    renderer::update_background_scroll(background, delta_time);
+    background.update_scroll(delta_time);
 
     update_camera();
 
     // Render the background
-    renderer::render_background(background);
+    background.render();
 
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();

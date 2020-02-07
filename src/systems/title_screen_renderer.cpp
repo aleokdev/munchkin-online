@@ -46,17 +46,14 @@ TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr) {
 
 } // namespace option_callbacks
 
-TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) : wrapper(&_wrapper) {
+TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
+    wrapper(&_wrapper), background(assets::get_manager<renderer::Texture>().load_asset(
+                            "bg", renderer::Background::default_load_params)) {
 
     // Load assets
 
-    auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
-
-    assets::loaders::LoadParams<renderer::Texture> bg_params;
-    bg_params.path = "data/generic/bg.png";
-    background = renderer::create_background(texture_manager.load_asset("bg", bg_params));
 
     assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
                                                                        "data/shaders/sprite.frag"};
@@ -81,7 +78,7 @@ void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
 }
 
 TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
-    renderer::render_background(background);
+    background.render();
 
     if (status == Status::None) {
         render_menu_options();

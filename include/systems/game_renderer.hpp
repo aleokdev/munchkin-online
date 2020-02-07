@@ -20,7 +20,6 @@ namespace systems {
 class GameRenderer {
 public:
     GameRenderer(RenderWrapper&);
-    ~GameRenderer();
 
     void render();
 
