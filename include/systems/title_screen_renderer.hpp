@@ -5,7 +5,11 @@
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
 
+#include <filesystem>
 #include <functional>
+#include <optional>
+
+namespace fs = std::filesystem;
 
 namespace munchkin {
 class GameWrapper;
@@ -75,6 +79,17 @@ private:
     Status status = Status::None;
 
     Status update_status(float delta_time);
+
+    struct GameSettings {
+        size_t total_players = 3;
+        size_t total_ai_players = 2;
+
+        std::optional<fs::path> ai_path;
+        std::optional<fs::path> gamerules_path;
+        std::vector<fs::path> cardpack_paths;
+    };
+
+    GameSettings game_settings;
 };
 
 } // namespace systems

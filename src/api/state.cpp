@@ -71,7 +71,7 @@ State::State(size_t player_count, std::string gamerule_path) {
 
     lua.new_usertype<Player>("munchkin_player",
         "level", &Player::level,
-        "id", &Player::id,
+        "id", sol::readonly_property(&Player::get_id),
         "hand", &Player::hand,
         "hand_max_cards", &Player::hand_max_cards,
         "equipped", &Player::equipped);
@@ -153,7 +153,7 @@ void State::give_treasure(Player& player) {
     if (treasure_deck.size() == 0)
         return;
     CardPtr ptr = treasure_deck.back();
-    ptr->move_to(Card::CardLocation::player_hand, player.id);
+    ptr->move_to(Card::CardLocation::player_hand, player.get_id());
     ptr->visibility = Card::CardVisibility::front_visible_to_owner;
 }
 
@@ -161,7 +161,7 @@ void State::give_dungeon(Player& player) {
     if (dungeon_deck.size() == 0)
         return;
     CardPtr ptr = dungeon_deck.back();
-    ptr->move_to(Card::CardLocation::player_hand, player.id);
+    ptr->move_to(Card::CardLocation::player_hand, player.get_id());
     ptr->visibility = Card::CardVisibility::front_visible_to_owner;
 }
 

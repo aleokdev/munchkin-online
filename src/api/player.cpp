@@ -11,7 +11,7 @@ Player* PlayerPtr::operator->() const {
         throw std::runtime_error("Tried to index null PlayerPtr!");
     Player* retval = nullptr;
     for (auto& player : state->players) {
-        if (player.id == player_id) {
+        if (player.get_id() == player_id) {
             retval = std::addressof(player);
             break;
         }

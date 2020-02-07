@@ -6,12 +6,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <filesystem>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <sdl/SDL.h>
-#include <filesystem>
 
 using namespace munchkin::renderer::internal::card_sprite;
 
@@ -22,10 +22,10 @@ namespace renderer {
 
 CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card) {
     auto& texture_manager = assets::get_manager<Texture>();
-    back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path, {card->get_def().back_texture_path});
-    assets::loaders::LoadParams<Texture> params;
-    params.path = fs::path(card->get_def().front_texture_path);
-    front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path, params);
+    back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path,
+                                                     {card->get_def().back_texture_path});
+    front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path,
+                                                      {card->get_def().front_texture_path});
 }
 
 void CardSprite::set_target_pos(math::Vec2D target) { target_pos = target; }
@@ -72,10 +72,10 @@ void CardSprite::calculate_target_from_location() {
             }
 
             float player_angle =
-                ((float)card_owner.id) / ((float)card.state->players.size()) * 2.f * M_PI -
+                ((float)card_owner.get_id()) / ((float)card.state->players.size()) * 2.f * M_PI -
                 M_PI / 2.f;
             // radius of an imaginary circurference where all the player hand cards are placed
-//            constexpr float distance = renderer::table_radius + 50; // unused variable
+            //            constexpr float distance = renderer::table_radius + 50; // unused variable
             math::Vec2D player_pos{table_radius * std::cos(player_angle),
                                    table_radius * std::sin(player_angle)};
 
@@ -93,7 +93,7 @@ void CardSprite::calculate_target_from_location() {
         case munchkin::Card::CardLocation::player_equipped: {
             Player& card_owner = card.state->players[card->owner_id];
             float player_angle =
-                ((float)card_owner.id) / ((float)card.state->players.size()) * 2.f * M_PI -
+                ((float)card_owner.get_id()) / ((float)card.state->players.size()) * 2.f * M_PI -
                 M_PI / 2.f;
             // radius of an imaginary circurference where all the equipped cards are placed
             constexpr float distance = renderer::table_radius / 3.f * 2.f;

@@ -13,12 +13,15 @@ namespace renderer {
 inline static constexpr float table_radius = 700;
 }
 
+class Game;
 class Game {
 public:
     Game(size_t player_count,
          size_t window_w,
          size_t window_h,
          std::string gamerules_path = DEFAULT_GAMERULES_PATH);
+    Game& operator=(Game&&) = delete;
+    Game(Game&&) = delete;
 
     void turn();
 

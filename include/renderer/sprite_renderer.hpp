@@ -52,7 +52,7 @@ private:
     glm::vec4 color = glm::vec4(1, 1, 1, 1);
 
     // Only Z rotation really needed
-    float rotation;
+    float rotation = 0;
 };
 
 } // namespace renderer

@@ -19,7 +19,7 @@ size_t AIManager::get_total_players_controlled() { return players_controlled.siz
 void AIManager::tick() {
     if (last_player_playing_id != state->current_player_id) {
         for (auto& [player, ai_table] : players_controlled) {
-            if (player->id == state->current_player_id) {
+            if (player->get_id() == state->current_player_id) {
                 sol::coroutine coro = ai_table["on_turn"];
                 coro(player);
                 state->active_coroutines.emplace_back(ai_table["on_turn"]);

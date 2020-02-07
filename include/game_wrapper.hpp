@@ -4,13 +4,14 @@
 #include "api/gamerules.hpp"
 #include "game.hpp"
 #include "input/input.hpp"
+#include "render_wrapper.hpp"
 #include "renderer/font_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
-#include "systems/game_renderer.hpp"
+#include "systems/ai_manager.hpp"
+#include "systems/debug_terminal.hpp"
+#include "systems/game_logger.hpp"
 #include "systems/input_binder.hpp"
 #include "systems/state_debugger.hpp"
-#include "systems/debug_terminal.hpp"
-#include "systems/ai_manager.hpp"
 
 #include <iostream>
 #include <numeric>
@@ -37,10 +38,11 @@ public:
 
     // Systems
 
-    systems::GameRenderer renderer;
+    RenderWrapper renderer;
     systems::InputBinder input_binder;
     systems::StateDebugger state_debugger;
     systems::DebugTerminal debug_terminal;
+    systems::GameLogger logger;
 
     AIManager ai_manager;
 

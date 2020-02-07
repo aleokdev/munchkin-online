@@ -2,45 +2,31 @@
 #define MUNCHKIN_GAME_RENDERER_HPP__
 
 #include "input/input.hpp"
+#include "renderer/assets.hpp"
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/uniform_buffer.hpp"
-#include "renderer/assets.hpp"
-#include "systems/title_screen_renderer.hpp"
 
 #include <glm/mat4x4.hpp>
 
 namespace munchkin {
 
 class Game;
-class GameWrapper;
+class RenderWrapper;
 
 namespace systems {
 
 class GameRenderer {
 public:
-    enum class State {
-        TitleScreen,
-        GamePlaying
-    };
+    GameRenderer(RenderWrapper&);
 
-    GameRenderer(Game& game, GameWrapper& wrapper);
-    ~GameRenderer();
-
-    void render_frame();
-    void blit(unsigned int target_framebuf);
-
-    void on_resize(size_t w, size_t h);
+    void render();
 
     void update_sprite_vector();
 
 private:
-    glm::mat4 projection;
-
-    // Game-related data
-    Game* game;
-    GameWrapper* wrapper;
+    RenderWrapper* wrapper;
 
     input::MouseState last_mouse;
     input::MouseState cur_mouse;
@@ -50,17 +36,12 @@ private:
     float last_frame_time = 0;
 
     // Render data
-    renderer::RenderTarget framebuf;
     renderer::UniformBuffer camera_buffer;
-
-    TitleScreenRenderer title_screen_renderer;
 
     // Assets
     renderer::Background background;
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Texture> table_texture;
-
-    State state = State::TitleScreen;
 
     // Functions
     void update_camera();

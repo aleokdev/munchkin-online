@@ -37,7 +37,9 @@ set(MUNCHKIN_SOURCES
     "src/renderer/font_renderer.cpp"
     "src/renderer/font.cpp" "src/game_wrapper.cpp"
     "src/systems/debug_terminal.cpp"
+    "src/systems/game_logger.cpp"
     "src/api/player.cpp"
+    "src/render_wrapper.cpp"
 )
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")
 set(MUNCHKIN_LINK_LIBRARIES "")
