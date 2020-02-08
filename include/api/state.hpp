@@ -6,6 +6,7 @@
 #include <queue>
 #include <sol/sol.hpp>
 #include <string_view>
+#include <filesystem>
 
 #include "battle.hpp"
 #include "card.hpp"
@@ -14,6 +15,8 @@
 
 #define STATE_API_WRAPPER_FILE_PATH "data/generic/api_wrapper.lua"
 #define STATE_API_RULES_FILE_NAME "rules.lua"
+
+namespace fs = std::filesystem;
 
 namespace munchkin {
 struct FlowEvent {
@@ -77,7 +80,8 @@ public:
     std::vector<Player> players;
     size_t current_player_id;
 
-    void add_cardpack(std::string path);
+    // Loads a cardpack from a path. The path must be the directory of the cardpack.
+    void add_cardpack(fs::path path);
     Card& add_card(CardDef& def);
     std::vector<Card> all_cards;
 

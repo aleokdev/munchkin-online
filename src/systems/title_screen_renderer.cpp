@@ -8,6 +8,8 @@
 #include <audeo/audeo.hpp>
 #include <imgui.h>
 
+#include <algorithm>
+
 #include "game_wrapper.hpp"
 
 namespace munchkin {
@@ -184,6 +186,43 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             }
         }
 
+        { // Cardpacks combo box
+            // TODO: allow selecting more than one cardpack
+            static bool update_available_vector = true;
+            static std::vector<fs::path> cardpacks_available;
+
+            if (update_available_vector) {
+                cardpacks_available.clear();
+                for (const auto& entry : fs::directory_iterator("data/cardpacks/"))
+                    cardpacks_available.emplace_back(entry);
+
+                for (auto& cardpack : cardpacks_available)
+                    game_settings.cardpack_paths.emplace_back(cardpack);
+
+                update_available_vector = false;
+            }
+
+            ImGui::TextUnformatted("Cardpacks");
+            if (ImGui::BeginChildFrame(ImGui::GetID("_Cardpacks"), {0, 200})) {
+                for (const auto& entry : cardpacks_available) {
+                    std::string entry_name = entry.filename().generic_string();
+                    bool enabled = std::find(game_settings.cardpack_paths.begin(),
+                                             game_settings.cardpack_paths.end(),
+                                             entry) != game_settings.cardpack_paths.end();
+                    if (ImGui::Selectable(entry_name.c_str(), enabled)) {
+                        if (enabled) {
+                            game_settings.cardpack_paths.erase(
+                                std::remove(game_settings.cardpack_paths.begin(),
+                                            game_settings.cardpack_paths.end(), entry),
+                                game_settings.cardpack_paths.end());
+                        } else
+                            game_settings.cardpack_paths.emplace_back(entry);
+                    }
+                }
+                ImGui::EndChildFrame();
+            }
+        }
+
         if (ImGui::Button("Back"))
             game_settings_opened = false;
 
@@ -206,11 +245,23 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             }
 
             { // Update gamerules
+                // @todo Gamerules are not updated
+                // @body Gamerules are not updated when they change from init to when the OK button
+                // is pressed
                 wrapper->game.state.active_coroutines
                     .clear(); // Clear the active coroutines vector because it contains the old
                               // gamerules' game_flow
                 wrapper->game.gamerules =
                     GameRules(wrapper->game.state, game_settings.gamerules_path->string());
+            }
+
+            { // Add cardpacks
+                for (auto& cardpack : game_settings.cardpack_paths)
+                    wrapper->game.state.add_cardpack(cardpack);
+
+                std::cout << "Cards loaded: " << wrapper->game.get_state().all_cards.size()
+                          << std::endl;
+                wrapper->renderer.game_renderer.update_sprite_vector();
             }
 
             { // Update AI players vector

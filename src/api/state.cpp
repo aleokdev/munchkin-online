@@ -224,8 +224,9 @@ void State::set_game_stage(std::string s) {
     game_stage = s;
 }
 
-void State::add_cardpack(std::string path) {
-    std::vector<CardDef> new_carddefs = load_cards(path, lua);
+void State::add_cardpack(fs::path path) {
+    std::string path_str = (path / "cards.json").string();
+    std::vector<CardDef> new_carddefs = load_cards(path_str, lua);
     for (auto& def : new_carddefs) add_card(def);
 }
 
