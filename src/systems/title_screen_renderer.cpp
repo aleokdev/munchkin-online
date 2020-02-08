@@ -6,6 +6,7 @@
 #include "util/util.hpp"
 
 #include <imgui.h>
+#include <audeo/audeo.hpp>
 
 #include "game_wrapper.hpp"
 
@@ -54,6 +55,7 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
 
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
+    auto& music_manager = assets::get_manager<assets::Music>();
 
     assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
                                                                        "data/shaders/sprite.frag"};
@@ -66,8 +68,11 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.05f, 0.2f);
 
-    // We're in the main menu state by default
-    options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
+    // Start the title music
+    audeo::play_sound(music_manager.get_asset(music_manager.load_asset("title_music", {"data/generic/title.mp3"})).source, audeo::loop_forever);
+
+        // We're in the main menu state by default
+        options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
     options.push_back({"Credits", option_callbacks::credits, default_option_color});
     options.push_back({"Exit", option_callbacks::quit, default_option_color});
 }
@@ -186,7 +191,9 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             }
 
             { // Update gamerules
-                wrapper->game.state.active_coroutines.clear(); // Clear the active coroutines vector because it contains the old gamerules' game_flow
+                wrapper->game.state.active_coroutines
+                    .clear(); // Clear the active coroutines vector because it contains the old
+                              // gamerules' game_flow
                 wrapper->game.gamerules =
                     GameRules(wrapper->game.state, game_settings.gamerules_path->string());
             }

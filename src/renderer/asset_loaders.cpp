@@ -42,6 +42,16 @@ void load(Font& font, LoadParams<Font> const& params) {
     font.swap(f);
 }
 
+void load(SoundEffect& sound, LoadParams<SoundEffect> const& params) {
+    std::string path_str = params.path.string();
+    sound.source = audeo::load_source(path_str, audeo::AudioType::Effect);
+}
+
+void load(Music& music, LoadParams<Music> const& params) {
+    std::string path_str = params.path.string();
+    music.source = audeo::load_source(path_str, audeo::AudioType::Music);
+}
+
 void free(Texture& texture) { glDeleteTextures(1, &texture.handle); }
 
 void free(Shader& shader) { glDeleteProgram(shader.handle); }
