@@ -5,7 +5,10 @@
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 
+#include <audeo/audeo.hpp>
 #include <imgui.h>
+
+#include <algorithm>
 
 #include "game_wrapper.hpp"
 
@@ -54,6 +57,7 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
 
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
+    auto& music_manager = assets::get_manager<assets::Music>();
 
     assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
                                                                        "data/shaders/sprite.frag"};
@@ -65,6 +69,12 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
 
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.05f, 0.2f);
+
+    // Start the title music
+    audeo::play_sound(
+        music_manager.get_asset(music_manager.load_asset("title_music", {"data/generic/title.mp3"}))
+            .source,
+        audeo::loop_forever);
 
     // We're in the main menu state by default
     options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
@@ -93,6 +103,14 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
     // TODO: Clean this up.
     if (ImGui::BeginPopupModal("Setup Game...", &game_settings_opened,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
+        { // Local player name
+            static char player_name_buf[32] = "Player";
+
+            ImGui::InputText("Player name", player_name_buf, 32);
+
+            game_settings.local_player_name = player_name_buf;
+        }
+
         { // Total players slider
             int total_players = game_settings.total_players;
             ImGui::InputInt("Total players", &total_players);
@@ -168,6 +186,42 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             }
         }
 
+        { // Cardpacks combo box
+            static bool update_available_vector = true;
+            static std::vector<fs::path> cardpacks_available;
+
+            if (update_available_vector) {
+                cardpacks_available.clear();
+                for (const auto& entry : fs::directory_iterator("data/cardpacks/"))
+                    cardpacks_available.emplace_back(entry);
+
+                for (auto& cardpack : cardpacks_available)
+                    game_settings.cardpack_paths.emplace_back(cardpack);
+
+                update_available_vector = false;
+            }
+
+            ImGui::TextUnformatted("Cardpacks");
+            if (ImGui::BeginChildFrame(ImGui::GetID("_Cardpacks"), {0, 200})) {
+                for (const auto& entry : cardpacks_available) {
+                    std::string entry_name = entry.filename().generic_string();
+                    bool enabled = std::find(game_settings.cardpack_paths.begin(),
+                                             game_settings.cardpack_paths.end(),
+                                             entry) != game_settings.cardpack_paths.end();
+                    if (ImGui::Selectable(entry_name.c_str(), enabled)) {
+                        if (enabled) {
+                            game_settings.cardpack_paths.erase(
+                                std::remove(game_settings.cardpack_paths.begin(),
+                                            game_settings.cardpack_paths.end(), entry),
+                                game_settings.cardpack_paths.end());
+                        } else
+                            game_settings.cardpack_paths.emplace_back(entry);
+                    }
+                }
+                ImGui::EndChildFrame();
+            }
+        }
+
         if (ImGui::Button("Back"))
             game_settings_opened = false;
 
@@ -183,12 +237,30 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
                 for (auto& player : wrapper->game.state.players) {
                     player.hand_max_cards = wrapper->game.state.default_hand_max_cards;
                 }
+
+                // Set local player name
+                wrapper->game.state.players[wrapper->game.local_player_id].name =
+                    game_settings.local_player_name;
             }
 
             { // Update gamerules
-                wrapper->game.state.active_coroutines.clear(); // Clear the active coroutines vector because it contains the old gamerules' game_flow
+                // @todo Gamerules are not updated
+                // @body Gamerules are not updated when they change from init to when the OK button
+                // is pressed
+                wrapper->game.state.active_coroutines
+                    .clear(); // Clear the active coroutines vector because it contains the old
+                              // gamerules' game_flow
                 wrapper->game.gamerules =
                     GameRules(wrapper->game.state, game_settings.gamerules_path->string());
+            }
+
+            { // Add cardpacks
+                for (auto& cardpack : game_settings.cardpack_paths)
+                    wrapper->game.state.add_cardpack(cardpack);
+
+                std::cout << "Cards loaded: " << wrapper->game.get_state().all_cards.size()
+                          << std::endl;
+                wrapper->renderer.game_renderer.update_sprite_vector();
             }
 
             { // Update AI players vector

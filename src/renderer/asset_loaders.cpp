@@ -2,12 +2,14 @@
 
 #include "renderer/util.hpp"
 
-#include <stb/stb_image.h>
 #include <glad/glad.h>
+#include <stb/stb_image.h>
 
 using namespace munchkin::renderer;
 
-namespace munchkin::assets::loaders {
+namespace munchkin {
+namespace assets {
+namespace loaders {
 
 void load(Texture& texture, LoadParams<Texture> const& params) {
     stbi_set_flip_vertically_on_load(true);
@@ -30,10 +32,8 @@ void load(Texture& texture, LoadParams<Texture> const& params) {
 }
 
 void load(Shader& shader, LoadParams<Shader> const& params) {
-    shader.handle = renderer::load_shader(
-        params.vert.generic_string().c_str(),
-        params.frag.generic_string().c_str()
-    );
+    shader.handle = renderer::load_shader(params.vert.generic_string().c_str(),
+                                          params.frag.generic_string().c_str());
 }
 
 void load(Font& font, LoadParams<Font> const& params) {
@@ -42,16 +42,20 @@ void load(Font& font, LoadParams<Font> const& params) {
     font.swap(f);
 }
 
-void free(Texture& texture) {
-    glDeleteTextures(1, &texture.handle);
+void load(SoundEffect& sound, LoadParams<SoundEffect> const& params) {
+    std::string path_str = params.path.string();
+    sound.source = audeo::load_source(path_str, audeo::AudioType::Effect);
 }
 
-void free(Shader& shader) {
-    glDeleteProgram(shader.handle);
+void load(Music& music, LoadParams<Music> const& params) {
+    std::string path_str = params.path.string();
+    music.source = audeo::load_source(path_str, audeo::AudioType::Music);
 }
 
-void free(Font&) {
-    // This is taken care of by the Font destructor
-}
+void free(Texture& texture) { glDeleteTextures(1, &texture.handle); }
 
-}
+void free(Shader& shader) { glDeleteProgram(shader.handle); }
+
+} // namespace loaders
+} // namespace assets
+} // namespace munchkin

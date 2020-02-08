@@ -9,8 +9,9 @@
 
 namespace munchkin {
 
+// @todo Use filesystem::path instead of string_view
 std::vector<CardDef> load_cards(std::string_view path, sol::state& lua);
 
-}
+} // namespace munchkin
 
 #endif

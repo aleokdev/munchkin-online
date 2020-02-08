@@ -25,6 +25,7 @@ public:
     std::vector<CardPtr> hand;
     std::vector<CardPtr> equipped;
     size_t hand_max_cards;
+    std::string name;
 
 private:
     size_t id;

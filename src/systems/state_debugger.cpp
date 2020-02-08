@@ -121,8 +121,10 @@ void StateDebugger::render() {
         ImGui::TextUnformatted("Players");
         ImGui::SameLine();
         ImGui::TextDisabled("(%zu)", game->state.players.size());
-        ImGui::Columns(4);
+        ImGui::Columns(5);
         ImGui::TextUnformatted("ID");
+        ImGui::NextColumn();
+        ImGui::TextUnformatted("Name");
         ImGui::NextColumn();
         ImGui::TextUnformatted("Level");
         ImGui::NextColumn();
@@ -133,6 +135,8 @@ void StateDebugger::render() {
 
         for (auto& player : game->state.players) {
             ImGui::Text("%zu", player.get_id());
+            ImGui::NextColumn();
+            ImGui::Text("%s", player.name.c_str());
             ImGui::NextColumn();
             ImGui::Text("%d", player.level);
             ImGui::NextColumn();

@@ -16,3 +16,6 @@
 [submodule "lib/sol2"]
 	path = lib/sol2
 	url = https://github.com/ThePhD/sol2
+[submodule "lib/audeo"]
+	path = lib/audeo
+	url = https://github.com/NotAPenguin0/audeo
