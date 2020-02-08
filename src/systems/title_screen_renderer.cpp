@@ -5,8 +5,8 @@
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 
-#include <imgui.h>
 #include <audeo/audeo.hpp>
+#include <imgui.h>
 
 #include "game_wrapper.hpp"
 
@@ -69,10 +69,13 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
     text_base_position = glm::vec2(0.05f, 0.2f);
 
     // Start the title music
-    audeo::play_sound(music_manager.get_asset(music_manager.load_asset("title_music", {"data/generic/title.mp3"})).source, audeo::loop_forever);
+    audeo::play_sound(
+        music_manager.get_asset(music_manager.load_asset("title_music", {"data/generic/title.mp3"}))
+            .source,
+        audeo::loop_forever);
 
-        // We're in the main menu state by default
-        options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
+    // We're in the main menu state by default
+    options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
     options.push_back({"Credits", option_callbacks::credits, default_option_color});
     options.push_back({"Exit", option_callbacks::quit, default_option_color});
 }
@@ -98,6 +101,14 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
     // TODO: Clean this up.
     if (ImGui::BeginPopupModal("Setup Game...", &game_settings_opened,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
+        { // Local player name
+            static char player_name_buf[32] = "Player";
+
+            ImGui::InputText("Player name", player_name_buf, 32);
+
+            game_settings.local_player_name = player_name_buf;
+        }
+
         { // Total players slider
             int total_players = game_settings.total_players;
             ImGui::InputInt("Total players", &total_players);
@@ -188,6 +199,10 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
                 for (auto& player : wrapper->game.state.players) {
                     player.hand_max_cards = wrapper->game.state.default_hand_max_cards;
                 }
+
+                // Set local player name
+                wrapper->game.state.players[wrapper->game.local_player_id].name =
+                    game_settings.local_player_name;
             }
 
             { // Update gamerules
