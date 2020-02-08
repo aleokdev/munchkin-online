@@ -145,6 +145,12 @@ void CardSprite::draw(SpriteRenderer& spr) {
                       card.state->get_game_stage()) == card->get_def().play_stages.end();
     }
 
+    // Only render highlighted if hovered and being owned by local player or not being owned by
+    // anyone
+    bool render_highlighted = is_being_hovered && ((card->is_being_owned_by_player() &&
+                                                   card->owner_id == game->local_player_id) ||
+                              !card->is_being_owned_by_player());
+
     current_pos += (target_pos - current_pos) / movement_slowness;
     current_rotation += (target_rotation - current_rotation) / rotation_slowness;
     const bool is_card_visible =
@@ -156,7 +162,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
                     ((is_card_visible ? -texture_width : texture_width) - current_size.x) /
                     flip_slowness;
     current_scale +=
-        (((is_being_hovered && !render_darker) ? texture_hovered_scale : texture_scale) -
+        (((render_highlighted && !render_darker) ? texture_hovered_scale : texture_scale) -
          current_scale) /
         scale_slowness;
 
@@ -175,7 +181,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
     spr.set_rotation(current_rotation);
     if (render_darker)
         spr.set_color(.7f, .7f, .7f, 1);
-    else if (is_being_hovered)
+    else if (render_highlighted)
         spr.set_color(1.1f, 1.1f, 1.1f, 1);
 
     spr.do_draw();
