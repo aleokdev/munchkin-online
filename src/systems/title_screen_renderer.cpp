@@ -187,7 +187,6 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
         }
 
         { // Cardpacks combo box
-            // TODO: allow selecting more than one cardpack
             static bool update_available_vector = true;
             static std::vector<fs::path> cardpacks_available;
 
