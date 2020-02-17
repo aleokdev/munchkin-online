@@ -37,14 +37,14 @@ struct PlayerPtr {
     size_t player_id;
 
     PlayerPtr() : state(nullptr), player_id(0){};
-    PlayerPtr(nullptr_t) : state(nullptr), player_id(0){};
+    PlayerPtr(std::nullptr_t) : state(nullptr), player_id(0){};
     PlayerPtr(Player& player) : state(&player.get_state()), player_id(player.get_id()){};
     PlayerPtr(State& _state, size_t playerID) : state(&_state), player_id(playerID){};
     PlayerPtr(PlayerPtr&) = default;
     PlayerPtr(PlayerPtr const&) = default;
     PlayerPtr& operator=(PlayerPtr const&) = default;
     PlayerPtr& operator=(PlayerPtr&&) = default;
-    PlayerPtr& operator=(nullptr_t) {
+    PlayerPtr& operator=(std::nullptr_t) {
         state = nullptr;
         return *this;
     }
@@ -57,7 +57,7 @@ struct PlayerPtr {
 
     operator bool() const { return *this == nullptr; }
     bool operator==(PlayerPtr const& b) const { return player_id == b.player_id; }
-    bool operator==(nullptr_t) const { return state == nullptr; }
+    bool operator==(std::nullptr_t) const { return state == nullptr; }
 };
 
 } // namespace munchkin

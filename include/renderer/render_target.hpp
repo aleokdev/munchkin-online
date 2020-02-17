@@ -1,6 +1,8 @@
 #ifndef MUNCHKIN_RENDERER_RENDER_TARGET_HPP_
 #define MUNCHKIN_RENDERER_RENDER_TARGET_HPP_
 
+#include <cstddef>
+
 namespace munchkin {
 
 namespace renderer {
@@ -13,7 +15,7 @@ namespace renderer {
 class RenderTarget {
 public:
     struct CreateInfo {
-        size_t width, height;
+        std::size_t width, height;
     };
 
     RenderTarget() = default;
@@ -37,24 +39,24 @@ public:
     // Clears the stored framebuffer
     void clear(float r, float g, float b, float a, unsigned int flags);
 
-    size_t get_width() const;
-    size_t get_height() const;
+    std::size_t get_width() const;
+    std::size_t get_height() const;
 
-    void resize(size_t w, size_t h);
+    void resize(std::size_t w, std::size_t h);
 
     // Returns the handle to the OpenGL framebuffer object
-    size_t handle();
+    std::size_t handle();
 
     // Returns the handle to the OpenGL texture object
-    size_t texture_handle();
+    std::size_t texture_handle();
 
 private:
     unsigned int texture = 0;
     unsigned int fbo = 0;
     unsigned int rbo = 0;
 
-    size_t width = 0;
-    size_t height = 0;
+    std::size_t width = 0;
+    std::size_t height = 0;
 
     // assumes valid() == true
     void destroy();

@@ -101,14 +101,14 @@ struct CardPtr {
     size_t card_id;
 
     CardPtr() : state(nullptr), card_id(0){};
-    CardPtr(nullptr_t) : state(nullptr), card_id(0){};
+    CardPtr(std::nullptr_t) : state(nullptr), card_id(0){};
     CardPtr(Card& card) : state(&card.get_state()), card_id(card.get_id()){};
     CardPtr(State& _state, size_t cardID) : state(&_state), card_id(cardID){};
     CardPtr(CardPtr&) = default;
     CardPtr(CardPtr const&) = default;
     CardPtr& operator=(CardPtr const&) = default;
     CardPtr& operator=(CardPtr&&) = default;
-    CardPtr& operator=(nullptr_t) {
+    CardPtr& operator=(std::nullptr_t) {
         state = nullptr;
         return *this;
     }
@@ -121,7 +121,7 @@ struct CardPtr {
 
     operator bool() const { return *this == nullptr; }
     bool operator==(CardPtr const& b) const { return card_id == b.card_id; }
-    bool operator==(nullptr_t) const { return state == nullptr; }
+    bool operator==(std::nullptr_t) const { return state == nullptr; }
 };
 
 } // namespace munchkin

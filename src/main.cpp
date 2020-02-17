@@ -4,7 +4,11 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
+#ifdef WIN32
 #include <sdl/SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 #include <glad/glad.h>
 
