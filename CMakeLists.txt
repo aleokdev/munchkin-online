@@ -20,6 +20,10 @@ endforeach ()
 
 set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
 
+set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib/glm")
+set(MUNCHKIN_LINK_LIBRARIES "")
+set(MUNCHKIN_LINK_DIRECTORIES "")
+
 project("munchkin-online" VERSION 0.0.0
         DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
@@ -41,30 +45,27 @@ set(MUNCHKIN_SOURCES
         "src/api/player.cpp"
         "src/render_wrapper.cpp"
         )
-set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib" "lib/glm")
-set(MUNCHKIN_LINK_LIBRARIES "")
-set(MUNCHKIN_LINK_DIRECTORIES "")
 
 add_subdirectory("lib")
 
-add_executable(${PROJECT_NAME} "src/main.cpp" ${MUNCHKIN_SOURCES})
+message("Linked libs: ${MUNCHKIN_LINK_LIBRARIES}")
+message("Include directories: ${MUNCHKIN_INCLUDE_DIRECTORIES}")
+add_executable(munchkin-online "src/main.cpp" ${MUNCHKIN_SOURCES})
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
+set_property(TARGET munchkin-online PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
-target_compile_features(${PROJECT_NAME} PUBLIC "cxx_std_17")
-if (UNIX)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SOL_USING_CXX_LUA)
-endif ()
+target_compile_features(munchkin-online PUBLIC "cxx_std_17")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(${PROJECT_NAME} PUBLIC "-Wno-deprecated-declarations" "-Wall" "-Wno-unused-private-field"
+    target_compile_options(munchkin-online PUBLIC "-Wno-deprecated-declarations" "-Wall" "-Wno-unused-private-field"
             "-Wno-reorder")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
 endif ()
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
+target_include_directories(munchkin-online PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
+target_link_libraries(munchkin-online PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
+target_compile_definitions(munchkin-online PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
 
 # Tests
 
@@ -76,7 +77,4 @@ if (BUILD_CARDDATA_TEST)
     target_compile_features("carddata-test" PUBLIC "cxx_std_17")
     target_include_directories("carddata-test" PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
     target_link_libraries("carddata-test" PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
-    if (UNIX)
-        target_compile_definitions("carddata-test" PRIVATE SOL_USING_CXX_LUA)
-    endif ()
 endif ()
