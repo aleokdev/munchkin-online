@@ -23,34 +23,17 @@ set(BUILD_SHARED_LIBS OFF CACHE STRING "" FORCE)
 set(MUNCHKIN_INCLUDE_DIRECTORIES "include" "lib/glm")
 set(MUNCHKIN_LINK_LIBRARIES "")
 set(MUNCHKIN_LINK_DIRECTORIES "")
+set(MUNCHKIN_SOURCES "")
+set(MUNCHKIN_VERSION 0.0.0)
 
-project("munchkin-online" VERSION 0.0.0
+project("munchkin-online" VERSION ${MUNCHKIN_VERSION}
         DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
-set(MUNCHKIN_SOURCES
-        "src/game.cpp" "src/api/state.cpp" "src/api/card.cpp" "src/api/carddef.cpp"
-        "src/api/card_loader.cpp" "src/api/gamerules.cpp" "src/api/battle.cpp"
-        "src/systems/game_renderer.cpp" "src/renderer/render_target.cpp" "src/renderer/background_renderer.cpp"
-        "src/renderer/stb_image.cpp" "src/renderer/util.cpp" "src/renderer/uniform_buffer.cpp"
-        "src/systems/title_screen_renderer.cpp"
-        "src/systems/ai_manager.cpp"
-        "src/renderer/sprite_renderer.cpp"
-        "src/input/input.cpp" "src/renderer/card_sprite.cpp" "src/renderer/asset_loaders.cpp"
-        "src/systems/input_binder.cpp"
-        "src/systems/state_debugger.cpp"
-        "src/renderer/font_renderer.cpp"
-        "src/renderer/font.cpp" "src/game_wrapper.cpp"
-        "src/systems/debug_terminal.cpp"
-        "src/systems/game_logger.cpp"
-        "src/api/player.cpp"
-        "src/render_wrapper.cpp"
-        )
+add_subdirectory(src)
 
-add_subdirectory("lib")
+add_executable(munchkin-online ${MUNCHKIN_SOURCES})
 
-message("Linked libs: ${MUNCHKIN_LINK_LIBRARIES}")
-message("Include directories: ${MUNCHKIN_INCLUDE_DIRECTORIES}")
-add_executable(munchkin-online "src/main.cpp" ${MUNCHKIN_SOURCES})
+add_subdirectory(lib)
 
 set_property(TARGET munchkin-online PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
@@ -65,16 +48,15 @@ endif ()
 
 target_include_directories(munchkin-online PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
 target_link_libraries(munchkin-online PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
-target_compile_definitions(munchkin-online PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD)
+target_compile_definitions(munchkin-online PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD MUNCHKIN_VERSION=${MUNCHKIN_VERSION})
 
 # Tests
 
 if (BUILD_CARDDATA_TEST)
     add_executable("carddata-test" "tests/carddata.cpp" ${MUNCHKIN_SOURCES})
+    target_compile_features("carddata-test" PUBLIC "cxx_std_17")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options("carddata-test" PUBLIC "-w")
     endif ()
-    target_compile_features("carddata-test" PUBLIC "cxx_std_17")
-    target_include_directories("carddata-test" PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
-    target_link_libraries("carddata-test" PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
+    add_subdirectory(lib)
 endif ()
