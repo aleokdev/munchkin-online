@@ -1,3 +1,6 @@
+-- #EDITOR_PROPERTIES
+-- #PROPERTY power
+
 local card = {}
 
 function card.on_reveal(self)
