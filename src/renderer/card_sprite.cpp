@@ -11,7 +11,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#ifdef WIN32
 #include <sdl/SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 using namespace munchkin::renderer::internal::card_sprite;
 

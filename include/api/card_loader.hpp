@@ -6,11 +6,14 @@
 #include <sol/sol.hpp>
 #include <string_view>
 #include <vector>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace munchkin {
 
 // @todo Use filesystem::path instead of string_view
-std::vector<CardDef> load_cards(std::string_view path, sol::state& lua);
+std::vector<CardDef> load_cards(fs::path cardpack_path, sol::state& lua);
 
 } // namespace munchkin
 

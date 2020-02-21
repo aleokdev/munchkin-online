@@ -64,7 +64,7 @@ TEST_CASE("Card loading") {
     State state(5);
 
     SUBCASE("load all carddefs") {
-        std::vector<CardDef> defs(load_cards("data/cardpacks/test/cards.json", state.lua));
+        std::vector<CardDef> defs(load_cards("data/cardpacks/test/", state.lua));
 
         REQUIRE(defs.size() >= 3);
 
@@ -124,7 +124,7 @@ TEST_CASE("play stages") {
     State state(5);
 
     SUBCASE("load all carddefs") {
-        std::vector<CardDef> defs(load_cards("data/cardpacks/test/cards.json", state.lua));
+        std::vector<CardDef> defs(load_cards("data/cardpacks/test/", state.lua));
 
         CardDef* def = nullptr;
         for (auto& d : defs) {

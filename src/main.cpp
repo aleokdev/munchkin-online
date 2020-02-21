@@ -4,7 +4,11 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
+#ifdef WIN32
 #include <sdl/SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
 
 #include <glad/glad.h>
 
@@ -53,7 +57,8 @@ int main() try {
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
-    bool err = gladLoadGL() == 0;
+    bool err = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) == 0;
+    std::cout << glGetString(GL_VERSION) << std::endl;
 
     if (err) {
         std::cerr << "Failed to initialize GLAD!" << std::endl;

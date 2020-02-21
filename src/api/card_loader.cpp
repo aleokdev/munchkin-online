@@ -8,18 +8,16 @@
 
 namespace munchkin {
 
-std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
+std::vector<CardDef> load_cards(fs::path path, sol::state& lua) {
     nlohmann::json j;
-    std::ifstream f(path.data());
+    std::ifstream f(path/"cards.json");
     f >> j;
 
     std::vector<CardDef> result;
-    std::filesystem::path basepath(path);
-    basepath = basepath.parent_path();
 
     for (auto& card_json : j) {
         std::string script_path =
-            (basepath / std::filesystem::path((std::string)card_json["script"])).generic_string();
+            (path / fs::path((std::string)card_json["script"])).generic_string();
         DeckType def_category(DeckType::null);
         if (!card_json.contains("category"))
             std::cerr << "Card has no category! Will default to null; This means that it won't be "
@@ -37,16 +35,16 @@ std::vector<CardDef> load_cards(std::string_view path, sol::state& lua) {
         // @todo: Do not hardcode default textures
         std::string front_texture_path =
             card_json.contains("front_texture")
-                ? (basepath / std::filesystem::path((std::string)card_json["front_texture"]))
+                ? (path / fs::path((std::string)card_json["front_texture"]))
                       .generic_string()
-                : (basepath / "textures" /
+                : (path / "textures" /
                    (def_category == DeckType::dungeon ? "dungeon-front.png" : "treasure-front.png"))
                       .generic_string();
         std::string back_texture_path =
             card_json.contains("back_texture")
-                ? (basepath / std::filesystem::path((std::string)card_json["back_texture"]))
+                ? (path / fs::path((std::string)card_json["back_texture"]))
                       .generic_string()
-                : (basepath / "textures" /
+                : (path / "textures" /
                    (def_category == DeckType::dungeon ? "dungeon-back.png" : "treasure-back.png"))
                       .generic_string();
         CardDef def(lua, script_path, card_json["name"], card_json["description"], def_category,
