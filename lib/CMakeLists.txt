@@ -3,6 +3,7 @@
 add_subdirectory("freetype")
 set(AUDEO_BUILD_EXAMPLES OFF)
 add_subdirectory("audeo")
+add_subdirectory("glad")
 
 target_link_libraries(munchkin-online PRIVATE
         freetype
@@ -12,6 +13,7 @@ if (WIN32)
     target_link_libraries(munchkin-online PRIVATE
             "${CMAKE_CURRENT_SOURCE_DIR}/SDL2.lib"
             "${CMAKE_CURRENT_SOURCE_DIR}/lua53.lib"
+            glad
             )
 elseif (UNIX)
     message("Linux build, using Lua package")
@@ -42,6 +44,7 @@ if (WIN32)
             "${CMAKE_CURRENT_SOURCE_DIR}/sdl/include/"
             "${CMAKE_CURRENT_SOURCE_DIR}/sdl/include/sdl"
             "${CMAKE_CURRENT_SOURCE_DIR}/lua/include"
+            "${CMAKE_CURRENT_SOURCE_DIR}/glad/include"
             )
 else ()
     message("Lua include path: ${LUA_INCLUDE_DIR}")
@@ -60,5 +63,3 @@ target_sources(munchkin-online PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/imgui_impl_sdl.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/imgui/examples/imgui_impl_opengl3.cpp"
         )
-
-add_subdirectory("glad")
