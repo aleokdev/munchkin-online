@@ -47,7 +47,7 @@ public:
     void give_treasure(Player& player);
     void give_dungeon(Player& player);
 
-    void start_battle();
+    void start_battle(Card& source);
     void end_current_battle();
 
     Player& get_player(size_t id);

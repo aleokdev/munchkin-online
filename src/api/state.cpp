@@ -81,6 +81,8 @@ State::State(size_t player_count, std::string gamerule_path) {
         "monster_power_offset", &Battle::monster_power_offset,
         "get_total_player_power", &Battle::get_total_player_power,
         "get_total_monster_power", &Battle::get_total_monster_power,
+        "source_player", &Battle::source_player,
+        "source_card", &Battle::source_card,
         "add_card", &Battle::add_card,
         "remove_card", &Battle::remove_card,
         "modify_card", &Battle::modify_card,
@@ -165,11 +167,11 @@ void State::give_dungeon(Player& player) {
     ptr->visibility = Card::CardVisibility::front_visible_to_owner;
 }
 
-void State::start_battle() {
+void State::start_battle(Card& source_card) {
     if (current_battle)
         return;
 
-    current_battle = std::make_shared<Battle>(*this, get_current_player());
+    current_battle = std::make_shared<Battle>(*this, get_current_player(), &source_card);
 }
 
 void State::end_current_battle() {

@@ -10,15 +10,19 @@
 namespace munchkin {
 
 struct Battle {
-    Battle(State& s, PlayerPtr source) : state(&s), source_player(source) {}
-    Battle() : state(nullptr), source_player(nullptr) {}
+    Battle(State& s, PlayerPtr source, CardPtr card_source) :
+        state(&s), source_player(source), source_card(card_source) {
+        add_card(card_source);
+    }
+    Battle() : state(nullptr), source_player(nullptr), source_card(nullptr) {}
     Battle(const Battle&) = default;
     Battle& operator=(const Battle&) = default;
 
     State* state;
     PlayerPtr source_player;
+    CardPtr source_card;
     std::vector<PlayerPtr> helpers;
-    
+
     // The number of treasures to draw at the end of the battle (int because sol2)
     int treasures_to_draw = 0;
     // The number of levels to obtain at the end of the battle (int because sol2)
