@@ -71,6 +71,7 @@ State::State(size_t player_count, std::string gamerule_path) {
 
     lua.new_usertype<Player>("munchkin_player",
         "level", &Player::level,
+        "name", sol::readonly(&Player::name),
         "id", sol::readonly_property(&Player::get_id),
         "hand", &Player::hand,
         "hand_max_cards", &Player::hand_max_cards,
