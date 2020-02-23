@@ -41,10 +41,10 @@ local function stage_equip_stuff()
 		return -- end the game
 	end
 
-	card = game:get_dungeon_deck_front()
+	local card = game:get_dungeon_deck_front()
 	card:move_to(card_location.table_center, 0)
 	card.visibility = card_visibility.front_visible
-	on_reveal = card["on_reveal"]
+	local on_reveal = card["on_reveal"]
 
 	if on_reveal ~= nil then
 		print("Found on_reveal...")
@@ -99,9 +99,15 @@ local function stage_fight_monster()
 	-- Check if the user(s) have won the battle.
 	if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
 		-- Players have won, woo!
+		local cur_player_name = game:get_current_player().name
+		local cur_monster_name = game.current_battle.source_card:get_def().name
+		logger:log(cur_player_name .." has defeated ".. cur_monster_name .."!")
 		game.stage = "GET_TREASURE"
 	else
 		-- Monsters have won, woo!
+		local cur_player_name = game:get_current_player().name
+		local cur_monster_name = game.current_battle.source_card:get_def().name
+		logger:log(cur_player_name .." has been defeated by ".. cur_monster_name .."!")
 		game.stage = "FLEE_MONSTER"
 	end
 end
