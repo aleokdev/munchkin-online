@@ -87,9 +87,6 @@ void GameRenderer::update_camera() {
 }
 
 void GameRenderer::game_playing_frame() {
-
-    background.update_scroll(delta_time);
-
     update_camera();
 
     // Render the background

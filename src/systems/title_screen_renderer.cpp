@@ -50,8 +50,11 @@ TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr) {
 } // namespace option_callbacks
 
 TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
-    wrapper(&_wrapper), background(assets::get_manager<renderer::Texture>().load_asset(
-                            "bg", renderer::Background::default_load_params)) {
+    wrapper(&_wrapper), static_bg(assets::get_manager<renderer::Texture>().load_asset(
+                            "vignette", {"data/generic/vignette.png"})),
+    dynamic_bg(
+        assets::get_manager<renderer::Texture>().load_asset("noise", {"data/generic/noise.png"}),
+        true) {
 
     // Load assets
 
@@ -88,7 +91,9 @@ void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
 }
 
 TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
-    background.render();
+    dynamic_bg.render();
+    dynamic_bg.update_scroll(delta_time);
+    static_bg.render();
 
     if (status == Status::None) {
         render_menu_options();

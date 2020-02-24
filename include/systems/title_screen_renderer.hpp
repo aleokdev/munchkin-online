@@ -41,7 +41,9 @@ private:
 
     renderer::RenderTarget* target;
 
-    renderer::Background background;
+    renderer::Background static_bg;
+    renderer::Background dynamic_bg;
+
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Font> font;
     ::munchkin::GameWrapper* wrapper;
