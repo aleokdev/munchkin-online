@@ -6,50 +6,52 @@
 #include "util/util.hpp"
 
 #include <audeo/audeo.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
 #include <algorithm>
 
 #include "game_wrapper.hpp"
+#include "render_wrapper.hpp"
 
 namespace munchkin {
 namespace systems {
 
-namespace option_callbacks {
-
-TitleScreenRenderer::Status quit(TitleScreenRenderer&);
-TitleScreenRenderer::Status local_game(TitleScreenRenderer&);
-TitleScreenRenderer::Status credits(TitleScreenRenderer& tr);
-TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr);
-
-TitleScreenRenderer::Status quit(TitleScreenRenderer&) {
+TitleScreenRenderer::Status TitleScreenRenderer::quit() {
     return TitleScreenRenderer::Status::QuitApp;
 }
 
-TitleScreenRenderer::Status local_game(TitleScreenRenderer& tr) {
-    tr.game_settings_opened = true;
+TitleScreenRenderer::Status TitleScreenRenderer::local_game() {
+    game_settings_opened = true;
     return TitleScreenRenderer::Status::None;
 }
 
-TitleScreenRenderer::Status credits(TitleScreenRenderer& tr) {
+TitleScreenRenderer::Status TitleScreenRenderer::credits() {
     // Prepare option list for credits menu
-    tr.options.clear();
-    tr.options.push_back({"Back", option_callbacks::exit_credits, tr.default_option_color});
+    options.clear();
+    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
+    options.emplace_back(
+        "Back", [this]() { return exit_credits(); }, default_option_color,
+        fnt.calculate_width("Back"));
     return TitleScreenRenderer::Status::Credits;
 }
 
-TitleScreenRenderer::Status exit_credits(TitleScreenRenderer& tr) {
+TitleScreenRenderer::Status TitleScreenRenderer::exit_credits() {
     // Prepare option list for main menu
-    tr.options.clear();
-    tr.options.push_back({"Local Game", option_callbacks::local_game, tr.default_option_color});
-    tr.options.push_back({"Credits", option_callbacks::credits, tr.default_option_color});
-    tr.options.push_back({"Exit", option_callbacks::quit, tr.default_option_color});
+    options.clear();
+    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
+    options.emplace_back(
+        "Local Game", [this]() { return local_game(); }, default_option_color,
+        fnt.calculate_width("Local Game"));
+    options.emplace_back(
+        "Credits", [this]() { return credits(); }, default_option_color,
+        fnt.calculate_width("Credits"));
+    options.emplace_back(
+        "Exit", [this]() { return quit(); }, default_option_color, fnt.calculate_width("Exit"));
     return TitleScreenRenderer::Status::None;
 }
 
-} // namespace option_callbacks
-
-TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
+TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
     wrapper(&_wrapper), static_bg(assets::get_manager<renderer::Texture>().load_asset(
                             "vignette", {"data/generic/vignette.png"})),
     dynamic_bg(
@@ -59,19 +61,21 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
     // Load assets
 
     auto& shader_manager = assets::get_manager<renderer::Shader>();
+    auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& font_manager = assets::get_manager<renderer::Font>();
     auto& music_manager = assets::get_manager<assets::Music>();
 
     assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
                                                                        "data/shaders/sprite.frag"};
     sprite_shader = shader_manager.load_asset("sprite_shader", sprite_shader_params);
+    logo_texture = texture_manager.load_asset("logo", {"data/generic/logo.png"});
 
     assets::loaders::LoadParams<renderer::Font> font_params;
     font_params.path = "data/generic/quasimodo_regular.ttf";
     font = font_manager.load_asset("main_font", font_params);
 
     text_scale = glm::vec2(1, 1);
-    text_base_position = glm::vec2(0.05f, 0.2f);
+    text_base_position = glm::vec2(0.5f, 0.4f);
 
     // Start the title music
     audeo::play_sound(
@@ -80,9 +84,15 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::GameWrapper& _wrapper) :
         audeo::loop_forever);
 
     // We're in the main menu state by default
-    options.push_back({"Local Game", option_callbacks::local_game, default_option_color});
-    options.push_back({"Credits", option_callbacks::credits, default_option_color});
-    options.push_back({"Exit", option_callbacks::quit, default_option_color});
+    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
+    options.emplace_back(
+        "Local Game", [this]() { return local_game(); }, default_option_color,
+        fnt.calculate_width("Local Game"));
+    options.emplace_back(
+        "Credits", [this]() { return credits(); }, default_option_color,
+        fnt.calculate_width("Credits"));
+    options.emplace_back(
+        "Exit", [this]() { return quit(); }, default_option_color, fnt.calculate_width("Exit"));
 }
 
 void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
@@ -94,6 +104,22 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
     dynamic_bg.render();
     dynamic_bg.update_scroll(delta_time);
     static_bg.render();
+
+    renderer::SpriteRenderer sprite_renderer;
+    // Bind sprite shader
+    glUseProgram(assets::get_manager<renderer::Shader>().get_asset(sprite_shader).handle);
+
+    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
+
+    const auto& logo_tex = assets::get_manager<renderer::Texture>().get_asset(logo_texture);
+    const float window_w = wrapper->wrapper->game.window_w;
+    const float window_h = wrapper->wrapper->game.window_h;
+    sprite_renderer.set_camera_drag(false);
+    sprite_renderer.set_position({window_w / 2.f, window_h / 5.f * 4.f});
+    sprite_renderer.set_scale({logo_tex.w / 2.f, logo_tex.h / 2.f});
+    sprite_renderer.set_texture(logo_tex.handle);
+
+    sprite_renderer.do_draw();
 
     if (status == Status::None) {
         render_menu_options();
@@ -232,50 +258,47 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
 
         ImGui::SameLine();
         if (ImGui::Button("OK")) {
+            auto& game = wrapper->wrapper->game;
 
             { // Update players vector
-                wrapper->game.state.players.clear();
+                game.state.players.clear();
 
                 for (int i = 0; i < game_settings.total_players; i++)
-                    wrapper->game.state.players.emplace_back(wrapper->game.state, i);
+                    game.state.players.emplace_back(game.state, i);
 
-                for (auto& player : wrapper->game.state.players) {
-                    player.hand_max_cards = wrapper->game.state.default_hand_max_cards;
+                for (auto& player : game.state.players) {
+                    player.hand_max_cards = game.state.default_hand_max_cards;
                 }
 
                 // Set local player name
-                wrapper->game.state.players[wrapper->game.local_player_id].name =
-                    game_settings.local_player_name;
+                game.state.players[game.local_player_id].name = game_settings.local_player_name;
             }
 
             { // Update gamerules
                 // @todo Gamerules are not updated
                 // @body Gamerules are not updated when they change from init to when the OK button
                 // is pressed
-                wrapper->game.state.active_coroutines
-                    .clear(); // Clear the active coroutines vector because it contains the old
-                              // gamerules' game_flow
-                wrapper->game.gamerules =
-                    GameRules(wrapper->game.state, game_settings.gamerules_path->string());
+                game.state.active_coroutines.clear(); // Clear the active coroutines vector because
+                                                      // it contains the old gamerules' game_flow
+                game.gamerules = GameRules(game.state, game_settings.gamerules_path->string());
             }
 
             { // Add cardpacks
                 for (auto& cardpack : game_settings.cardpack_paths)
-                    wrapper->game.state.add_cardpack(cardpack);
+                    game.state.add_cardpack(cardpack);
 
-                std::cout << "Cards loaded: " << wrapper->game.get_state().all_cards.size()
-                          << std::endl;
-                wrapper->renderer.game_renderer.update_sprite_vector();
+                std::cout << "Cards loaded: " << game.get_state().all_cards.size() << std::endl;
+                wrapper->wrapper->renderer.game_renderer.update_sprite_vector();
             }
 
             { // Update AI players vector
                 std::vector<PlayerPtr> players_to_control;
 
                 for (int i = 1; i < game_settings.total_ai_players + 1; i++)
-                    players_to_control.emplace_back(wrapper->game.state.players[i]);
+                    players_to_control.emplace_back(game.state.players[i]);
 
-                wrapper->ai_manager = AIManager(wrapper->game.state, players_to_control,
-                                                game_settings.ai_path->generic_string());
+                wrapper->wrapper->ai_manager = AIManager(game.state, players_to_control,
+                                                         game_settings.ai_path->generic_string());
             }
 
             game_settings_opened = false;
@@ -296,10 +319,6 @@ float TitleScreenRenderer::get_menu_option_y_offset(size_t opt_index) {
     return opt_index * text_spacing;
 }
 
-float TitleScreenRenderer::calculate_text_width(std::string const& text) {
-    return (text.size() * text_scale.x * base_point_size) / target->get_width();
-}
-
 void TitleScreenRenderer::render_menu_options() {
     renderer::FontRenderer renderer;
     float yoffset = 0.0f;
@@ -307,17 +326,16 @@ void TitleScreenRenderer::render_menu_options() {
     renderer.set_size(text_scale);
     renderer.set_window_size(target->get_width(), target->get_height());
 
-    auto render_option = [this, &renderer, &yoffset](size_t i) {
-        std::string const& text = options[i].name;
-        renderer.set_color(options[i].color);
-        float xoffset = options[i].offset / target->get_width();
-        renderer.set_position(
-            glm::vec2(text_base_position.x + xoffset, text_base_position.y + yoffset));
+    for (auto & option : options) {
+        std::string const& text = option.name;
+        renderer.set_color(option.color);
+        renderer.set_position(glm::vec2(
+            (-option.text_width / (float)target->get_width() / 2.f) * option.scale + text_base_position.x,
+            yoffset + text_base_position.y));
+        renderer.set_size(glm::vec2{1, 1} * option.scale);
         renderer.render_text(font, text);
         yoffset += text_spacing;
-    };
-
-    for (size_t i = 0; i < options.size(); ++i) { render_option(i); }
+    }
 }
 void TitleScreenRenderer::render_credits() {
     renderer::FontRenderer renderer;
@@ -326,25 +344,27 @@ void TitleScreenRenderer::render_credits() {
     renderer.set_size(text_scale);
     renderer.set_window_size(target->get_width(), target->get_height());
 
-    auto render_option = [this, &renderer, &yoffset](size_t i) {
-        std::string const& text = options[i].name;
-        renderer.set_color(options[i].color);
-        float xoffset = options[i].offset / target->get_width();
-        renderer.set_position(
-            glm::vec2(text_base_position.x + xoffset, text_base_position.y + yoffset));
+    for (auto & option : options) {
+        std::string const& text = option.name;
+        renderer.set_color(option.color);
+        renderer.set_position(glm::vec2(
+            (-option.text_width / (float)target->get_width() / 2.f) * option.scale + text_base_position.x,
+            yoffset + text_base_position.y));
+        renderer.set_size(glm::vec2{1, 1} * option.scale);
         renderer.render_text(font, text);
         yoffset += text_spacing;
-    };
-
-    for (size_t i = 0; i < options.size(); ++i) { render_option(i); }
+    }
 }
 
 TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time) {
     for (size_t opt_index = 0; opt_index < options.size(); ++opt_index) {
         // Compute bounding box
-        glm::vec2 top_left = text_base_position + glm::vec2(0, get_menu_option_y_offset(opt_index));
-        glm::vec2 bottom_right = top_left + glm::vec2(calculate_text_width(options[opt_index].name),
-                                                      base_point_size / target->get_height());
+        glm::vec2 top_left =
+            text_base_position + glm::vec2(0, get_menu_option_y_offset(opt_index)) -
+            glm::vec2(options[opt_index].text_width / target->get_width() / 2.f, 0);
+        glm::vec2 bottom_right =
+            top_left + glm::vec2(options[opt_index].text_width / target->get_width(),
+                                 base_point_size / target->get_height());
         BoundingBox bbox{top_left, bottom_right};
         auto mouse_pos = input::get_mouse_pos();
         // Normalize mouse position
@@ -353,14 +373,14 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
             auto& option = options[opt_index];
             option.color = glm::vec3(1, 1, 1);
-            option.offset += (selected_option_offset - option.offset) / offset_animate_slowness;
+            option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
-                status = options[opt_index].callback(*this);
+                status = options[opt_index].callback();
                 return status;
             }
         } else {
             auto& option = options[opt_index];
-            option.offset += (0 - option.offset) / offset_animate_slowness;
+            option.scale += (1 - option.scale) / offset_animate_slowness;
             option.color = default_option_color;
         }
     }

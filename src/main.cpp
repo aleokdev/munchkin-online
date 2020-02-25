@@ -46,6 +46,7 @@ int main() try {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     SDL_WindowFlags window_flags =
@@ -59,6 +60,7 @@ int main() try {
 
     bool err = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) == 0;
     std::cout << glGetString(GL_VERSION) << std::endl;
+    glEnable(GL_MULTISAMPLE);
 
     if (err) {
         std::cerr << "Failed to initialize GLAD!" << std::endl;
