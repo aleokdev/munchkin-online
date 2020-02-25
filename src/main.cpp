@@ -67,7 +67,9 @@ int main() try {
         return -1;
     }
 
-    if (!audeo::init()) {
+    audeo::InitInfo audeo_init_info;
+    audeo_init_info.chunk_size = 2048;
+    if (!audeo::init(audeo_init_info)) {
         std::cerr << "Failed to initialize audeo!" << std::endl;
         return -1;
     }

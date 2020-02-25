@@ -379,10 +379,10 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
             option.color = glm::vec3(1, 1, 1);
             option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
             if(!option.selected)
-                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(hover_sfx).source, 0);
+                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(hover_sfx).source);
             option.selected = true;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
-                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(click_sfx).source, 0);
+                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(click_sfx).source);
                 status = options[opt_index].callback();
                 return status;
             }
