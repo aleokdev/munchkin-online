@@ -64,11 +64,15 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& font_manager = assets::get_manager<renderer::Font>();
     auto& music_manager = assets::get_manager<assets::Music>();
+    auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
 
     assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
                                                                        "data/shaders/sprite.frag"};
     sprite_shader = shader_manager.load_asset("sprite_shader", sprite_shader_params);
     logo_texture = texture_manager.load_asset("logo", {"data/generic/logo.png"});
+
+    hover_sfx = sfx_manager.load_asset("ui_hover", {"data/generic/ui_hover.wav"});
+    click_sfx = sfx_manager.load_asset("ui_click", {"data/generic/ui_click.wav"});
 
     assets::loaders::LoadParams<renderer::Font> font_params;
     font_params.path = "data/generic/quasimodo_regular.ttf";
@@ -374,7 +378,11 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
             auto& option = options[opt_index];
             option.color = glm::vec3(1, 1, 1);
             option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
+            if(!option.selected)
+                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(hover_sfx).source, 0);
+            option.selected = true;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
+                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(click_sfx).source, 0);
                 status = options[opt_index].callback();
                 return status;
             }
@@ -382,6 +390,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
             auto& option = options[opt_index];
             option.scale += (1 - option.scale) / offset_animate_slowness;
             option.color = default_option_color;
+            option.selected = false;
         }
     }
 

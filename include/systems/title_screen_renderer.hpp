@@ -47,6 +47,9 @@ private:
 
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Font> font;
+
+    assets::Handle<assets::SoundEffect> hover_sfx;
+    assets::Handle<assets::SoundEffect> click_sfx;
     ::munchkin::RenderWrapper* wrapper;
     struct MenuOption {
         std::string name;
@@ -54,6 +57,7 @@ private:
         glm::vec3 color;
         // When selected, a menu option is assigned a scale offset so it appears selected
         float scale = 1.0f;
+        bool selected = false;
         float text_width;
 
         MenuOption(std::string n, OptionCallbackT c, glm::vec3 col, float _text_width) :
