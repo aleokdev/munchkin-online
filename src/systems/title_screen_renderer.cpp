@@ -83,7 +83,8 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
 
     // Start the title music
     audeo::play_sound(
-        music_manager.get_asset(music_manager.load_asset("title_music", {"data/generic/title.mp3"}))
+        music_manager
+            .get_asset(music_manager.load_asset("title_song", {"data/generic/title_song.mp3"}))
             .source,
         audeo::loop_forever);
 
@@ -330,12 +331,13 @@ void TitleScreenRenderer::render_menu_options() {
     renderer.set_size(text_scale);
     renderer.set_window_size(target->get_width(), target->get_height());
 
-    for (auto & option : options) {
+    for (auto& option : options) {
         std::string const& text = option.name;
         renderer.set_color(option.color);
-        renderer.set_position(glm::vec2(
-            (-option.text_width / (float)target->get_width() / 2.f) * option.scale + text_base_position.x,
-            yoffset + text_base_position.y));
+        renderer.set_position(
+            glm::vec2((-option.text_width / (float)target->get_width() / 2.f) * option.scale +
+                          text_base_position.x,
+                      yoffset + text_base_position.y));
         renderer.set_size(glm::vec2{1, 1} * option.scale);
         renderer.render_text(font, text);
         yoffset += text_spacing;
@@ -348,12 +350,13 @@ void TitleScreenRenderer::render_credits() {
     renderer.set_size(text_scale);
     renderer.set_window_size(target->get_width(), target->get_height());
 
-    for (auto & option : options) {
+    for (auto& option : options) {
         std::string const& text = option.name;
         renderer.set_color(option.color);
-        renderer.set_position(glm::vec2(
-            (-option.text_width / (float)target->get_width() / 2.f) * option.scale + text_base_position.x,
-            yoffset + text_base_position.y));
+        renderer.set_position(
+            glm::vec2((-option.text_width / (float)target->get_width() / 2.f) * option.scale +
+                          text_base_position.x,
+                      yoffset + text_base_position.y));
         renderer.set_size(glm::vec2{1, 1} * option.scale);
         renderer.render_text(font, text);
         yoffset += text_spacing;
@@ -378,11 +381,13 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
             auto& option = options[opt_index];
             option.color = glm::vec3(1, 1, 1);
             option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
-            if(!option.selected)
-                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(hover_sfx).source);
+            if (!option.selected)
+                audeo::play_sound(
+                    assets::get_manager<assets::SoundEffect>().get_asset(hover_sfx).source);
             option.selected = true;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
-                audeo::play_sound(assets::get_manager<assets::SoundEffect>().get_asset(click_sfx).source);
+                audeo::play_sound(
+                    assets::get_manager<assets::SoundEffect>().get_asset(click_sfx).source);
                 status = options[opt_index].callback();
                 return status;
             }
