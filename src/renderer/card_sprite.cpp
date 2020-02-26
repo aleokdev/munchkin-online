@@ -12,9 +12,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #ifdef _WIN32
-#include <sdl/SDL.h>
+#    include <sdl/SDL.h>
 #else
-#include <SDL2/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 using namespace munchkin::renderer::internal::card_sprite;
@@ -30,6 +30,11 @@ CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card) {
                                                      {card->get_def().back_texture_path});
     front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path,
                                                       {card->get_def().front_texture_path});
+    if (!initialized_sfx) {
+        auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
+        move_sfx = sfx_manager.load_asset("card_deal", {"data/generic/card_deal.ogg"});
+        flip_sfx = sfx_manager.load_asset("card_flip", {"data/generic/card_flip.ogg"});
+    }
 }
 
 void CardSprite::set_target_pos(math::Vec2D target) { target_pos = target; }
@@ -136,6 +141,11 @@ void CardSprite::draw(SpriteRenderer& spr) {
     if (last_card_location != card->get_location() ||
         card.state->players[card->owner_id].hand.size() != last_cards_in_owner) {
         calculate_target_from_location();
+        if (!first_sfx_play && last_card_location != card->get_location()) {
+            auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
+            audeo::Sound s = audeo::play_sound(sfx_manager.get_asset(CardSprite::move_sfx).source);
+            audeo::set_volume(s, .5f);
+        }
         last_card_location = card->get_location();
         last_cards_in_owner = card.state->players[card->owner_id].hand.size();
     }
@@ -151,9 +161,10 @@ void CardSprite::draw(SpriteRenderer& spr) {
 
     // Only render highlighted if hovered and being owned by local player or not being owned by
     // anyone
-    bool render_highlighted = is_being_hovered && ((card->is_being_owned_by_player() &&
-                                                   card->owner_id == game->local_player_id) ||
-                              !card->is_being_owned_by_player());
+    bool render_highlighted =
+        is_being_hovered &&
+        ((card->is_being_owned_by_player() && card->owner_id == game->local_player_id) ||
+         !card->is_being_owned_by_player());
 
     current_pos += (target_pos - current_pos) / movement_slowness;
     current_rotation += (target_rotation - current_rotation) / rotation_slowness;
@@ -161,6 +172,13 @@ void CardSprite::draw(SpriteRenderer& spr) {
         card->visibility == Card::CardVisibility::front_visible ||
         (card->visibility == Card::CardVisibility::front_visible_to_owner &&
          card->owner_id == game->local_player_id);
+
+    if (!first_sfx_play && (is_card_visible ^ last_visible)) {
+        auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
+        audeo::Sound s = audeo::play_sound(sfx_manager.get_asset(CardSprite::flip_sfx).source);
+        audeo::set_volume(s, .5f);
+    }
+    last_visible = is_card_visible;
 
     current_size += math::vectors::x_axis *
                     ((is_card_visible ? -texture_width : texture_width) - current_size.x) /
@@ -189,6 +207,8 @@ void CardSprite::draw(SpriteRenderer& spr) {
         spr.set_color(1.1f, 1.1f, 1.1f, 1);
 
     spr.do_draw();
+
+    first_sfx_play = false;
 }
 
 math::Rect2D CardSprite::get_rect() {
