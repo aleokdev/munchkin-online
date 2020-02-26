@@ -28,6 +28,7 @@ GameRenderer::GameRenderer(RenderWrapper& r) :
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
+    auto& music_manager = assets::get_manager<assets::Music>();
 
     assets::loaders::LoadParams<renderer::Texture> table_texture_params{"data/generic/table.png"};
 
@@ -41,6 +42,7 @@ GameRenderer::GameRenderer(RenderWrapper& r) :
     infobar_normal_font =
         font_manager.load_asset("medium_sec_font", {"data/generic/Raleway-Medium.ttf"});
     table_texture = texture_manager.load_asset("table", table_texture_params);
+    game_music = music_manager.load_asset("game_song", {"data/generic/game_song.mp3"});
 
     // Update camera data
     renderer::UniformBuffer::bind(camera_buffer);
@@ -87,10 +89,18 @@ void GameRenderer::update_camera() {
 }
 
 void GameRenderer::game_playing_frame() {
+    static bool first_time = true;
     update_camera();
 
     // Render the background
     background.render();
+
+    auto& music_manager = assets::get_manager<assets::Music>();
+    if(first_time && !audeo::is_playing_music())
+    {
+        music = audeo::play_sound(music_manager.get_asset(game_music).source, audeo::loop_forever, 500);
+        first_time = false;
+    }
 
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
