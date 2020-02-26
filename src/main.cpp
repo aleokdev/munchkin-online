@@ -5,9 +5,9 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
 #ifdef _WIN32
-#include <sdl/SDL.h>
+#    include <sdl/SDL.h>
 #else
-#include <SDL2/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 #include <glad/glad.h>
@@ -68,7 +68,12 @@ int main() try {
     }
 
     audeo::InitInfo audeo_init_info;
+    audeo_init_info.frequency = 44100;
+#ifdef __linux__
+    // Some linux systems have delayed audio when the chunk size is set too high. Doesn't happen on
+    // windows systems though.
     audeo_init_info.chunk_size = 2048;
+#endif
     if (!audeo::init(audeo_init_info)) {
         std::cerr << "Failed to initialize audeo!" << std::endl;
         return -1;
