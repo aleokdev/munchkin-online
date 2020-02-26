@@ -82,7 +82,7 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
     text_base_position = glm::vec2(0.5f, 0.4f);
 
     // Start the title music
-    audeo::play_sound(
+    music = audeo::play_sound(
         music_manager
             .get_asset(music_manager.load_asset("title_song", {"data/generic/title_song.mp3"}))
             .source,
@@ -309,6 +309,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             game_settings_opened = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
+            audeo::stop_sound(music, 200);
             return TitleScreenRenderer::Status::EnterGamePlaying;
         }
 
