@@ -121,7 +121,7 @@ void FontRenderer::render_text(assets::Handle<Font> font, std::string const& tex
     glUniform3fv(3, 1, glm::value_ptr(text_color));
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
     glm::vec2 offset = glm::vec2(0, 0);
     for (auto const& c : text) {

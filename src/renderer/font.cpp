@@ -75,5 +75,11 @@ Font::~Font() {
 
 void Font::swap(Font& other) { std::swap(glyphs, other.glyphs); }
 
+float Font::calculate_width(std::string const& str) {
+    unsigned int offset = 0; // In 1/64ths of a pixel!
+    for (char ch : str) { offset += glyphs[ch].advance; }
+    return (offset >> 6);
+}
+
 } // namespace renderer
 } // namespace munchkin

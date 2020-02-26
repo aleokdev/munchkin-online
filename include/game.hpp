@@ -48,6 +48,7 @@ public:
 
     // Sprites
     std::vector<renderer::CardSprite> card_sprites;
+    renderer::CardSprite* current_hovered_sprite = nullptr;
 
     size_t local_player_id = 0;
 };

@@ -8,13 +8,13 @@ RenderWrapper::RenderWrapper(GameWrapper& w) :
     wrapper(&w), 
     framebuf(renderer::RenderTarget::CreateInfo{wrapper->game.window_w, wrapper->game.window_h}),
     projection(glm::ortho(0.0f, (float)wrapper->game.window_w, 0.0f, (float)wrapper->game.window_h)),
-    game_renderer(*this), title_screen_renderer(w) {
+    game_renderer(*this), title_screen_renderer(*this) {
 
     title_screen_renderer.set_render_target(&framebuf);
 
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 }
 
 RenderWrapper::~RenderWrapper() {}

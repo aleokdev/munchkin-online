@@ -4,10 +4,10 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
-#ifdef WIN32
-#include <sdl/SDL.h>
+#ifdef _WIN32
+#    include <sdl/SDL.h>
 #else
-#include <SDL2/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 #include <glad/glad.h>
@@ -46,6 +46,7 @@ int main() try {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     SDL_WindowFlags window_flags =
@@ -59,13 +60,21 @@ int main() try {
 
     bool err = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) == 0;
     std::cout << glGetString(GL_VERSION) << std::endl;
+    glEnable(GL_MULTISAMPLE);
 
     if (err) {
         std::cerr << "Failed to initialize GLAD!" << std::endl;
         return -1;
     }
 
-    if (!audeo::init()) {
+    audeo::InitInfo audeo_init_info;
+    audeo_init_info.frequency = 44100;
+#ifdef __linux__
+    // Some linux systems have delayed audio when the chunk size is set too high. Doesn't happen on
+    // windows systems though.
+    audeo_init_info.chunk_size = 2048;
+#endif
+    if (!audeo::init(audeo_init_info)) {
         std::cerr << "Failed to initialize audeo!" << std::endl;
         return -1;
     }

@@ -6,7 +6,7 @@
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <sdl/SDL.h>
 #else
 #include <SDL2/SDL.h>
@@ -79,7 +79,7 @@ void GameWrapper::main_loop(SDL_Window* window) {
 
         SDL_GL_SwapWindow(window);
 
-        input::update();
+        input::update(!io.WantCaptureMouse);
         if (do_tick) {
             input_binder.tick();
             ai_manager.tick();

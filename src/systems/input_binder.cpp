@@ -27,13 +27,18 @@ void InputBinder::tick() {
         Card& sprite_card = *sprite.get_card_ptr();
         if (sprite.get_rect().contains(m_pos)) {
             sprite.is_being_hovered = true;
+            game->current_hovered_sprite = &sprite;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
                 game->push_event(FlowEvent{FlowEvent::EventType::card_clicked, sprite_card,
                                            game->local_player_id});
                 break;
             }
         } else
+        {
+            if(game->current_hovered_sprite == &sprite)
+                game->current_hovered_sprite = nullptr;
             sprite.is_being_hovered = false;
+        }
     }
 
     // Panning //

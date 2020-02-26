@@ -7,6 +7,9 @@
 #include "renderer/render_target.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/uniform_buffer.hpp"
+#include "util/pos_vec.hpp"
+
+#include <audeo/audeo.hpp>
 
 #include <glm/mat4x4.hpp>
 
@@ -14,6 +17,10 @@ namespace munchkin {
 
 class Game;
 class RenderWrapper;
+
+namespace renderer {
+class CardSprite;
+}
 
 namespace systems {
 
@@ -41,7 +48,23 @@ private:
     // Assets
     renderer::Background background;
     assets::Handle<renderer::Shader> sprite_shader;
+    assets::Handle<renderer::Shader> solid_shader;
+    assets::Handle<renderer::Shader> text_shader;
+
+    assets::Handle<renderer::Font> infobar_title_font;
+    assets::Handle<renderer::Font> infobar_normal_font;
+
     assets::Handle<renderer::Texture> table_texture;
+    assets::Handle<assets::Music> game_music;
+
+    audeo::Sound music;
+
+    // Info box
+    std::string info_box_title;
+    std::string info_box_description;
+    math::Vec2D info_box_position;
+    static constexpr float info_box_move_slowness = 16;
+    renderer::CardSprite* last_frame_hovered_sprite = nullptr;
 
     // Functions
     void update_camera();

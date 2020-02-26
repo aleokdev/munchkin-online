@@ -8,7 +8,7 @@ namespace renderer {
 
 class Background {
 public:
-    Background(assets::Handle<Texture> texture);
+    Background(assets::Handle<Texture> texture, bool scrolling = false);
     ~Background();
 
     assets::Handle<Texture> texture;
@@ -25,7 +25,8 @@ private:
     unsigned int texcoords_buffer;
     unsigned int shader;
 
-    float scroll_speed = 0;
+    bool scrolling;
+    float scroll_speed = .02f;
     float scroll = 0;
 
     void create_buffers();

@@ -50,6 +50,13 @@ target_include_directories(munchkin-online PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES
 target_link_libraries(munchkin-online PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
 target_compile_definitions(munchkin-online PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD MUNCHKIN_VERSION=${MUNCHKIN_VERSION})
 
+# Data
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cmake-build-debug/")
+    message("Copying data files to cmake-build-debug/...")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/build/data" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/cmake-build-debug/")
+    message("Done!")
+endif ()
+
 # Tests
 
 if (BUILD_CARDDATA_TEST)

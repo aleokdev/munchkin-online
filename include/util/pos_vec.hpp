@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <imgui.h>
+#include <glm/vec2.hpp>
 
 namespace math {
 
@@ -39,6 +40,7 @@ struct Vec2D {
     }
 
     operator ImVec2() const { return ImVec2{(float)x, (float)y}; }
+    operator glm::vec2() const { return glm::vec2((float)x, (float)y); }
 
     static Vec2D from_ImVec(ImVec2 v) {
         Vec2D ret;
@@ -111,6 +113,7 @@ inline static constexpr Vec2D x_axis = Vec2D{1, 0};
 inline static constexpr Vec2D left = Vec2D{-1, 0};
 inline static constexpr Vec2D right = Vec2D{1, 0};
 inline static constexpr Vec2D zero = Vec2D{0, 0};
+inline static constexpr Vec2D one = Vec2D{1, 1};
 } // namespace vectors
 
 } // namespace math

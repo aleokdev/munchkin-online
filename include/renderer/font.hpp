@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <glm/glm.hpp>
 #include <unordered_map>
+#include <string>
 
 namespace munchkin {
 namespace renderer {
@@ -29,6 +30,8 @@ public:
     std::unordered_map<char, glyph_data> glyphs;
 
     void swap(Font& other);
+    // Returns width (in pixels) of a string in this font. 
+    float calculate_width(std::string const& str);
 };
 
 } // namespace renderer
