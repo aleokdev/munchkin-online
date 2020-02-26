@@ -79,7 +79,7 @@ void GameWrapper::main_loop(SDL_Window* window) {
 
         SDL_GL_SwapWindow(window);
 
-        input::update();
+        input::update(!io.WantCaptureMouse);
         if (do_tick) {
             input_binder.tick();
             ai_manager.tick();

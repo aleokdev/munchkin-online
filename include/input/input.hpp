@@ -15,7 +15,7 @@ struct MouseState {
     int button_flagmap = 0;
 };
 
-void update();
+void update(bool capture_mouse);
 
 bool is_key_pressed(Keycode);
 bool is_mousebutton_pressed(MouseButton mouse_button);

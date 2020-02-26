@@ -6,10 +6,15 @@ namespace input {
 MouseState mouse;
 MouseState last_mouse;
 
-void update()
-{
+void update(bool capture_mouse) {
 	last_mouse = mouse;
-	mouse.button_flagmap = SDL_GetMouseState(&mouse.x, &mouse.y);
+	if(!capture_mouse)
+    {
+        mouse.button_flagmap = 0;
+        mouse.x = mouse.y = -1;
+    }
+	else
+	    mouse.button_flagmap = SDL_GetMouseState(&mouse.x, &mouse.y);
 }
 
 bool is_key_pressed(Keycode keycode) {
