@@ -96,7 +96,6 @@ private:
 
     struct GameSettings {
         size_t total_players = 3;
-        size_t total_ai_players = 2;
 
         std::string local_player_name;
 

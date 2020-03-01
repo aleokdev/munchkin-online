@@ -153,13 +153,6 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             game_settings.total_players = std::max(0, total_players);
         }
 
-        { // AI players slider
-            int ai_players = game_settings.total_ai_players;
-            ImGui::InputInt("AI Players", &ai_players);
-            game_settings.total_ai_players =
-                std::max(0, std::min(ai_players, (int)game_settings.total_players - 1));
-        }
-
         { // Gamerules combo box
             static bool update_available_vector = true;
             static std::vector<fs::path> gamerules_available;
@@ -299,7 +292,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             { // Update AI players vector
                 std::vector<PlayerPtr> players_to_control;
 
-                for (int i = 1; i < game_settings.total_ai_players + 1; i++)
+                for (int i = 1; i < game_settings.total_players; i++)
                     players_to_control.emplace_back(game.state.players[i]);
 
                 wrapper->wrapper->ai_manager = AIManager(game.state, players_to_control,
