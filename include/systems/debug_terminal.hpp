@@ -19,7 +19,7 @@ public:
     void log(std::string);
 
 private:
-    void log_lua(sol::this_state, sol::object);
+    void log_lua(std::string, sol::object);
 
     Game* game;
     std::vector<std::string> terminal_log;
