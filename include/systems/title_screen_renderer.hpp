@@ -5,8 +5,6 @@
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
 
-#include <audeo/audeo.hpp>
-
 #include <filesystem>
 #include <functional>
 #include <optional>
@@ -49,8 +47,6 @@ private:
 
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Font> font;
-
-    audeo::Sound music;
 
     assets::Handle<assets::SoundEffect> hover_sfx;
     assets::Handle<assets::SoundEffect> click_sfx;

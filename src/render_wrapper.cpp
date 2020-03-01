@@ -5,10 +5,11 @@
 namespace munchkin {
 
 RenderWrapper::RenderWrapper(GameWrapper& w) :
-    wrapper(&w), 
+    wrapper(&w),
     framebuf(renderer::RenderTarget::CreateInfo{wrapper->game.window_w, wrapper->game.window_h}),
-    projection(glm::ortho(0.0f, (float)wrapper->game.window_w, 0.0f, (float)wrapper->game.window_h)),
-    game_renderer(*this), title_screen_renderer(*this) {
+    projection(
+        glm::ortho(0.0f, (float)wrapper->game.window_w, 0.0f, (float)wrapper->game.window_h)),
+    game_renderer(*this), title_screen_renderer(*this), jukebox_renderer(*this) {
 
     title_screen_renderer.set_render_target(&framebuf);
 
@@ -41,7 +42,6 @@ void RenderWrapper::render() {
     // Set viewport to full window
     glViewport(0, 0, framebuf.get_width(), framebuf.get_height());
 
-
     framebuf.clear(0, 0, 0, 1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     switch (renderer_state) {
@@ -57,6 +57,8 @@ void RenderWrapper::render() {
         }
         case State::GamePlaying: game_renderer.render(); break;
     }
+
+    jukebox_renderer.render();
 
     // Blit framebuffer
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

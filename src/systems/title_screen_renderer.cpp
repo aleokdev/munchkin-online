@@ -5,7 +5,7 @@
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 
-#include <audeo/audeo.hpp>
+#include "sound/sound_player.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
@@ -82,11 +82,7 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
     text_base_position = glm::vec2(0.5f, 0.4f);
 
     // Start the title music
-    music = audeo::play_sound(
-        music_manager
-            .get_asset(music_manager.load_asset("title_song", {"data/generic/title_song.mp3"}))
-            .source,
-        audeo::loop_forever);
+    sound::play_music(music_manager.load_asset("title_song", {"data/generic/title_song.mp3"}));
 
     // We're in the main menu state by default
     auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
@@ -302,7 +298,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
             game_settings_opened = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
-            audeo::stop_sound(music, 200);
+            sound::stop_music();
             return TitleScreenRenderer::Status::EnterGamePlaying;
         }
 

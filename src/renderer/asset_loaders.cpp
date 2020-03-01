@@ -4,6 +4,9 @@
 
 #include <glad/glad.h>
 #include <stb/stb_image.h>
+#include <fstream>
+#include <taglib/tag.h>
+#include <taglib/fileref.h>
 
 using namespace munchkin::renderer;
 
@@ -50,6 +53,10 @@ void load(SoundEffect& sound, LoadParams<SoundEffect> const& params) {
 void load(Music& music, LoadParams<Music> const& params) {
     std::string path_str = params.path.string();
     music.source = audeo::load_source(path_str, audeo::AudioType::Music);
+
+    // TODO: Get taglib working, or get actual metadata from song files
+    music.title = params.path.stem();
+    music.artist = "Kevin Macleod";
 }
 
 void free(Texture& texture) { glDeleteTextures(1, &texture.handle); }
