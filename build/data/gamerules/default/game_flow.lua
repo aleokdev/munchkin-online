@@ -63,23 +63,37 @@ end
 
 local function stage_fight_monster()
     print("stage_fight_monster")
-    while true do
-        coroutine.yield()
-        if game.last_event.type == event_type.card_clicked then
-            print("clicked!")
-            -- Calculate if the card clicked can be played or not
-            if is_playermove_allowed(game.last_event) then
-                local c = game.last_event.card_involved
-                c["on_play"](c)
-                if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
-                    break
+    local function process_battle()
+        local end_battle = false
+        local btn = gui:create_button("End Battle", function(self)
+            end_battle = true
+            gui:delete_button(self)
+        end)
+        while true do
+            coroutine.yield()
+            if game.last_event.type == event_type.card_clicked then
+                print("clicked!")
+                -- Calculate if the card clicked can be played or not
+                if is_playermove_allowed(game.last_event) then
+                    local c = game.last_event.card_involved
+                    c["on_play"](c)
+                    if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
+                        break
+                    end
+                else
+                    print("but the playermove wasn't allowed...")
                 end
-            else
-                print("but the playermove wasn't allowed...")
+            end
+            if end_battle then
+                print("Clicked end battle button!")
+                break
             end
         end
+        if btn then gui:delete_button(btn) end
     end
-    print("Ok, monster should be defeated by now!")
+
+    process_battle()
+    print("Battle processing ended.")
 
     local ticks_to_wait = 2.6 * 60 -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
     local ticks_waited = 0
@@ -89,8 +103,9 @@ local function stage_fight_monster()
         if game.last_event.type == event_type.tick then
             ticks_waited = ticks_waited + 1
         elseif game.last_event.type == event_type.card_clicked and is_playermove_allowed(game.last_event) then
-            -- Someone used a card, apply it and wait another 2.6 seconds
+            -- Someone used a card, apply it and process battle events again
             event_type.card_involved["on_play"](event_type.card_involved)
+            process_battle()
             ticks_waited = 0
         end
     end
@@ -161,8 +176,46 @@ local function stage_charity()
     coroutine.yield()
 end
 
+local function stage_flee_monster()
+    local num = 0
+    local btn = gui:create_button("Roll the dice", function(self)
+        num = math.random(1, 6)
+        gui:delete_button(self)
+    end)
+
+    if num >= game:get_current_player().min_escape_val then
+       -- Successfully fleed!
+        -- Discard all cards on battle
+        for k, card in pairs(game.current_battle:get_cards_played()) do
+            print(card.id)
+            discard(card)
+        end
+        -- End the battle
+        game:end_current_battle()
+
+        -- Time for the next player to play!
+        game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
+        game:next_player_turn()
+        coroutine.yield()
+    else
+        -- Execute the monster(s)' bad stuff
+        for _, monster in pairs(game:get_current_battle():get_cards_played()) do
+            if monster.bad_stuff then
+                monster:bad_stuff()
+            end
+        end
+    end
+end
+
 local function main()
-    local stages = { EQUIP_STUFF_AND_OPEN_DUNGEON = stage_equip_stuff, FIGHT_MONSTER = stage_fight_monster, GET_TREASURE = stage_get_treasure, CHARITY = stage_charity, DECIDE_NOMONSTER = stage_decide_nomonster }
+    local stages = {
+        EQUIP_STUFF_AND_OPEN_DUNGEON = stage_equip_stuff,
+        FIGHT_MONSTER = stage_fight_monster,
+        GET_TREASURE = stage_get_treasure,
+        CHARITY = stage_charity,
+        DECIDE_NOMONSTER = stage_decide_nomonster,
+        FLEE_MONSTER = stage_flee_monster
+    }
 
     game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
     wait_for_event(event_type.tick) -- Wait for the game to load cardpacks in
