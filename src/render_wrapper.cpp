@@ -9,7 +9,8 @@ RenderWrapper::RenderWrapper(GameWrapper& w) :
     framebuf(renderer::RenderTarget::CreateInfo{wrapper->game.window_w, wrapper->game.window_h}),
     projection(
         glm::ortho(0.0f, (float)wrapper->game.window_w, 0.0f, (float)wrapper->game.window_h)),
-    game_renderer(*this), title_screen_renderer(*this), jukebox_renderer(*this) {
+    game_renderer(*this), title_screen_renderer(*this), jukebox_renderer(*this),
+    game_gui_renderer(*this) {
 
     title_screen_renderer.set_render_target(&framebuf);
 
@@ -59,6 +60,7 @@ void RenderWrapper::render() {
     }
 
     jukebox_renderer.render();
+    game_gui_renderer.render(delta_time);
 
     // Blit framebuffer
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

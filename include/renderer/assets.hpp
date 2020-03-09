@@ -52,8 +52,8 @@ public:
         return assets[handle.id];
     }
 
-    A const& get_asset(Handle<A> handle) const {
-        return assets[handle.id];
+    A const& get_const_asset(Handle<A> handle) const {
+        return assets.at(handle.id);
     }
 
 private:
