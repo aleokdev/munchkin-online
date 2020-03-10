@@ -61,11 +61,17 @@ private:
 
     CardPtr card;
     Card::CardLocation last_card_location = Card::CardLocation::invalid;
+    bool last_visible = false;
     size_t last_cards_in_owner = 0;
 
     assets::Handle<Texture> back_texture_handle;
 
     assets::Handle<Texture> front_texture_handle;
+
+    inline static bool initialized_sfx = false;
+    inline static assets::Handle<assets::SoundEffect> move_sfx;
+    inline static assets::Handle<assets::SoundEffect> flip_sfx;
+    bool first_sfx_play = true;
 };
 
 } // namespace renderer

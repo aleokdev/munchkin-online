@@ -31,7 +31,7 @@ public:
 
     void swap(Font& other);
     // Returns width (in pixels) of a string in this font. 
-    float calculate_width(std::string const& str);
+    float calculate_width(std::string const& str) const;
 };
 
 } // namespace renderer

@@ -9,8 +9,6 @@
 #include "renderer/uniform_buffer.hpp"
 #include "util/pos_vec.hpp"
 
-#include <audeo/audeo.hpp>
-
 #include <glm/mat4x4.hpp>
 
 namespace munchkin {
@@ -56,8 +54,6 @@ private:
 
     assets::Handle<renderer::Texture> table_texture;
     assets::Handle<assets::Music> game_music;
-
-    audeo::Sound music;
 
     // Info box
     std::string info_box_title;

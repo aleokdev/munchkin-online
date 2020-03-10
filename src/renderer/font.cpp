@@ -75,9 +75,9 @@ Font::~Font() {
 
 void Font::swap(Font& other) { std::swap(glyphs, other.glyphs); }
 
-float Font::calculate_width(std::string const& str) {
+float Font::calculate_width(std::string const& str) const {
     unsigned int offset = 0; // In 1/64ths of a pixel!
-    for (char ch : str) { offset += glyphs[ch].advance; }
+    for (char ch : str) { offset += glyphs.at(ch).advance; }
     return (offset >> 6);
 }
 

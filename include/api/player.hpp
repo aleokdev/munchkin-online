@@ -26,6 +26,7 @@ public:
     std::vector<CardPtr> equipped;
     size_t hand_max_cards;
     std::string name;
+    int min_escape_val = 5
 
 private:
     size_t id;
@@ -55,7 +56,7 @@ struct PlayerPtr {
     Player& operator*() const { return *this->operator->(); }
     Player* get() const { return this->operator->(); }
 
-    operator bool() const { return *this == nullptr; }
+    operator bool() const { return state != nullptr; }
     bool operator==(PlayerPtr const& b) const { return player_id == b.player_id; }
     bool operator==(std::nullptr_t) const { return state == nullptr; }
 };

@@ -119,7 +119,7 @@ struct CardPtr {
     Card& operator*() const { return *this->operator->(); }
     Card* get() const { return this->operator->(); }
 
-    operator bool() const { return *this == nullptr; }
+    operator bool() const { return state == nullptr; }
     bool operator==(CardPtr const& b) const { return card_id == b.card_id; }
     bool operator==(std::nullptr_t) const { return state == nullptr; }
 };

@@ -9,13 +9,13 @@ namespace munchkin {
 namespace systems {
 
 DebugTerminal::DebugTerminal(Game& g) : game(&g) {
-    g.state.lua.set_function("print", &DebugTerminal::log_lua, this);
+    g.state.lua.set_function("internal_print", &DebugTerminal::log_lua, this);
 }
 
-void DebugTerminal::log_lua(sol::this_state state, sol::object obj) {
+void DebugTerminal::log_lua(std::string func_name, sol::object obj) {
     // @todo: Make log_lua also log the print caller
-    std::cout << obj.as<std::string>() << std::endl; 
-    terminal_log.emplace_back(obj.as<std::string>());
+    std::cout << "[" << func_name << "] " << obj.as<std::string>() << std::endl;
+    terminal_log.emplace_back("["+func_name+"] "+obj.as<std::string>());
 }
 
 void DebugTerminal::render() {

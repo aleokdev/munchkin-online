@@ -134,6 +134,7 @@ State::State(size_t player_count, std::string gamerule_path) {
     lua.open_libraries(sol::lib::coroutine);
     lua.open_libraries(sol::lib::base);
     lua.open_libraries(sol::lib::math);
+    lua.open_libraries(sol::lib::debug);
 
     // Load the generic API wrapper
     lua["game"] = this;

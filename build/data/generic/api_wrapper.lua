@@ -7,6 +7,11 @@
 
 -- munchkin_state
 
+print = function(obj)
+    local name = debug.getinfo(2).name
+    internal_print(name and name or "anonymous", obj)
+end
+
 function munchkin_state.iter_players(self)
     local i = -1
     return function()

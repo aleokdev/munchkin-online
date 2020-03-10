@@ -13,16 +13,15 @@ end
 function card.on_play(self)
     local function selection_filter(card)
         local cards_played = game.current_battle:get_cards_played()
-        print(#cards_played)
         local is_present_in_battle = has_value(cards_played, card)
-        if not is_present_in_battle then print("not present in battle") return false end
+        if not is_present_in_battle then print("Card selected is not present in battle (Clicked card ".. card:get_def().name ..")") return false end
 
         local is_monster = game.current_battle:get_card_power(card) > 0
         return is_monster
     end
 
     print("select a card...")
-    selected_card = selection.choose_card(selection_filter)
+    local selected_card = selection.choose_card(selection_filter)
     print("card selected...")
     if selection ~= nil then
         game.current_battle:add_card(self)

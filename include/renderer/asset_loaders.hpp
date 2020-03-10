@@ -14,9 +14,15 @@ namespace fs = std::filesystem;
 namespace munchkin {
 namespace assets {
 
-template<audeo::AudioType T> struct Sound { audeo::SoundSource source; };
-using Music = Sound<audeo::AudioType::Music>;
-using SoundEffect = Sound<audeo::AudioType::Effect>;
+struct Music {
+    audeo::SoundSource source;
+    std::string title;
+    std::string artist;
+};
+
+struct SoundEffect {
+    audeo::SoundSource source;
+};
 
 namespace loaders {
 
@@ -33,7 +39,6 @@ template<> struct LoadParams<SoundEffect> { fs::path path; };
 template<> struct LoadParams<Music> { fs::path path; };
 
 template<> struct LoadParams<renderer::Font> { fs::path path; };
-
 
 void load(renderer::Texture& texture, LoadParams<renderer::Texture> const& params);
 void load(renderer::Shader& shader, LoadParams<renderer::Shader> const& params);

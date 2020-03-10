@@ -4,6 +4,8 @@
 #include "systems/game_renderer.hpp"
 #include "systems/title_screen_renderer.hpp"
 #include "renderer/background_renderer.hpp"
+#include "systems/jukebox_renderer.hpp"
+#include "systems/game_gui_renderer.hpp"
 
 #include <glm/mat4x4.hpp>
 
@@ -32,6 +34,8 @@ public:
     // Systems
     systems::GameRenderer game_renderer;
     systems::TitleScreenRenderer title_screen_renderer;
+    systems::GameGUIRenderer game_gui_renderer;
+    systems::JukeboxRenderer jukebox_renderer;
 
 private:
     State renderer_state = State::TitleScreen;

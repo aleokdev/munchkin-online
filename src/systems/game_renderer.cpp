@@ -5,7 +5,9 @@
 #include "render_wrapper.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
+#include "sound/sound_player.hpp"
 
+#include <audeo/audeo.hpp>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -98,7 +100,7 @@ void GameRenderer::game_playing_frame() {
     auto& music_manager = assets::get_manager<assets::Music>();
     if(first_time && !audeo::is_playing_music())
     {
-        music = audeo::play_sound(music_manager.get_asset(game_music).source, audeo::loop_forever, 500);
+        sound::play_music(game_music);
         first_time = false;
     }
 

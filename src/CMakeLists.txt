@@ -18,4 +18,7 @@ set(MUNCHKIN_SOURCES
         "src/systems/game_logger.cpp"
         "src/api/player.cpp"
         "src/render_wrapper.cpp"
+        "src/sound/sound_player.cpp"
+        "src/systems/jukebox_renderer.cpp"
+        "src/systems/game_gui_renderer.cpp"
         PARENT_SCOPE)

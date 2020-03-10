@@ -7,9 +7,9 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl.h>
 #ifdef _WIN32
-#include <sdl/SDL.h>
+#    include <sdl/SDL.h>
 #else
-#include <SDL2/SDL.h>
+#    include <SDL2/SDL.h>
 #endif
 
 #include <glad/glad.h>
@@ -54,7 +54,8 @@ void GameWrapper::main_loop(SDL_Window* window) {
                 glViewport(0, 0, event.window.data1, event.window.data2);
                 renderer.on_resize(event.window.data1, event.window.data2);
             } else if (event.type == SDL_KEYDOWN && !io.WantCaptureKeyboard &&
-                       event.key.keysym.scancode == SDL_SCANCODE_K && event.key.repeat == 0)
+                       event.key.keysym.scancode == SDL_SCANCODE_K && do_tick &&
+                       event.key.repeat == 0)
                 show_debugger = !show_debugger;
         }
 
@@ -62,7 +63,6 @@ void GameWrapper::main_loop(SDL_Window* window) {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(window);
         ImGui::NewFrame();
-
 
         renderer.render();
 

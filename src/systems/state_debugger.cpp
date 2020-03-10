@@ -141,6 +141,11 @@ void StateDebugger::render() {
             ImGui::Text("%d", player.level);
             ImGui::NextColumn();
             ImGui::Text("%zu", player.hand.size());
+            ImGui::SameLine();
+            char buf[10];
+            std::sprintf(buf, "Show##%zu", player.get_id());
+            if (ImGui::Button(buf))
+                player_cards_to_show = &player;
             ImGui::NextColumn();
             ImGui::Text("%zu", player.hand_max_cards);
             ImGui::NextColumn();
@@ -191,7 +196,7 @@ void StateDebugger::render() {
 
             ImGui::Text("Battle active: %s", game->state.current_battle ? "true" : "false");
             if (game->state.current_battle && ImGui::TreeNode("Current Battle")) {
-                ImGui::Text("Number of cards played: %i",
+                ImGui::Text("Number of cards played: %zu",
                             game->state.current_battle->played_cards.size());
                 ImGui::Text("Total player power: %i",
                             game->state.current_battle->get_total_player_power());
@@ -210,6 +215,14 @@ void StateDebugger::render() {
         }
     }
     ImGui::End();
+
+    if (player_cards_to_show) {
+        ImGui::Begin("Hand Cards");
+        for (auto& card : player_cards_to_show->hand) {
+            ImGui::TextUnformatted(card->get_def().name.c_str());
+        }
+        ImGui::End();
+    }
 }
 
 } // namespace systems
