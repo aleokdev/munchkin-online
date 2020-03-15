@@ -51,8 +51,6 @@ GameGUIRenderer::ButtonWrapper GameGUIRenderer::create_button(sol::this_state co
     sol::function f(thread.thread_state(), callback);
     auto id_to_use = last_button_id++;
     auto button = buttons.emplace(id_to_use, Button(id_to_use, text, f, thread));
-    std::cout << "Creating button of ID " << id_to_use
-              << ", address: " << (void*)&button.first->second << std::endl;
     return ButtonWrapper(button.first->second);
 }
 
@@ -90,7 +88,6 @@ void GameGUIRenderer::render(float delta_time) {
 
         if (button.hovered && input::is_mousebutton_pressed(input::MouseButton::left)) {
             if (!button.has_been_clicked) {
-                std::cout << "Clicked button (callback set)" << std::endl;
                 button.has_been_clicked = true;
                 do_callback = &button;
             }

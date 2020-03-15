@@ -32,7 +32,7 @@ end
 local function next_player()
     game:next_player_turn()
     local turn_text
-    if game:get_current_player().id == game.local_player_id then
+    if game:get_current_player().id == client.local_player_id then
         turn_text = "Your turn!"
     else
         turn_text = game:get_current_player().name .. "'s turn!"
@@ -47,7 +47,10 @@ game_funcs = {}
 
 function game_funcs.roll_dice()
     local num = 0
+    local clicked = false
     local btn = gui:create_button("Roll the dice", function(self)
+        if clicked then return end
+        clicked = true
         local tick_delay = math.random(1, 6)
         repeat
             num = num + 1
@@ -66,21 +69,21 @@ function game_funcs.roll_dice()
         coroutine.yield()
     until not btn:exists()
 
-    print("returning")
     return num
 end
 
 function game_funcs.process_battle_events()
     local end_battle = false
-    local end_battle_btn = gui:create_button("End Battle", function(self)
-        print("Clicked end battle button!")
-        end_battle = true
-        gui:delete_button(self)
-    end)
+    local end_battle_btn
+    if client.local_player_id == game:get_current_player().id then
+        end_battle_btn = gui:create_button("End Battle", function(self)
+            end_battle = true
+            gui:delete_button(self)
+        end)
+    end
     while true do
         coroutine.yield()
         if game.last_event.type == event_type.card_clicked then
-            print("clicked!")
             -- Calculate if the card clicked can be played or not
             if is_playermove_allowed(game.last_event) then
                 local c = game.last_event.card_involved
@@ -88,17 +91,16 @@ function game_funcs.process_battle_events()
                 if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
                     break
                 end
-            else
-                print("but the playermove wasn't allowed...")
             end
         end
         if end_battle then
-            print("Clicked end battle button!")
             break
         end
     end
     logger:log(game:get_current_player().name .. " tries to end the current battle!")
-    if end_battle_btn:exists() then gui:delete_button(end_battle_btn) end
+    if client.local_player_id == game:get_current_player().id then
+        if end_battle_btn:exists() then gui:delete_button(end_battle_btn) end
+    end
 end
 
 ------------
@@ -137,8 +139,6 @@ local function stage_equip_stuff()
 end
 
 local function stage_fight_monster()
-    print("stage_fight_monster")
-
     game_funcs.process_battle_events()
     print("Battle processing ended.")
 
@@ -232,7 +232,6 @@ local function stage_flee_monster()
         -- Successfully fleed!
         -- Discard all cards on battle
         for k, card in pairs(game.current_battle:get_cards_played()) do
-            print(card.id)
             discard(card)
         end
         -- End the battle
@@ -254,7 +253,6 @@ local function stage_flee_monster()
 
         -- Discard all cards on battle
         for k, card in pairs(game.current_battle:get_cards_played()) do
-            print(card.id)
             discard(card)
         end
         -- End the battle

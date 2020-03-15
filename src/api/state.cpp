@@ -46,6 +46,7 @@ State::State(size_t player_count, std::string gamerule_path) {
         "get_current_player", &State::get_current_player,
         "set_current_player", &State::set_current_player,
         // next_player_turn defined in api_wrapper
+
         "get_visible_cards", &State::get_visible_cards,
         "all_cards", sol::readonly_property(&State::get_all_cards),
 
