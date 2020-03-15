@@ -22,8 +22,11 @@ end
 
 function card:bad_stuff()
 	if card.properties.bad_stuff_script then
+		local bad_stuff_path = debug.getinfo(1).source:gsub("^@(.+/)[^/]+$", "%1").."../"..card.properties.bad_stuff_script
 		local args = card.properties.bad_stuff_script_args
-		dofile(card.properties.bad_stuff_script)
+		local f = loadfile(bad_stuff_path)
+		local _ENV = {_G=_G, args=args, pcall=pcall}
+		pcall(f)
 	end
 end
 

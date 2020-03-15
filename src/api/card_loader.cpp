@@ -8,6 +8,27 @@
 
 namespace munchkin {
 
+void parse_json_object(sol::table& t, nlohmann::json const& json) {
+    for (auto& [k, v] : json.items()) {
+        if (v.is_null())
+            continue;
+        else if (v.is_boolean())
+            t[sol::create_if_nil][k] = (bool)v;
+        else if (v.is_number())
+            t[sol::create_if_nil][k] = (int)v;
+        else if (v.is_object())
+        {
+            parse_json_object(t, v);
+        }
+        else if (v.is_array())
+            throw std::runtime_error(
+                "load_cards doesn't allow JSON arrays as card properties");
+        else if (v.is_string())
+            t[sol::create_if_nil][k] =
+                (std::string)v;
+    }
+}
+
 std::vector<CardDef> load_cards(fs::path path, sol::state& lua) {
     nlohmann::json j;
     std::ifstream f(path/"cards.json");
@@ -52,23 +73,10 @@ std::vector<CardDef> load_cards(fs::path path, sol::state& lua) {
 
         for (auto& play_stage : card_json["play_stages"]) def.play_stages.emplace_back(play_stage);
 
-        for (auto& [k, v] : card_json["properties"].items()) {
-            if (v.is_null())
-                continue;
-            else if (v.is_boolean())
-                def.metatable[sol::create_if_nil]["properties"][k] = (bool)v;
-            else if (v.is_number())
-                def.metatable[sol::create_if_nil]["properties"][k] = (int)v;
-            else if (v.is_object())
-                throw std::runtime_error(
-                    "load_cards doesn't allow JSON objects or arrays as card properties");
-            else if (v.is_array())
-                throw std::runtime_error(
-                    "load_cards doesn't allow JSON objects or arrays as card properties");
-            else if (v.is_string())
-                def.metatable[sol::create_if_nil]["properties"][k] =
-                    (std::string)v;
-        }
+        sol::table t(def.metatable.lua_state(), sol::create);
+        def.metatable["properties"] = t;
+        if(card_json.contains("properties"))
+            parse_json_object(t, card_json["properties"]);
         result.emplace_back(def);
     }
 
