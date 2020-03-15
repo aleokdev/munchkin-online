@@ -1,3 +1,6 @@
+-------------
+-- HELPERS --
+-------------
 local function has_value(tab, val)
     for index, value in ipairs(tab) do
         if value == val then
@@ -24,6 +27,78 @@ local function is_playermove_allowed(event)
             and event.card_involved.owner_id == event.player_id_involved
             and event.card_involved.owner_id == game:get_current_player().id
             and has_value(event.card_involved:get_def().play_stages, game.stage)
+end
+
+local function next_player()
+    game:next_player_turn()
+    local turn_text
+    if game:get_current_player().id == game.local_player_id then
+        turn_text = "Your turn!"
+    else
+        turn_text = game:get_current_player().name .. "'s turn!"
+    end
+    logger:log("\n"..turn_text.."\n"..string.rep("-", #turn_text))
+end
+
+---------
+-- API --
+---------
+game_funcs = {}
+
+function game_funcs.roll_dice()
+    local num = 0
+    local btn = gui:create_button("Roll the dice", function(self)
+        local tick_delay = math.random(1, 6)
+        repeat
+            num = num + 1
+            if num > 6 then
+                num = 1
+            end
+            self.text = tostring(num)
+            wait_for_ticks(tick_delay)
+            tick_delay = tick_delay + 1
+        until tick_delay >= 20
+        wait_for_ticks(60)
+        gui:delete_button(self)
+    end)
+
+    repeat
+        coroutine.yield()
+    until not btn:exists()
+
+    print("returning")
+    return num
+end
+
+function game_funcs.process_battle_events()
+    local end_battle = false
+    local end_battle_btn = gui:create_button("End Battle", function(self)
+        print("Clicked end battle button!")
+        end_battle = true
+        gui:delete_button(self)
+    end)
+    while true do
+        coroutine.yield()
+        if game.last_event.type == event_type.card_clicked then
+            print("clicked!")
+            -- Calculate if the card clicked can be played or not
+            if is_playermove_allowed(game.last_event) then
+                local c = game.last_event.card_involved
+                c["on_play"](c)
+                if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
+                    break
+                end
+            else
+                print("but the playermove wasn't allowed...")
+            end
+        end
+        if end_battle then
+            print("Clicked end battle button!")
+            break
+        end
+    end
+    logger:log(game:get_current_player().name .. " tries to end the current battle!")
+    if end_battle_btn:exists() then gui:delete_button(end_battle_btn) end
 end
 
 ------------
@@ -63,36 +138,8 @@ end
 
 local function stage_fight_monster()
     print("stage_fight_monster")
-    local function process_battle()
-        local end_battle = false
-        local btn = gui:create_button("End Battle", function(self)
-            end_battle = true
-            gui:delete_button(self)
-        end)
-        while true do
-            coroutine.yield()
-            if game.last_event.type == event_type.card_clicked then
-                print("clicked!")
-                -- Calculate if the card clicked can be played or not
-                if is_playermove_allowed(game.last_event) then
-                    local c = game.last_event.card_involved
-                    c["on_play"](c)
-                    if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then
-                        break
-                    end
-                else
-                    print("but the playermove wasn't allowed...")
-                end
-            end
-            if end_battle then
-                print("Clicked end battle button!")
-                break
-            end
-        end
-        if btn then gui:delete_button(btn) end
-    end
 
-    process_battle()
+    game_funcs.process_battle_events()
     print("Battle processing ended.")
 
     local ticks_to_wait = 2.6 * 60 -- "When you kill a monster, you must wait a reasonable time, defined as about 2.6 seconds,"
@@ -105,7 +152,7 @@ local function stage_fight_monster()
         elseif game.last_event.type == event_type.card_clicked and is_playermove_allowed(game.last_event) then
             -- Someone used a card, apply it and process battle events again
             event_type.card_involved["on_play"](event_type.card_involved)
-            process_battle()
+            game_funcs.process_battle_events()
             ticks_waited = 0
         end
     end
@@ -122,7 +169,7 @@ local function stage_fight_monster()
         -- Monsters have won, woo!
         local cur_player_name = game:get_current_player().name
         local cur_monster_name = game.current_battle.source_card:get_def().name
-        logger:log(cur_player_name .. " has been defeated by " .. cur_monster_name .. "!")
+        logger:log(cur_player_name .. " has been defeated by " .. cur_monster_name .. ", thus they must escape!")
         game.stage = "FLEE_MONSTER"
     end
 end
@@ -172,19 +219,17 @@ local function stage_charity()
         end
     end
     game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
-    game:next_player_turn()
+    next_player()
     coroutine.yield()
 end
 
 local function stage_flee_monster()
-    local num = 0
-    local btn = gui:create_button("Roll the dice", function(self)
-        num = math.random(1, 6)
-        gui:delete_button(self)
-    end)
+    local diceval = game_funcs.roll_dice()
+    logger:log("Rolled a "..tostring(diceval))
 
-    if num >= game:get_current_player().min_escape_val then
-       -- Successfully fleed!
+    if diceval >= game:get_current_player().min_escape_val then
+        logger:log("Escape successful!")
+        -- Successfully fleed!
         -- Discard all cards on battle
         for k, card in pairs(game.current_battle:get_cards_played()) do
             print(card.id)
@@ -195,15 +240,30 @@ local function stage_flee_monster()
 
         -- Time for the next player to play!
         game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
-        game:next_player_turn()
+        next_player()
         coroutine.yield()
     else
+        logger:log("Escape failed!")
+        -- Failed to flee!
         -- Execute the monster(s)' bad stuff
-        for _, monster in pairs(game:get_current_battle():get_cards_played()) do
+        for _, monster in pairs(game.current_battle:get_cards_played()) do
             if monster.bad_stuff then
                 monster:bad_stuff()
             end
         end
+
+        -- Discard all cards on battle
+        for k, card in pairs(game.current_battle:get_cards_played()) do
+            print(card.id)
+            discard(card)
+        end
+        -- End the battle
+        game:end_current_battle()
+
+        -- Time for the next player to play!
+        game.stage = "EQUIP_STUFF_AND_OPEN_DUNGEON"
+        next_player()
+        coroutine.yield()
     end
 end
 

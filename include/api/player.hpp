@@ -26,7 +26,7 @@ public:
     std::vector<CardPtr> equipped;
     size_t hand_max_cards;
     std::string name;
-    int min_escape_val = 5
+    int min_escape_val = 5;
 
 private:
     size_t id;

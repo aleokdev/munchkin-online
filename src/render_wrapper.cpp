@@ -60,7 +60,7 @@ void RenderWrapper::render() {
     }
 
     jukebox_renderer.render();
-    game_gui_renderer.render(delta_time);
+        game_gui_renderer.render(delta_time);
 
     // Blit framebuffer
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

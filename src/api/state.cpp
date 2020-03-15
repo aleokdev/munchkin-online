@@ -75,7 +75,8 @@ State::State(size_t player_count, std::string gamerule_path) {
         "id", sol::readonly_property(&Player::get_id),
         "hand", &Player::hand,
         "hand_max_cards", &Player::hand_max_cards,
-        "equipped", &Player::equipped);
+        "equipped", &Player::equipped,
+        "min_escape_val", &Player::min_escape_val);
 
     lua.new_usertype<Battle>("munchkin_battle",
         "player_power_offset", &Battle::player_power_offset,
@@ -135,6 +136,8 @@ State::State(size_t player_count, std::string gamerule_path) {
     lua.open_libraries(sol::lib::base);
     lua.open_libraries(sol::lib::math);
     lua.open_libraries(sol::lib::debug);
+    lua.open_libraries(sol::lib::string);
+    lua.open_libraries(sol::lib::table);
 
     // Load the generic API wrapper
     lua["game"] = this;

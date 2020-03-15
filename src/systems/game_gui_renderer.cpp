@@ -18,14 +18,16 @@ GameGUIRenderer::GameGUIRenderer(RenderWrapper& w) : wrapper(&w) {
 
     auto& lua = w.wrapper->game.state.lua;
     /* clang-format off */
-    lua.new_usertype<Button>("game_gui_renderer_button",
-        "text", &Button::text,
-        "callback", &Button::callback);
-    lua.new_usertype<GameGUIRenderer>("game_gui_renderer",
+    lua.new_usertype<ButtonWrapper>("game_gui_renderer_button",
+        "text", sol::property(&ButtonWrapper::get_text, &ButtonWrapper::set_text),
+        "callback", sol::property(&ButtonWrapper::get_callback, &ButtonWrapper::set_callback),
+        "exists", &ButtonWrapper::exists);
+
+    lua["gui"] = this;
+    sol::usertype<GameGUIRenderer> gui_api = lua.new_usertype<GameGUIRenderer>("game_gui_renderer",
         "create_button", &GameGUIRenderer::create_button,
         "delete_button", &GameGUIRenderer::delete_button);
     /* clang-format on */
-    lua["gui"] = this;
 
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
@@ -34,21 +36,28 @@ GameGUIRenderer::GameGUIRenderer(RenderWrapper& w) : wrapper(&w) {
     gui_font = font_manager.load_asset("title_font", {"data/generic/quasimodo_regular.ttf"});
 }
 
-GameGUIRenderer::ButtonPtr GameGUIRenderer::Button::ptr() { return ButtonPtr(id); }
-GameGUIRenderer::Button* GameGUIRenderer::ButtonPtr::operator->() const {
-    return std::addressof(game_gui_instance->buttons[id]);
+GameGUIRenderer::Button& GameGUIRenderer::ButtonWrapper::get() {
+    return game_gui_instance->buttons.at(id);
 }
 
-GameGUIRenderer::ButtonPtr GameGUIRenderer::create_button(std::string const& text,
-                                                          sol::function const& callback) {
+bool GameGUIRenderer::ButtonWrapper::exists() const {
+    return game_gui_instance->buttons.find(id) != game_gui_instance->buttons.end();
+}
+
+GameGUIRenderer::ButtonWrapper GameGUIRenderer::create_button(sol::this_state const& s,
+                                                              std::string const& text,
+                                                              sol::function const& callback) {
+    sol::thread thread(sol::thread::create(s.L));
+    sol::function f(thread.thread_state(), callback);
     auto id_to_use = last_button_id++;
-    auto button = buttons.emplace(id_to_use, Button{id_to_use, text, callback});
-    return ButtonPtr(button.first->second.id);
+    auto button = buttons.emplace(id_to_use, Button(id_to_use, text, f, thread));
+    std::cout << "Creating button of ID " << id_to_use
+              << ", address: " << (void*)&button.first->second << std::endl;
+    return ButtonWrapper(button.first->second);
 }
 
-void GameGUIRenderer::delete_button(ButtonPtr& button) {
+void GameGUIRenderer::delete_button(ButtonWrapper button) {
     buttons.erase(button.id);
-    button.id = -1;
 }
 
 void GameGUIRenderer::render(float delta_time) {
@@ -79,15 +88,24 @@ void GameGUIRenderer::render(float delta_time) {
         fnt.set_color((button.hovered ? 1.f : 0.8f) * glm::vec3{1, 1, 1});
         fnt.render_text(gui_font, button.text);
 
-        if (button.hovered && input::is_mousebutton_pressed(input::MouseButton::left))
-            do_callback = &button;
+        if (button.hovered && input::is_mousebutton_pressed(input::MouseButton::left)) {
+            if (!button.has_been_clicked) {
+                std::cout << "Clicked button (callback set)" << std::endl;
+                button.has_been_clicked = true;
+                do_callback = &button;
+            }
+        } else
+            button.has_been_clicked = false;
         index++;
     }
 
-    // Use a pointer for doing the callback because it could erase the button from the list while
-    // iterating
-    if (do_callback)
-        do_callback->callback(do_callback->ptr());
+    // Use a pointer for doing the callback because it could erase the button from the
+    // list while iterating
+    if (do_callback) {
+        sol::coroutine coro(do_callback->callback);
+        coro(ButtonWrapper(*do_callback));
+        wrapper->wrapper->game.state.active_coroutines.emplace_back(coro);
+    }
 }
 
 } // namespace systems
