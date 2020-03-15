@@ -5,8 +5,6 @@
 #include <glad/glad.h>
 #include <stb/stb_image.h>
 #include <fstream>
-#include <taglib/tag.h>
-#include <taglib/fileref.h>
 
 using namespace munchkin::renderer;
 
@@ -55,7 +53,7 @@ void load(Music& music, LoadParams<Music> const& params) {
     music.source = audeo::load_source(path_str, audeo::AudioType::Music);
 
     // TODO: Get taglib working, or get actual metadata from song files
-    music.title = params.path.stem();
+    music.title = params.path.stem().generic_string();
     music.artist = "Kevin Macleod";
 }
 
