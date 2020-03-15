@@ -41,7 +41,7 @@ public:
     // api functions
     // More information in scripting_api.md
 
-    int get_ticks() const;
+    [[nodiscard]] int get_ticks() const;
     void add_coroutine(sol::function);
 
     void give_treasure(Player& player);
@@ -50,9 +50,9 @@ public:
     void start_battle(Card& source);
     void end_current_battle();
 
-    Player& get_player(size_t id);
-    PlayerPtr get_current_player() { return PlayerPtr(*this, current_player_id); }
-    size_t get_player_count() const;
+    [[nodiscard]] Player& get_player(size_t id);
+    [[nodiscard]] PlayerPtr get_current_player() { return PlayerPtr(*this, current_player_id); }
+    [[nodiscard]] size_t get_player_count() const;
     void set_current_player(size_t id);
     // next_player_turn() defined in api_wrapper.lua
 
@@ -65,7 +65,7 @@ public:
 
     sol::state lua;
     sol::table game_api;
-    bool should_borrow_facing_up;
+    bool should_borrow_facing_up = true;
 
     std::string get_last_game_stage();
     std::string get_game_stage();

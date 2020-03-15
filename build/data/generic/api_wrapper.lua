@@ -9,7 +9,7 @@
 
 print = function(obj)
     local name = debug.getinfo(2).name
-    internal_print(name and name or "anonymous", obj)
+    internal_print(tostring(name and name or "anonymous"), tostring(obj))
 end
 
 function munchkin_state.iter_players(self)
