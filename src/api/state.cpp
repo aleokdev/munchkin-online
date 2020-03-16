@@ -25,8 +25,7 @@ State::State(size_t player_count, std::string gamerule_path) {
         "card_involved", &FlowEvent::card_involved,
         "player_id_involved", &FlowEvent::player_id_involved);
 
-    // @todo: Rename to munchkin_game OR rename game to state
-    sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_state",
+    sol::usertype<State> state_type = lua.new_usertype<State>("munchkin_game",
         "last_event", &State::last_event,
         "get_ticks", &State::get_ticks,
         "stage", sol::property(&State::get_game_stage, &State::set_game_stage),
