@@ -17,7 +17,8 @@ void parse_json_object(sol::table& t, nlohmann::json const& json) {
         else if (v.is_number())
             t[sol::create_if_nil][k] = (int)v;
         else if (v.is_object()) {
-            parse_json_object(t, v);
+            sol::table tk = t[k] = sol::new_table();
+            parse_json_object(tk, v);
         } else if (v.is_array())
             throw std::runtime_error("load_cards doesn't allow JSON arrays as card properties");
         else if (v.is_string())

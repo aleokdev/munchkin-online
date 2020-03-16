@@ -14,7 +14,10 @@ function card:bad_stuff()
 	if card.properties.bad_stuff_script then
 		local bad_stuff_path = debug.getinfo(1).source:gsub("^@(.+/)[^/]+$", "%1").."../"..card.properties.bad_stuff_script
 		local args = card.properties.bad_stuff_script_args
-		local f = loadfile(bad_stuff_path)
+		local env = {}
+		setmetatable(env, {__index = _G})
+		env.args = args
+		local f = loadfile(bad_stuff_path, "t", env)
 		local ok, error = pcall(f)
 		if not ok then
 			print("ERROR on bad_stuff: " .. error)
