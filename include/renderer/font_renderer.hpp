@@ -1,7 +1,7 @@
 #ifndef MUNCHKIN_FONT_RENDERER_HPP__
 #define MUNCHKIN_FONT_RENDERER_HPP__
 
-#include "renderer/assets.hpp"
+#include "assets/assets.hpp"
 
 #include <glm/glm.hpp>
 #include <string>

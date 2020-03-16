@@ -1,8 +1,8 @@
 #ifndef MUNCHKIN_GAME_RENDERER_HPP__
 #define MUNCHKIN_GAME_RENDERER_HPP__
 
+#include "assets/assets.hpp"
 #include "input/input.hpp"
-#include "renderer/assets.hpp"
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
 #include "renderer/sprite_renderer.hpp"

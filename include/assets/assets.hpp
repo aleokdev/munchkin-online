@@ -1,7 +1,7 @@
 #ifndef MUNCHKIN_ONLINE_ASSET_MANAGER_HPP_
 #define MUNCHKIN_ONLINE_ASSET_MANAGER_HPP_
 
-#include "asset_loaders.hpp"
+#include "assets/asset_loaders.hpp"
 
 #include <unordered_map>
 #include <string>

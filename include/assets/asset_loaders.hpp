@@ -1,9 +1,9 @@
 #ifndef MUNCHKIN_ONLINE_ASSET_LOADERS_HPP_
 #define MUNCHKIN_ONLINE_ASSET_LOADERS_HPP_
 
-#include "font.hpp"
-#include "shader.hpp"
-#include "texture.hpp"
+#include "renderer/font.hpp"
+#include "renderer/shader.hpp"
+#include "renderer/texture.hpp"
 
 #include <filesystem>
 

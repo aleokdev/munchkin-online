@@ -1,6 +1,6 @@
 #include "render_wrapper.hpp"
+#include "assets/assets.hpp"
 #include "game_wrapper.hpp"
-#include "renderer/assets.hpp"
 
 namespace munchkin {
 

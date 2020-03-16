@@ -1,7 +1,7 @@
 #ifndef MUNCHKIN_RENDERER_BACKGROUND_RENDERER_HPP_
 #define MUNCHKIN_RENDERER_BACKGROUND_RENDERER_HPP_
 
-#include "assets.hpp"
+#include "assets/assets.hpp"
 
 namespace munchkin {
 namespace renderer {

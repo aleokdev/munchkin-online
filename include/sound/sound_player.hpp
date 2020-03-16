@@ -1,6 +1,6 @@
 #ifndef MUNCHKIN_ONLINE_SOUND_PLAYER_HPP
 #define MUNCHKIN_ONLINE_SOUND_PLAYER_HPP
-#include "renderer/assets.hpp"
+#include "assets/assets.hpp"
 
 namespace munchkin {
 namespace sound {

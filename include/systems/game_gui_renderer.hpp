@@ -5,7 +5,7 @@
 #ifndef MUNCHKIN_ONLINE_GAME_GUI_RENDERER_HPP
 #define MUNCHKIN_ONLINE_GAME_GUI_RENDERER_HPP
 
-#include "renderer/assets.hpp"
+#include "assets/assets.hpp"
 #include <cstddef>
 #include <sol/sol.hpp>
 #include <vector>

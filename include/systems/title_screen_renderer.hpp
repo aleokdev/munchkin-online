@@ -1,7 +1,7 @@
 #ifndef MUNCHKIN_TITLE_SCREEN_RENDERER_HPP_
 #define MUNCHKIN_TITLE_SCREEN_RENDERER_HPP_
 
-#include "renderer/assets.hpp"
+#include "assets/assets.hpp"
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
 

@@ -9,7 +9,7 @@ set(MUNCHKIN_SOURCES
         "src/systems/title_screen_renderer.cpp"
         "src/systems/ai_manager.cpp"
         "src/renderer/sprite_renderer.cpp"
-        "src/input/input.cpp" "src/renderer/card_sprite.cpp" "src/renderer/asset_loaders.cpp"
+        "src/input/input.cpp" "src/renderer/card_sprite.cpp" "src/assets/asset_loaders.cpp"
         "src/systems/input_binder.cpp"
         "src/systems/state_debugger.cpp"
         "src/renderer/font_renderer.cpp"

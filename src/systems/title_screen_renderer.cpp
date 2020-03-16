@@ -1,7 +1,7 @@
 #include "systems/title_screen_renderer.hpp"
 
+#include "assets/assets.hpp"
 #include "input/input.hpp"
-#include "renderer/assets.hpp"
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 

@@ -2,8 +2,8 @@
 #define MUNCHKIN_CARD_SPRITE_HPP__
 
 #include "api/card.hpp"
+#include "assets/assets.hpp"
 #include "util/pos_vec.hpp"
-#include "renderer/assets.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 
