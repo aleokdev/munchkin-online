@@ -17,13 +17,15 @@ struct CardDef {
             std::string description,
             DeckType category,
             std::string front_texture_path,
-            std::string back_texture_path);
+            std::string back_texture_path,
+            bool is_monster);
 
     std::string name;
     std::string description;
     sol::table metatable;
     std::vector<std::string> play_stages;
     DeckType category;
+    bool is_monster = false;
 
     std::string front_texture_path;
     std::string back_texture_path;

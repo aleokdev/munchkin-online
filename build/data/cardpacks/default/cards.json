@@ -115,6 +115,7 @@
 
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Vulkan",
     "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
     "play_stages": [],
@@ -186,6 +187,7 @@
   },
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Generic Monster",
     "description": "Generic description.",
     "play_stages": [],
@@ -201,6 +203,7 @@
   },
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Font Rendering",
     "description": "hard",
     "play_stages": [],
@@ -267,6 +270,7 @@
 
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Vulkan",
     "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
     "play_stages": [],
@@ -338,6 +342,7 @@
   },
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Generic Monster",
     "description": "Generic description.",
     "play_stages": [],
