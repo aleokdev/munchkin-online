@@ -7,6 +7,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "sound/sound_assets.hpp"
 #include "util/pos_vec.hpp"
 
 namespace munchkin {
@@ -69,8 +70,8 @@ private:
     assets::Handle<Texture> front_texture_handle;
 
     inline static bool initialized_sfx = false;
-    inline static assets::Handle<assets::SoundEffect> move_sfx;
-    inline static assets::Handle<assets::SoundEffect> flip_sfx;
+    inline static assets::Handle<sound::SoundEffect> move_sfx;
+    inline static assets::Handle<sound::SoundEffect> flip_sfx;
     bool first_sfx_play = true;
 };
 

@@ -21,4 +21,5 @@ set(MUNCHKIN_SOURCES
         "src/sound/sound_player.cpp"
         "src/systems/jukebox_renderer.cpp"
         "src/systems/game_gui_renderer.cpp"
+        "include/sound/sound_assets.hpp"
         PARENT_SCOPE)

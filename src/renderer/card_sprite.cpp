@@ -3,6 +3,7 @@
 #include "game.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
+#include "sound/sound_assets.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -31,7 +32,7 @@ CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card) {
     front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path,
                                                       {card->get_def().front_texture_path});
     if (!initialized_sfx) {
-        auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
+        auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
         move_sfx = sfx_manager.load_asset("card_deal", {"data/generic/card_deal.ogg"});
         flip_sfx = sfx_manager.load_asset("card_flip", {"data/generic/card_flip.ogg"});
     }
@@ -142,7 +143,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
         card.state->players[card->owner_id].hand.size() != last_cards_in_owner) {
         calculate_target_from_location();
         if (!first_sfx_play && last_card_location != card->get_location()) {
-            auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
+            auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
             audeo::Sound s = audeo::play_sound(sfx_manager.get_asset(CardSprite::move_sfx).source);
             audeo::set_volume(s, .5f);
         }
@@ -174,7 +175,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
          card->owner_id == game->local_player_id);
 
     if (!first_sfx_play && (is_card_visible ^ last_visible)) {
-        auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
+        auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
         audeo::Sound s = audeo::play_sound(sfx_manager.get_asset(CardSprite::flip_sfx).source);
         audeo::set_volume(s, .5f);
     }

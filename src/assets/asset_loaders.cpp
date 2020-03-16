@@ -1,10 +1,11 @@
 #include "assets/asset_loaders.hpp"
 
 #include "renderer/util.hpp"
+#include "sound/sound_assets.hpp"
 
+#include <fstream>
 #include <glad/glad.h>
 #include <stb/stb_image.h>
-#include <fstream>
 
 using namespace munchkin::renderer;
 
@@ -43,12 +44,12 @@ void load(Font& font, LoadParams<Font> const& params) {
     font.swap(f);
 }
 
-void load(SoundEffect& sound, LoadParams<SoundEffect> const& params) {
+void load(sound::SoundEffect& sound, LoadParams<sound::SoundEffect> const& params) {
     std::string path_str = params.path.string();
     sound.source = audeo::load_source(path_str, audeo::AudioType::Effect);
 }
 
-void load(Music& music, LoadParams<Music> const& params) {
+void load(sound::Music& music, LoadParams<sound::Music> const& params) {
     std::string path_str = params.path.string();
     music.source = audeo::load_source(path_str, audeo::AudioType::Music);
 
