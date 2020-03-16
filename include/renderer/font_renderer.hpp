@@ -24,6 +24,7 @@ public:
                     glm::vec2 size,
                     glm::vec2 offset);
     void render_text(assets::Handle<Font> font, std::string const& text);
+    void render_wrapped_text(assets::Handle<Font> font, float max_text_width, std::string const& text);
 
     static void deallocate();
 

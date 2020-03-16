@@ -174,7 +174,7 @@ void GameRenderer::game_playing_frame() {
             math::Vec2D{info_box_position.x/(float)window_w-.33f, .21f});
         font_renderer.set_size(glm::vec2(0.3f, 0.3f));
         font_renderer.set_window_size(window_w, window_h);
-        font_renderer.render_text(infobar_normal_font, info_box_description);
+        font_renderer.render_wrapped_text(infobar_normal_font, 400.f / window_w, info_box_description);
     }
 }
 
