@@ -9,7 +9,7 @@ namespace munchkin {
 
 Game::Game(size_t player_count, size_t w, size_t h, std::string gamerules_path) :
     window_w(w), window_h(h), state(player_count), gamerules(state, gamerules_path),
-    camera(-1, -1) {
+    camera(*this, -1, -1) {
     state.lua[sol::create_if_nil]["client"]["local_player_id"] = local_player_id;
     // Get the first game stage by executing the active coroutines (Which, right now, only
     // includes the gamerules' game_flow)

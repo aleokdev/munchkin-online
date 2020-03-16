@@ -227,12 +227,10 @@ void CardSprite::draw(SpriteRenderer& spr) {
         fnt.set_size(glm::vec2{1, 1});
         fnt.set_color({1, 1, 1});
         const auto& font(assets::get_manager<renderer::Font>().get_asset(monster_power_font));
-        const math::Vec2D pixel_pos(
-            (get_rect().pos * math::Vec2D{1, -1} + get_rect().size * math::Vec2D{.5f, 0}) -
-            game.camera.offset * math::Vec2D{(float)game.window_w, -(float)game.window_h} / 2.f +
-            math::Vec2D{0, (float)game.window_h});
+        const math::Vec2D rel_pos(game.camera.pixel_world_to_screen(
+            get_rect().pos * math::Vec2D{1, -1} + get_rect().size * math::Vec2D{.5f, 0}));
         const float textWidth = font.calculate_width(power_str);
-        const math::Vec2D final_pos((pixel_pos - math::Vec2D{textWidth / 2.f, 0}) /
+        const math::Vec2D final_pos((rel_pos - math::Vec2D{textWidth / 2.f, 0}) /
                                     math::Vec2D{(float)game.window_w, (float)game.window_h});
 
         fnt.set_position(final_pos);
