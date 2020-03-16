@@ -1,9 +1,10 @@
 #ifndef MUNCHKIN_TITLE_SCREEN_RENDERER_HPP_
 #define MUNCHKIN_TITLE_SCREEN_RENDERER_HPP_
 
-#include "renderer/assets.hpp"
+#include "assets/assets.hpp"
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
+#include "sound/sound_assets.hpp"
 
 #include <filesystem>
 #include <functional>
@@ -48,8 +49,8 @@ private:
     assets::Handle<renderer::Shader> sprite_shader;
     assets::Handle<renderer::Font> font;
 
-    assets::Handle<assets::SoundEffect> hover_sfx;
-    assets::Handle<assets::SoundEffect> click_sfx;
+    assets::Handle<sound::SoundEffect> hover_sfx;
+    assets::Handle<sound::SoundEffect> click_sfx;
     ::munchkin::RenderWrapper* wrapper;
     struct MenuOption {
         std::string name;

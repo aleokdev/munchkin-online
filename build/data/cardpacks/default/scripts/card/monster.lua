@@ -6,26 +6,23 @@
 local card = {}
 
 function card:on_reveal()
-	print("monster.lua on_reveal")
-	print("self = " .. tostring(self))
-	print("card = " .. tostring(card))
-	for k,v in pairs(card) do
-		print("\t"..tostring(k).." = "..tostring(v))
-	end
-	for k,v in pairs(card.properties) do
-		print("\t"..tostring(k).." = "..tostring(v))
-	end
-	print("power = " .. tostring(card.properties.power))
 	game:start_battle(self)
 	game.current_battle:modify_card(self, card.properties.power)
 end
 
 function card:bad_stuff()
 	if card.properties.bad_stuff_script then
+		local bad_stuff_path = debug.getinfo(1).source:gsub("^@(.+/)[^/]+$", "%1").."../"..card.properties.bad_stuff_script
 		local args = card.properties.bad_stuff_script_args
-		dofile(card.properties.bad_stuff_script)
+		local env = {}
+		setmetatable(env, {__index = _G})
+		env.args = args
+		local f = loadfile(bad_stuff_path, "t", env)
+		local ok, error = pcall(f)
+		if not ok then
+			print("ERROR on bad_stuff: " .. error)
+		end
 	end
 end
 
-print("monster.lua loaded")
 return card

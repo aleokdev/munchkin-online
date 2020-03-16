@@ -1,12 +1,13 @@
 #ifndef MUNCHKIN_GAME_RENDERER_HPP__
 #define MUNCHKIN_GAME_RENDERER_HPP__
 
+#include "assets/assets.hpp"
 #include "input/input.hpp"
-#include "renderer/assets.hpp"
 #include "renderer/background_renderer.hpp"
 #include "renderer/render_target.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/uniform_buffer.hpp"
+#include "sound/sound_assets.hpp"
 #include "util/pos_vec.hpp"
 
 #include <glm/mat4x4.hpp>
@@ -53,7 +54,7 @@ private:
     assets::Handle<renderer::Font> infobar_normal_font;
 
     assets::Handle<renderer::Texture> table_texture;
-    assets::Handle<assets::Music> game_music;
+    assets::Handle<sound::Music> game_music;
 
     // Info box
     std::string info_box_title;

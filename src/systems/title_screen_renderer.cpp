@@ -1,7 +1,7 @@
 #include "systems/title_screen_renderer.hpp"
 
+#include "assets/assets.hpp"
 #include "input/input.hpp"
-#include "renderer/assets.hpp"
 #include "renderer/font_renderer.hpp"
 #include "util/util.hpp"
 
@@ -13,6 +13,7 @@
 
 #include "game_wrapper.hpp"
 #include "render_wrapper.hpp"
+#include "sound/sound_assets.hpp"
 
 namespace munchkin {
 namespace systems {
@@ -63,8 +64,8 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& font_manager = assets::get_manager<renderer::Font>();
-    auto& music_manager = assets::get_manager<assets::Music>();
-    auto& sfx_manager = assets::get_manager<assets::SoundEffect>();
+    auto& music_manager = assets::get_manager<sound::Music>();
+    auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
 
     assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
                                                                        "data/shaders/sprite.frag"};
@@ -373,11 +374,11 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
             option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
             if (!option.selected)
                 audeo::play_sound(
-                    assets::get_manager<assets::SoundEffect>().get_asset(hover_sfx).source);
+                    assets::get_manager<sound::SoundEffect>().get_asset(hover_sfx).source);
             option.selected = true;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
                 audeo::play_sound(
-                    assets::get_manager<assets::SoundEffect>().get_asset(click_sfx).source);
+                    assets::get_manager<sound::SoundEffect>().get_asset(click_sfx).source);
                 status = options[opt_index].callback();
                 return status;
             }

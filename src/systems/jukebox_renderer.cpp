@@ -4,6 +4,7 @@
 #include "renderer/font_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "sound/sound_player.hpp"
+#include "sound/sound_assets.hpp"
 #include <glm/glm/gtc/type_ptr.hpp>
 
 namespace munchkin {
@@ -50,13 +51,13 @@ void JukeboxRenderer::render() {
     fnt.set_position({(float)(window_w - 390) / (float)window_w,
                       (float)(window_h - current_y_pos) / (float)window_h});
     fnt.set_size({.7f, .7f});
-    fnt.render_text(song_title_font, assets::get_manager<assets::Music>()
+    fnt.render_text(song_title_font, assets::get_manager<sound::Music>()
                                          .get_asset(sound::get_current_music_handle_being_played())
                                          .title);
     fnt.set_size({.5f, .5f});
     fnt.set_position({(float)(window_w - 390) / (float)window_w,
                       (float)(window_h + 35 - current_y_pos) / (float)window_h});
-    fnt.render_text(song_artist_font, assets::get_manager<assets::Music>()
+    fnt.render_text(song_artist_font, assets::get_manager<sound::Music>()
         .get_asset(sound::get_current_music_handle_being_played())
         .artist);
 }

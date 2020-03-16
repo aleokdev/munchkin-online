@@ -115,6 +115,7 @@
 
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Vulkan",
     "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
     "play_stages": [],
@@ -123,7 +124,8 @@
       "power": 10,
       "treasures": 2,
       "levels": 1,
-      "bad_stuff_script": "scripts/modify_levels.lua"
+      "bad_stuff_script": "bad_stuff/remove_levels.lua",
+      "bad_stuff_script_args": {"levels": 1}
     },
     "front_texture": "textures/test-card.png"
   },
@@ -185,6 +187,7 @@
   },
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Generic Monster",
     "description": "Generic description.",
     "play_stages": [],
@@ -193,12 +196,14 @@
       "power": 15,
       "treasures": 3,
       "levels": 2,
-      "bad_stuff_script": "scripts/modify_levels.lua"
+      "bad_stuff_script": "bad_stuff/remove_levels.lua",
+      "bad_stuff_script_args": { "levels": 1 }
     },
     "front_texture": "textures/test-card.png"
   },
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Font Rendering",
     "description": "hard",
     "play_stages": [],
@@ -207,7 +212,8 @@
       "power": 12,
       "treasures": 1,
       "levels": 2,
-      "bad_stuff_script": "scripts/modify_levels.lua"
+      "bad_stuff_script": "bad_stuff/remove_levels.lua",
+      "bad_stuff_script_args": { "levels": 1 }
     },
     "front_texture": "textures/test-card.png"
   },
@@ -264,6 +270,7 @@
 
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Vulkan",
     "description": "Someone must help you fight this monster, or you'll be forced to escape from it. Bad stuff: Lose a level.",
     "play_stages": [],
@@ -272,7 +279,8 @@
       "power": 10,
       "treasures": 2,
       "levels": 1,
-      "bad_stuff_script": "scripts/modify_levels.lua"
+      "bad_stuff_script": "bad_stuff/remove_levels.lua",
+      "bad_stuff_script_args": { "levels": 1 }
     },
     "front_texture": "textures/test-card.png"
   },
@@ -334,6 +342,7 @@
   },
   {
     "script": "scripts/card/monster.lua",
+    "is_monster": true,
     "name": "Generic Monster",
     "description": "Generic description.",
     "play_stages": [],
@@ -342,7 +351,8 @@
       "power": 15,
       "treasures": 3,
       "levels": 2,
-      "bad_stuff_script": "scripts/modify_levels.lua"
+      "bad_stuff_script": "bad_stuff/remove_levels.lua",
+      "bad_stuff_script_args": { "levels": 1 }
     },
     "front_texture": "textures/test-card.png"
   },

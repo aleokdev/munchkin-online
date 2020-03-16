@@ -97,4 +97,7 @@ int main() try {
     wrapper.main_loop(window);
 
     return 0;
-} catch (int) {}
+} catch (std::exception const& e) {
+    std::cout << "FATAL ERROR: " << e.what() << std::endl;
+    return -1;
+}

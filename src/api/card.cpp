@@ -25,10 +25,15 @@ Card::Card(State& st, CardDef& def, ConstructorKey) :
     state(&st), def(def), data(sol::state_view(def.metatable.lua_state()).create_table()) {
     id = st.generate_id();
 
-    // @todo: Replace with metatables (HOW?)
-    for (auto& [key, val] : def.metatable) { data[key] = val; }
-
     data["id"] = id;
+}
+
+sol::object Card::get_data_variable(std::string name) {
+    const auto metaval = def.metatable[name];
+    if (metaval == sol::lua_nil)
+        return data[name];
+    else
+        return metaval;
 }
 
 CardPtr Card::operator&() { return CardPtr(*this); }

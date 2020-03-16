@@ -125,10 +125,17 @@ void FontRenderer::render_text(assets::Handle<Font> font, std::string const& tex
 
     glm::vec2 offset = glm::vec2(0, 0);
     for (auto const& c : text) {
-        if (c == 0) {
+        if (c == 0)
             break;
-        };
         Font::glyph_data const& data = font_data.glyphs[c];
+        if(c == '\n')
+        {
+            offset.y += data.pixel_size * text_size.y;
+            offset.x = 0;
+        }
+        else if (offset.x == 0 && c == ' ') // Skip spaces on new lines
+            continue;
+
         glm::vec2 offset_pos =
             offset + glm::vec2(data.bearing.x, data.pixel_size - data.bearing.y) * text_size;
         glm::vec2 relative_offset =
@@ -136,6 +143,50 @@ void FontRenderer::render_text(assets::Handle<Font> font, std::string const& tex
         render_char(data, text_position, text_size, relative_offset);
         // shift by 6 to get the offset in pixels
         offset.x += (data.advance >> 6) * text_size.x;
+    }
+}
+
+void FontRenderer::render_wrapped_text(assets::Handle<Font> font,
+                                       float max_text_width,
+                                       std::string const& text) {
+    auto& shader_manager = assets::get_manager<Shader>();
+    auto& font_manager = assets::get_manager<Font>();
+    // If the optional shader was set, use that one. Otherwise, use default shader
+    auto& shader_program = shader_manager.get_asset(opt_shader.id ? opt_shader : shader);
+    auto& font_data = font_manager.get_asset(font);
+    glUseProgram(shader_program.handle);
+
+    glUniform3fv(3, 1, glm::value_ptr(text_color));
+
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+
+    glm::vec2 offset = glm::vec2(0, 0);
+    for (auto const& c : text) {
+        if (c == 0)
+            break;
+        Font::glyph_data const& data = font_data.glyphs[c];
+        if(c == '\n')
+        {
+            offset.y += data.pixel_size * text_size.y;
+            offset.x = 0;
+        }
+        else if (offset.x == 0 && c == ' ') // Skip spaces on new lines
+            continue;
+
+        glm::vec2 offset_pos =
+            offset + glm::vec2(data.bearing.x, data.pixel_size - data.bearing.y) * text_size;
+        glm::vec2 relative_offset =
+            glm::vec2(offset_pos.x / (float)window_w, offset_pos.y / (float)window_h);
+
+        render_char(data, text_position, text_size, relative_offset);
+        // shift by 6 to get the offset in pixels
+        offset.x += (data.advance >> 6) * text_size.x;
+        if(relative_offset.x > max_text_width)
+        {
+            offset.y += data.pixel_size * text_size.y;
+            offset.x = 0;
+        }
     }
 }
 

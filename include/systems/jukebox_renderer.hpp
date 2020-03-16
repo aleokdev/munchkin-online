@@ -1,7 +1,7 @@
 #ifndef MUNCHKIN_ONLINE_JUKEBOX_RENDERER_HPP
 #define MUNCHKIN_ONLINE_JUKEBOX_RENDERER_HPP
+#include <assets/assets.hpp>
 #include <audeo/audeo.hpp>
-#include <renderer/assets.hpp>
 
 namespace munchkin {
 class RenderWrapper;

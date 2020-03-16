@@ -6,6 +6,7 @@
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
 #include "sound/sound_player.hpp"
+#include "sound/sound_assets.hpp"
 
 #include <audeo/audeo.hpp>
 #include <glad/glad.h>
@@ -30,7 +31,7 @@ GameRenderer::GameRenderer(RenderWrapper& r) :
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
-    auto& music_manager = assets::get_manager<assets::Music>();
+    auto& music_manager = assets::get_manager<sound::Music>();
 
     assets::loaders::LoadParams<renderer::Texture> table_texture_params{"data/generic/table.png"};
 
@@ -97,7 +98,7 @@ void GameRenderer::game_playing_frame() {
     // Render the background
     background.render();
 
-    auto& music_manager = assets::get_manager<assets::Music>();
+    auto& music_manager = assets::get_manager<sound::Music>();
     if(first_time && !audeo::is_playing_music())
     {
         sound::play_music(game_music);
@@ -173,7 +174,7 @@ void GameRenderer::game_playing_frame() {
             math::Vec2D{info_box_position.x/(float)window_w-.33f, .21f});
         font_renderer.set_size(glm::vec2(0.3f, 0.3f));
         font_renderer.set_window_size(window_w, window_h);
-        font_renderer.render_text(infobar_normal_font, info_box_description);
+        font_renderer.render_wrapped_text(infobar_normal_font, 400.f / window_w, info_box_description);
     }
 }
 

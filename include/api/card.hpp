@@ -42,7 +42,7 @@ public:
         return data[name](data, std::forward<Args>(args)...);
     }
 
-    sol::object get_data_variable(std::string name) { return data[name]; }
+    sol::object get_data_variable(std::string name);
 
     void set_data_variable(std::string key, sol::object obj) { data[key] = obj; }
 
