@@ -41,6 +41,7 @@ struct Battle {
     void modify_card(CardPtr, int power);
     int get_card_power(CardPtr);
     std::vector<CardPtr> get_cards_played();
+    bool is_card_played(CardPtr);
 
     // The offset for the total monsters' power. Can be negative.
     int monster_power_offset = 0;

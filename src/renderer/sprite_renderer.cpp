@@ -27,6 +27,8 @@ void SpriteRenderer::set_color(float r, float g, float b, float a) {
 }
 
 void SpriteRenderer::do_draw() {
+    glBindVertexArray(vao);
+
     // Calculate model matrix and send to shader
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
@@ -89,8 +91,6 @@ void SpriteRenderer::setup_for_render() {
     if (!vao || !vbo) {
         init();
     }
-
-    glBindVertexArray(vao);
 }
 
 } // namespace munchkin::renderer

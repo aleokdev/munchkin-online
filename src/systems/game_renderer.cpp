@@ -75,7 +75,7 @@ void GameRenderer::render() {
 void GameRenderer::update_sprite_vector() {
     Game& game = wrapper->wrapper->game;
     game.card_sprites.clear();
-    for (auto& card : game.get_state().all_cards) { game.card_sprites.emplace_back(game, &card); }
+    for (auto& card : game.get_state().all_cards) { game.card_sprites.emplace_back(*wrapper, &card); }
 }
 
 void GameRenderer::update_input() {
@@ -98,7 +98,6 @@ void GameRenderer::game_playing_frame() {
     // Render the background
     background.render();
 
-    auto& music_manager = assets::get_manager<sound::Music>();
     if(first_time && !audeo::is_playing_music())
     {
         sound::play_music(game_music);

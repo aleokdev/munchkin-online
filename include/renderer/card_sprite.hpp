@@ -11,7 +11,7 @@
 #include "util/pos_vec.hpp"
 
 namespace munchkin {
-class Game;
+class RenderWrapper;
 
 namespace renderer {
 
@@ -32,7 +32,7 @@ class SpriteRenderer;
 
 class CardSprite {
 public:
-    CardSprite(Game&, CardPtr);
+    CardSprite(RenderWrapper&, CardPtr);
 
     void set_target_pos(math::Vec2D target);
     math::Vec2D get_current_pos();
@@ -48,7 +48,7 @@ public:
     CardPtr get_card_ptr() { return card; }
 
 private:
-    Game* const game;
+    RenderWrapper* const wrapper;
 
     math::Vec2D target_pos = {0, 0};
     math::Vec2D current_pos = {0, 0};
@@ -69,9 +69,10 @@ private:
 
     assets::Handle<Texture> front_texture_handle;
 
-    inline static bool initialized_sfx = false;
+    inline static bool initialized_assets = false;
     inline static assets::Handle<sound::SoundEffect> move_sfx;
     inline static assets::Handle<sound::SoundEffect> flip_sfx;
+    inline static assets::Handle<renderer::Font> monster_power_font;
     bool first_sfx_play = true;
 };
 
