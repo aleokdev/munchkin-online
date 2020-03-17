@@ -18,18 +18,68 @@
 #include "systems/game_renderer.hpp"
 #include "systems/input_binder.hpp"
 #include "systems/state_debugger.hpp"
+#include "systems/ai_manager.hpp"
 
 #include "input/input.hpp"
 
 #include "renderer/font_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
 
+#include "sound/sound_player.hpp"
+
 #include <audeo/audeo.hpp>
+
+#include <sstream>
+#include <string_view>
 
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
 
-int main() try {
+void parse_args(munchkin::GameWrapper& game_wrapper, std::vector<std::string_view> args) {
+    for (int argn = 0; argn < args.size(); argn++) {
+        const auto& arg = args[argn];
+        if (arg == "--no-title") {
+            game_wrapper.renderer.set_state(munchkin::RenderWrapper::State::GamePlaying);
+            game_wrapper.do_tick = true;
+        }
+        if (arg == "--cp") {
+            game_wrapper.game.state.add_cardpack(args[++argn]);
+
+            std::cout << "Cards loaded: " << game_wrapper.game.state.all_cards.size() << std::endl;
+            game_wrapper.renderer.game_renderer.update_sprite_vector();
+        }
+        if (arg == "--players") {
+            auto& game = game_wrapper.game;
+            int total_players = std::atoi(args[++argn].data());
+
+            game.state.players.clear();
+
+            for (int i = 0; i < total_players; i++) game.state.players.emplace_back(game.state, i);
+
+            for (auto& player : game.state.players) {
+                player.hand_max_cards = game.state.default_hand_max_cards;
+            }
+
+            std::vector<munchkin::PlayerPtr> players_to_control;
+
+            for (int i = 1; i < total_players; i++)
+                players_to_control.emplace_back(game.state.players[i]);
+
+            game_wrapper.ai_manager =
+                munchkin::AIManager(game.state, players_to_control, std::string(args[++argn]));
+        }
+        if (arg == "--name") {
+            auto& game = game_wrapper.game;
+            // Set local player name
+            game.state.players[game.local_player_id].name = args[++argn];
+        }
+        if (arg == "--bgm-volume") {
+            munchkin::sound::set_music_volume((float)std::atoi(args[++argn].data()) / 100.f);
+        }
+    }
+}
+
+int main(int argc, char* argv[]) try {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         std::cerr << "SDL Init error: " << SDL_GetError();
         return -1;
@@ -93,6 +143,12 @@ int main() try {
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 3, 2);
+
+    std::vector<std::string_view> args;
+
+    args.resize(argc);
+    for (int argn = 0; argn < argc; argn++) args[argn] = argv[argn];
+    parse_args(wrapper, args);
 
     wrapper.main_loop(window);
 

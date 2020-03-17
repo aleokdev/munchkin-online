@@ -13,6 +13,8 @@ assets::Handle<Music> get_current_music_handle_being_played();
 
 void play_sfx(assets::Handle<SoundEffect>);
 
+void set_music_volume(float new_volume);
+
 constexpr float music_crossfade_seconds = .5f;
 
 } // namespace sound
