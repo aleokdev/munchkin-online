@@ -12,24 +12,15 @@
 
 #include <glad/glad.h>
 
-#include "game.hpp"
 #include "game_wrapper.hpp"
-#include "systems/ai_manager.hpp"
-#include "systems/game_renderer.hpp"
-#include "systems/input_binder.hpp"
-#include "systems/state_debugger.hpp"
 #include "systems/ai_manager.hpp"
 
 #include "input/input.hpp"
-
-#include "renderer/font_renderer.hpp"
-#include "renderer/sprite_renderer.hpp"
 
 #include "sound/sound_player.hpp"
 
 #include <audeo/audeo.hpp>
 
-#include <sstream>
 #include <string_view>
 
 #define DEFAULT_WINDOW_WIDTH 1280
@@ -99,7 +90,7 @@ int main(int argc, char* argv[]) try {
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    SDL_WindowFlags window_flags =
+    auto window_flags =
         (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window* window =
         SDL_CreateWindow("Munchkin Online", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
