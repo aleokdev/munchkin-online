@@ -87,26 +87,32 @@ int main(int argc, char* argv[]) try {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+    // Multisampling might not work on some devices (i.e. Laptops such as mine), so I commented it
+    // out.
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     auto window_flags =
         (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window* window =
         SDL_CreateWindow("Munchkin Online", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                          DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, window_flags);
+    if(!window) {
+        std::cerr << "Failed to create a window!" << std::endl;
+        std::cerr << "Reason: " << SDL_GetError() << std::endl;
+        return -1;
+    }
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     bool err = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) == 0;
-    std::cout << glGetString(GL_VERSION) << std::endl;
-    glEnable(GL_MULTISAMPLE);
-
     if (err) {
         std::cerr << "Failed to initialize GLAD!" << std::endl;
         return -1;
     }
+    std::cout << glGetString(GL_VERSION) << std::endl;
+    glEnable(GL_MULTISAMPLE);
 
     audeo::InitInfo audeo_init_info;
     audeo_init_info.frequency = 44100;
