@@ -25,6 +25,12 @@
 
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
+constexpr const char* glsl_version = "#version 430";
+struct GLVersion {
+    int major;
+    int minor;
+};
+constexpr struct GLVersion gl_version { 4, 3 };
 
 void parse_args(munchkin::GameWrapper& game_wrapper, std::vector<std::string_view> args) {
     for (int argn = 0; argn < args.size(); argn++) {
@@ -70,14 +76,12 @@ void parse_args(munchkin::GameWrapper& game_wrapper, std::vector<std::string_vie
     }
 }
 
-int main(int argc, char* argv[]) try {
+static SDL_Window* init_window() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        std::cerr << "SDL Init error: " << SDL_GetError();
-        return -1;
+        return nullptr;
     }
 
     // GL 4.3 + GLSL 430
-    const char* glsl_version = "#version 430";
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -89,31 +93,32 @@ int main(int argc, char* argv[]) try {
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     // Multisampling might not work on some devices (i.e. Laptops such as mine), so I commented it
     // out.
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     auto window_flags =
         (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     SDL_Window* window =
         SDL_CreateWindow("Munchkin Online", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                          DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, window_flags);
-    if(!window) {
-        std::cerr << "Failed to create a window!" << std::endl;
-        std::cerr << "Reason: " << SDL_GetError() << std::endl;
-        return -1;
-    }
+    return window;
+}
+
+static SDL_GLContext init_opengl(SDL_Window* window) {
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     bool err = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) == 0;
     if (err) {
-        std::cerr << "Failed to initialize GLAD!" << std::endl;
-        return -1;
+        return nullptr;
     }
     std::cout << glGetString(GL_VERSION) << std::endl;
     glEnable(GL_MULTISAMPLE);
+    return gl_context;
+}
 
+static bool init_sound() {
     audeo::InitInfo audeo_init_info;
     audeo_init_info.frequency = 44100;
 #ifdef __linux__
@@ -121,23 +126,53 @@ int main(int argc, char* argv[]) try {
     // windows systems though.
     audeo_init_info.chunk_size = 2048;
 #endif
-    if (!audeo::init(audeo_init_info)) {
-        std::cerr << "Failed to initialize audeo!" << std::endl;
-        return -1;
-    }
+    return audeo::init(audeo_init_info);
+}
 
+static bool init_imgui(SDL_Window* window, SDL_GLContext context) {
     // Setup ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 
-    // Setup Dear ImGui style
+    // Setup ImGui style
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer bindings
-    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    if (!ImGui_ImplSDL2_InitForOpenGL(window, context))
+        return false;
+    if (!ImGui_ImplOpenGL3_Init(glsl_version))
+        return false;
+    return true;
+}
+
+int main(int argc, char* argv[]) try {
+    const char* error_help_msg = "If the problem persists, please report this error "
+                                 "along with debug information to the project creators.";
+
+    SDL_Window* window;
+    SDL_GLContext ogl_context;
+    if (window = init_window(); !window) {
+        std::cerr << "SDL Init Error: " << SDL_GetError() << ". " << error_help_msg << std::endl;
+        return -1;
+    }
+
+    if (ogl_context = init_opengl(window); !ogl_context) {
+        std::cerr << "OpenGL Init Error. Please update your drivers. " << error_help_msg
+                  << std::endl;
+        return -1;
+    }
+
+    if (!init_sound()) {
+        std::cerr << "Sound Init Error. " << error_help_msg << std::endl;
+        return -1;
+    }
+
+    if (!init_imgui(window, ogl_context)) {
+        std::cerr << "ImGUI Init Error. " << error_help_msg << std::endl;
+        return -1;
+    }
 
     munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 3, 2);
 
