@@ -31,16 +31,15 @@ namespace renderer {
 CardSprite::CardSprite(RenderWrapper& g, CardPtr _card) : wrapper(&g), card(_card) {
     auto& texture_manager = assets::get_manager<Texture>();
     back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path,
-                                                     {card->get_def().back_texture_path});
-    front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path,
-                                                      {card->get_def().front_texture_path});
+                                                     {(fs::path)card->get_def().back_texture_path});
+    front_texture_handle = texture_manager.load_asset(
+        card->get_def().front_texture_path, {(fs::path)card->get_def().front_texture_path});
     if (!initialized_assets) {
         auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
-        move_sfx = sfx_manager.load_asset("card_deal", {"data/generic/card_deal.ogg"});
-        flip_sfx = sfx_manager.load_asset("card_flip", {"data/generic/card_flip.ogg"});
+        move_sfx = sfx_manager.load_asset("card_deal_sfx");
+        flip_sfx = sfx_manager.load_asset("card_flip_sfx");
         auto& font_manager = assets::get_manager<renderer::Font>();
-        monster_power_font =
-            font_manager.load_asset("main_font", {"data/generic/quasimodo_regular.ttf"});
+        monster_power_font = font_manager.load_asset("title_font");
     }
 }
 

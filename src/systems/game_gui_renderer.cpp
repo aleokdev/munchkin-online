@@ -31,9 +31,8 @@ GameGUIRenderer::GameGUIRenderer(RenderWrapper& w) : wrapper(&w) {
 
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
-    solid_shader = shader_manager.load_asset(
-        "solid_shader", {"data/shaders/solid.vert", "data/shaders/solid.frag"});
-    gui_font = font_manager.load_asset("title_font", {"data/generic/quasimodo_regular.ttf"});
+    solid_shader = shader_manager.load_asset("solid_shader");
+    gui_font = font_manager.load_asset("title_font");
 }
 
 GameGUIRenderer::Button& GameGUIRenderer::ButtonWrapper::get() {

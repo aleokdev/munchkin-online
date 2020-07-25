@@ -53,11 +53,8 @@ TitleScreenRenderer::Status TitleScreenRenderer::exit_credits() {
 }
 
 TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
-    wrapper(&_wrapper), static_bg(assets::get_manager<renderer::Texture>().load_asset(
-                            "vignette", {"data/generic/vignette.png"})),
-    dynamic_bg(
-        assets::get_manager<renderer::Texture>().load_asset("noise", {"data/generic/noise.png"}),
-        true) {
+    wrapper(&_wrapper), static_bg(assets::get_manager<renderer::Texture>().load_asset("vignette")),
+    dynamic_bg(assets::get_manager<renderer::Texture>().load_asset("noise"), true) {
 
     // Load assets
 
@@ -67,23 +64,19 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
     auto& music_manager = assets::get_manager<sound::Music>();
     auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
 
-    assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
-                                                                       "data/shaders/sprite.frag"};
-    sprite_shader = shader_manager.load_asset("sprite_shader", sprite_shader_params);
-    logo_texture = texture_manager.load_asset("logo", {"data/generic/logo.png"});
+    sprite_shader = shader_manager.load_asset("sprite_shader");
+    logo_texture = texture_manager.load_asset("logo");
 
-    hover_sfx = sfx_manager.load_asset("ui_hover", {"data/generic/ui_hover.wav"});
-    click_sfx = sfx_manager.load_asset("ui_click", {"data/generic/ui_click.wav"});
+    hover_sfx = sfx_manager.load_asset("ui_hover_sfx");
+    click_sfx = sfx_manager.load_asset("ui_click_sfx");
 
-    assets::loaders::LoadParams<renderer::Font> font_params;
-    font_params.path = "data/generic/quasimodo_regular.ttf";
-    font = font_manager.load_asset("main_font", font_params);
+    font = font_manager.load_asset("title_font");
 
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.5f, 0.4f);
 
     // Start the title music
-    sound::play_music(music_manager.load_asset("title_song", {"data/generic/title_song.mp3"}));
+    sound::play_music(music_manager.load_asset("title_song"));
 
     // We're in the main menu state by default
     auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);

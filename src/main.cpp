@@ -15,6 +15,7 @@
 #include "game_wrapper.hpp"
 #include "systems/ai_manager.hpp"
 
+#include "assets/assets.hpp"
 #include "input/input.hpp"
 
 #include "sound/sound_player.hpp"
@@ -84,8 +85,8 @@ static SDL_Window* init_window() {
     // GL 4.3 + GLSL 430
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, gl_version.major);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, gl_version.minor);
 
     // Create window with graphics context
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -174,6 +175,7 @@ int main(int argc, char* argv[]) try {
         return -1;
     }
 
+    munchkin::assets::PathDatabase::load_paths_from_json_file("data/assets.json");
     munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 3, 2);
 
     std::vector<std::string_view> args;

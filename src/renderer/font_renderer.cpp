@@ -70,7 +70,7 @@ void FontRenderer::init() {
     glVertexAttribBinding(1, 1);
 
     auto& shader_manager = assets::get_manager<Shader>();
-    assets::loaders::LoadParams<Shader> params;
+    assets::loaders::LoadParams<renderer::Shader> params;
     params.vert = "data/shaders/text.vert";
     params.frag = "data/shaders/text.frag";
     shader = shader_manager.load_asset("text_shader", params);
