@@ -103,6 +103,7 @@ void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
 }
 
 TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
+    // Render background elements
     dynamic_bg.render();
     dynamic_bg.update_scroll(delta_time);
     static_bg.render();

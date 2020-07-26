@@ -22,7 +22,7 @@ void Game::turn() {
               << "Stage: " << state.get_game_stage() << "\n"
               << "Active coroutines: " << state.active_coroutines.size() << std::endl;
 
-    // check if the game is over
+    // Check if the game is over
     sol::object result = state.game_api["get_winner"](state.game_api);
     if (result != sol::lua_nil) {
         // We have a winner!
@@ -33,8 +33,11 @@ void Game::turn() {
 }
 
 void Game::tick() {
+    // Push tick event
     state.event_queue.push({FlowEvent::EventType::tick});
     state.tick++;
+
+    // Call all active coroutines for each event
     std::vector<sol::coroutine> last_coroutines = state.active_coroutines;
     while (state.event_queue.size() > 0) {
         state.last_event = state.event_queue.front();
