@@ -25,27 +25,20 @@ namespace systems {
 
 GameRenderer::GameRenderer(RenderWrapper& r) :
     wrapper(&r), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW),
-    background(assets::get_manager<renderer::Texture>().load_asset(
-        "bg", renderer::Background::default_load_params)) {
+    background(assets::get_manager<renderer::Texture>().load_asset("game_background")) {
 
     auto& texture_manager = assets::get_manager<renderer::Texture>();
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
     auto& music_manager = assets::get_manager<sound::Music>();
 
-    assets::loaders::LoadParams<renderer::Texture> table_texture_params{"data/generic/table.png"};
+    sprite_shader = shader_manager.load_asset("sprite_shader");
+    solid_shader = shader_manager.load_asset("solid_shader");
 
-    sprite_shader = shader_manager.load_asset(
-        "sprite_shader", {"data/shaders/sprite.vert", "data/shaders/sprite.frag"});
-    solid_shader = shader_manager.load_asset(
-        "solid_shader", {"data/shaders/solid.vert", "data/shaders/solid.frag"});
-
-    infobar_title_font =
-        font_manager.load_asset("main_font", {"data/generic/quasimodo_regular.ttf"});
-    infobar_normal_font =
-        font_manager.load_asset("medium_sec_font", {"data/generic/Raleway-Medium.ttf"});
-    table_texture = texture_manager.load_asset("table", table_texture_params);
-    game_music = music_manager.load_asset("game_song", {"data/generic/game_song.mp3"});
+    infobar_title_font = font_manager.load_asset("title_font");
+    infobar_normal_font = font_manager.load_asset("normal_medium_font");
+    table_texture = texture_manager.load_asset("table");
+    game_music = music_manager.load_asset("game_song");
 
     // Update camera data
     renderer::UniformBuffer::bind(camera_buffer);

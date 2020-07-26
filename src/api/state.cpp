@@ -6,6 +6,9 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+
 namespace munchkin {
 
 State::State(size_t player_count, std::string gamerule_path) {
@@ -19,7 +22,8 @@ State::State(size_t player_count, std::string gamerule_path) {
                                         {"card_discarded", FlowEvent::EventType::card_discarded},
                                         {"card_clicked", FlowEvent::EventType::card_clicked}});
 
-    // register types in lua api
+    // Register types in lua api
+    // TODO: Change types to PascalCase
     lua.new_usertype<FlowEvent>("flow_event",
         "type", &FlowEvent::type,
         "card_involved", &FlowEvent::card_involved,
@@ -121,7 +125,7 @@ State::State(size_t player_count, std::string gamerule_path) {
         "play_stages", &CardDef::play_stages,
         "is_monster", &CardDef::is_monster);
 
-    lua.new_usertype<Card>("munchkin_card",
+    lua.new_usertype<Card>("Card",
         "get_id", &Card::get_id,
         "get_def", &Card::get_def,
         "visibility", &Card::visibility,
@@ -131,6 +135,18 @@ State::State(size_t player_count, std::string gamerule_path) {
         sol::meta_function::index, &Card::get_data_variable,
         sol::meta_function::new_index, &Card::set_data_variable);
 
+    lua.new_usertype<glm::vec2>("vec2",
+        "x", &glm::vec2::x,
+        "y", &glm::vec2::y);
+    lua.new_usertype<glm::vec4>("vec4",
+        "x", &glm::vec4::x,
+        "r", &glm::vec4::r,
+        "y", &glm::vec4::y,
+        "g", &glm::vec4::g,
+        "z", &glm::vec4::z,
+        "b", &glm::vec4::b,
+        "w", &glm::vec4::w,
+        "a", &glm::vec4::a);
     /* clang-format on */
 
     lua.open_libraries(sol::lib::coroutine);
@@ -158,7 +174,7 @@ State::State(size_t player_count, std::string gamerule_path) {
 int State::get_ticks() const { return tick; }
 
 void State::give_treasure(Player& player) {
-    if (treasure_deck.size() == 0)
+    if (treasure_deck.empty())
         return;
     CardPtr ptr = treasure_deck.back();
     ptr->move_to(Card::CardLocation::player_hand, player.get_id());
@@ -166,7 +182,7 @@ void State::give_treasure(Player& player) {
 }
 
 void State::give_dungeon(Player& player) {
-    if (dungeon_deck.size() == 0)
+    if (dungeon_deck.empty())
         return;
     CardPtr ptr = dungeon_deck.back();
     ptr->move_to(Card::CardLocation::player_hand, player.get_id());
@@ -194,13 +210,13 @@ void State::set_current_player(size_t id) { current_player_id = id; }
 std::vector<CardPtr> State::get_visible_cards() {
     std::vector<CardPtr> result;
 
-    if (dungeon_deck.size() > 0)
+    if (!dungeon_deck.empty())
         result.emplace_back(dungeon_deck.front());
-    if (treasure_deck.size() > 0)
+    if (!treasure_deck.empty())
         result.emplace_back(treasure_deck.front());
-    if (dungeon_discard_deck.size() > 0)
+    if (!dungeon_discard_deck.empty())
         result.emplace_back(dungeon_discard_deck.front());
-    if (treasure_discard_deck.size() > 0)
+    if (!treasure_discard_deck.empty())
         result.emplace_back(treasure_discard_deck.front());
 
     for (auto& player : players) {

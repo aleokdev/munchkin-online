@@ -1,14 +1,8 @@
-//
-// Created by aleok on 4/3/20.
-//
-
 #include "systems/game_gui_renderer.hpp"
 #include "game_wrapper.hpp"
 #include "input/input.hpp"
 #include "render_wrapper.hpp"
 #include "renderer/font_renderer.hpp"
-#include "renderer/sprite_renderer.hpp"
-#include <glm/glm/gtc/type_ptr.hpp>
 
 namespace munchkin {
 namespace systems {
@@ -23,17 +17,39 @@ GameGUIRenderer::GameGUIRenderer(RenderWrapper& w) : wrapper(&w) {
         "callback", sol::property(&ButtonWrapper::get_callback, &ButtonWrapper::set_callback),
         "exists", &ButtonWrapper::exists);
 
+    lua.new_usertype<LabelWrapper>("game_gui_renderer_label",
+        "text", sol::property(&LabelWrapper::get_text, &LabelWrapper::set_text),
+        "color", sol::property(&LabelWrapper::get_color, &LabelWrapper::set_color),
+        "anchor", sol::property(&LabelWrapper::get_anchor, &LabelWrapper::set_anchor),
+        "horizontal_alignment", sol::property(&LabelWrapper::get_horizontal_alignment, &LabelWrapper::set_horizontal_alignment),
+        "pos", sol::property(&LabelWrapper::get_pos, &LabelWrapper::set_pos),
+        "exists", &LabelWrapper::exists);
+
+    lua.new_enum<GUIAnchor>("gui_anchor", {
+        {"upper_left_corner", GUIAnchor::upper_left_corner},
+        {"upper_right_corner", GUIAnchor::upper_right_corner},
+        {"lower_left_corner", GUIAnchor::lower_left_corner},
+        {"lower_right_corner", GUIAnchor::lower_right_corner},
+        {"center", GUIAnchor::center}});
+
+    lua.new_enum<TextAlignment>("text_alignment", {
+        {"start_at_pos", TextAlignment::start_at_pos},
+        {"center", TextAlignment::center},
+        {"end_at_pos", TextAlignment::end_at_pos}
+});
+
     lua["gui"] = this;
     sol::usertype<GameGUIRenderer> gui_api = lua.new_usertype<GameGUIRenderer>("game_gui_renderer",
         "create_button", &GameGUIRenderer::create_button,
-        "delete_button", &GameGUIRenderer::delete_button);
+        "delete_button", &GameGUIRenderer::delete_button,
+        "create_label", &GameGUIRenderer::create_label,
+        "delete_label", &GameGUIRenderer::delete_label);
     /* clang-format on */
 
     auto& shader_manager = assets::get_manager<renderer::Shader>();
     auto& font_manager = assets::get_manager<renderer::Font>();
-    solid_shader = shader_manager.load_asset(
-        "solid_shader", {"data/shaders/solid.vert", "data/shaders/solid.frag"});
-    gui_font = font_manager.load_asset("title_font", {"data/generic/quasimodo_regular.ttf"});
+    solid_shader = shader_manager.load_asset("solid_shader");
+    gui_font = font_manager.load_asset("title_font");
 }
 
 GameGUIRenderer::Button& GameGUIRenderer::ButtonWrapper::get() {
@@ -42,6 +58,14 @@ GameGUIRenderer::Button& GameGUIRenderer::ButtonWrapper::get() {
 
 bool GameGUIRenderer::ButtonWrapper::exists() const {
     return game_gui_instance->buttons.find(id) != game_gui_instance->buttons.end();
+}
+
+GameGUIRenderer::Label& GameGUIRenderer::LabelWrapper::get() {
+    return game_gui_instance->labels.at(id);
+}
+
+bool GameGUIRenderer::LabelWrapper::exists() const {
+    return game_gui_instance->labels.find(id) != game_gui_instance->labels.end();
 }
 
 GameGUIRenderer::ButtonWrapper GameGUIRenderer::create_button(sol::this_state const& s,
@@ -54,20 +78,21 @@ GameGUIRenderer::ButtonWrapper GameGUIRenderer::create_button(sol::this_state co
     return ButtonWrapper(button.first->second);
 }
 
-void GameGUIRenderer::delete_button(ButtonWrapper button) {
-    buttons.erase(button.id);
+void GameGUIRenderer::delete_button(ButtonWrapper button) { buttons.erase(button.id); }
+
+GameGUIRenderer::LabelWrapper GameGUIRenderer::create_label(sol::this_state const& s,
+                                                            std::string const& text) {
+    auto id_to_use = last_label_id++;
+    auto label = Label();
+    label.id = id_to_use;
+    label.text = text;
+    labels.emplace(id_to_use, label);
+    return LabelWrapper(label);
 }
 
+void GameGUIRenderer::delete_label(LabelWrapper label) { labels.erase(label.id); }
+
 void GameGUIRenderer::render(float delta_time) {
-    auto& shader_manager = assets::get_manager<renderer::Shader>();
-
-    renderer::SpriteRenderer spr;
-    // Bind sprite shader
-    auto& shader = shader_manager.get_asset(solid_shader);
-    glUseProgram(shader.handle);
-
-    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
-
     renderer::FontRenderer fnt;
     const auto window_w = wrapper->wrapper->game.window_w;
     const auto window_h = wrapper->wrapper->game.window_h;
@@ -83,7 +108,7 @@ void GameGUIRenderer::render(float delta_time) {
                                     math::Vec2D{font.calculate_width(button.text), 48.f}};
         button.hovered = btn_pixel_rect.contains(input::get_mouse_pos());
         fnt.set_position(btn_pos);
-        fnt.set_color((button.hovered ? 1.f : 0.8f) * glm::vec3{1, 1, 1});
+        fnt.set_color({1, 1, 1, button.hovered ? 1.f : 0.8f});
         fnt.render_text(gui_font, button.text);
 
         if (button.hovered && input::is_mousebutton_pressed(input::MouseButton::left)) {
@@ -102,6 +127,32 @@ void GameGUIRenderer::render(float delta_time) {
         sol::coroutine coro(do_callback->callback);
         coro(ButtonWrapper(*do_callback));
         wrapper->wrapper->game.state.active_coroutines.emplace_back(coro);
+    }
+
+    for (auto& [_, label] : labels) {
+        // NDC coordinates
+        float x_alignment_offset;
+        switch (label.horizontal_alignment) {
+            case TextAlignment::start_at_pos: x_alignment_offset = 0; break;
+            case TextAlignment::center:
+                x_alignment_offset = -font.calculate_width(label.text) / (float)window_w / 2.f;
+                break;
+            case TextAlignment::end_at_pos:
+                x_alignment_offset = -font.calculate_width(label.text) / (float)window_w;
+                break;
+        }
+        glm::vec2 anchor_pos;
+        switch (label.anchor) {
+            case GUIAnchor::upper_left_corner: anchor_pos = {0, 0}; break;
+            case GUIAnchor::upper_right_corner: anchor_pos = {1, 0}; break;
+            case GUIAnchor::lower_left_corner: anchor_pos = {0, 1}; break;
+            case GUIAnchor::lower_right_corner: anchor_pos = {1, 1}; break;
+            case GUIAnchor::center: anchor_pos = {.5f, .5f}; break;
+        }
+        glm::vec2 pos = anchor_pos + glm::vec2{x_alignment_offset, 0} + label.pos;
+        fnt.set_position(pos);
+        fnt.set_color(label.color);
+        fnt.render_text(gui_font, label.text);
     }
 }
 

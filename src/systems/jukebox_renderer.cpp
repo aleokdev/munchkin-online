@@ -3,20 +3,17 @@
 #include "render_wrapper.hpp"
 #include "renderer/font_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
-#include "sound/sound_player.hpp"
 #include "sound/sound_assets.hpp"
+#include "sound/sound_player.hpp"
 #include <glm/glm/gtc/type_ptr.hpp>
 
 namespace munchkin {
 namespace systems {
 
 JukeboxRenderer::JukeboxRenderer(RenderWrapper& w) : wrapper(&w) {
-    solid_shader = assets::get_manager<renderer::Shader>().load_asset(
-        "solid_shader", {"data/shaders/solid.vert", "data/shaders/solid.frag"});
-    song_title_font = assets::get_manager<renderer::Font>().load_asset(
-        "default_font", {"data/generic/quasimodo_regular.ttf"});
-    song_artist_font = assets::get_manager<renderer::Font>().load_asset(
-        "subtitle_font", {"data/generic/Raleway-Light.ttf"});
+    solid_shader = assets::get_manager<renderer::Shader>().load_asset("solid_shader");
+    song_title_font = assets::get_manager<renderer::Font>().load_asset("title_font");
+    song_artist_font = assets::get_manager<renderer::Font>().load_asset("normal_light_font");
 }
 
 void JukeboxRenderer::render() {
@@ -58,8 +55,8 @@ void JukeboxRenderer::render() {
     fnt.set_position({(float)(window_w - 390) / (float)window_w,
                       (float)(window_h + 35 - current_y_pos) / (float)window_h});
     fnt.render_text(song_artist_font, assets::get_manager<sound::Music>()
-        .get_asset(sound::get_current_music_handle_being_played())
-        .artist);
+                                          .get_asset(sound::get_current_music_handle_being_played())
+                                          .artist);
 }
 
 } // namespace systems

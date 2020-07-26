@@ -13,7 +13,7 @@ namespace munchkin {
 namespace assets {
 namespace loaders {
 
-void load(Texture& texture, LoadParams<Texture> const& params) {
+void load(Texture& texture, LoadParams<renderer::Texture> const& params) {
     stbi_set_flip_vertically_on_load(true);
     int w, h, channels;
     unsigned char* data = stbi_load(params.path.generic_string().c_str(), &w, &h, &channels, 4);
@@ -33,12 +33,12 @@ void load(Texture& texture, LoadParams<Texture> const& params) {
     texture.h = h;
 }
 
-void load(Shader& shader, LoadParams<Shader> const& params) {
+void load(Shader& shader, LoadParams<renderer::Shader> const& params) {
     shader.handle = renderer::load_shader(params.vert.generic_string().c_str(),
                                           params.frag.generic_string().c_str());
 }
 
-void load(Font& font, LoadParams<Font> const& params) {
+void load(Font& font, LoadParams<renderer::Font> const& params) {
     // Load and swap
     Font f(params.path);
     font.swap(f);

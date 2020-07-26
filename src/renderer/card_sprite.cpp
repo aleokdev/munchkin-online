@@ -31,16 +31,15 @@ namespace renderer {
 CardSprite::CardSprite(RenderWrapper& g, CardPtr _card) : wrapper(&g), card(_card) {
     auto& texture_manager = assets::get_manager<Texture>();
     back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path,
-                                                     {card->get_def().back_texture_path});
-    front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path,
-                                                      {card->get_def().front_texture_path});
+                                                     {(fs::path)card->get_def().back_texture_path});
+    front_texture_handle = texture_manager.load_asset(
+        card->get_def().front_texture_path, {(fs::path)card->get_def().front_texture_path});
     if (!initialized_assets) {
         auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
-        move_sfx = sfx_manager.load_asset("card_deal", {"data/generic/card_deal.ogg"});
-        flip_sfx = sfx_manager.load_asset("card_flip", {"data/generic/card_flip.ogg"});
+        move_sfx = sfx_manager.load_asset("card_deal_sfx");
+        flip_sfx = sfx_manager.load_asset("card_flip_sfx");
         auto& font_manager = assets::get_manager<renderer::Font>();
-        monster_power_font =
-            font_manager.load_asset("main_font", {"data/generic/quasimodo_regular.ttf"});
+        monster_power_font = font_manager.load_asset("title_font");
     }
 }
 
@@ -225,7 +224,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
         renderer::FontRenderer fnt;
         fnt.set_window_size(game.window_w, game.window_h);
         fnt.set_size(glm::vec2{1, 1});
-        fnt.set_color({1, 1, 1});
+        fnt.set_color({1, 1, 1, 1});
         const auto& font(assets::get_manager<renderer::Font>().get_asset(monster_power_font));
         const math::Vec2D rel_pos(game.camera.pixel_world_to_screen(
             get_rect().pos * math::Vec2D{1, -1} + get_rect().size * math::Vec2D{.5f, 0}));

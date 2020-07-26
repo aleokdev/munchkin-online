@@ -16,9 +16,6 @@ public:
     void update_scroll(float delta_time);
     void render() const;
 
-    inline static const assets::loaders::LoadParams<Texture> default_load_params = {
-        "data/generic/bg.png"};
-
 private:
     unsigned int vao;
     unsigned int vbo;
