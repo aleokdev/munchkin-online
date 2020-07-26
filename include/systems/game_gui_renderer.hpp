@@ -22,6 +22,22 @@ public:
 
     void render(float delta_time);
 
+    enum class GUIAnchor {
+        upper_left_corner,
+        upper_right_corner,
+        lower_left_corner,
+        lower_right_corner,
+        center
+    };
+    enum class TextAlignment {
+        // Text starts on its position, left-to-right.
+        start_at_pos,
+        // Middle of the bounds of the text is equal to its position.
+        center,
+        // Text ends on its position, left-to-right.
+        end_at_pos
+    };
+
     struct ButtonWrapper;
     struct Button;
     struct Button {
@@ -31,6 +47,7 @@ public:
         sol::thread stack_thread;
         bool has_been_clicked = false;
         bool hovered = false;
+        // TODO: Add position
 
         Button(){};
         ~Button() { std::cout << "Destroyed button." << std::endl; }
@@ -53,7 +70,7 @@ public:
             return *this;
         }
 
-        bool operator==(const Button& b) const { return b.id == id; }
+        bool operator==(Button const& b) const { return b.id == id; }
     };
 
     struct ButtonWrapper {
@@ -80,23 +97,64 @@ public:
         friend class GameGUIRenderer;
     };
 
-    struct TextWrapper;
-    struct Text;
-    struct Text {
+    struct LabelWrapper;
+    struct Label;
+    struct Label {
         std::size_t id;
         std::string text;
-        glm::vec4 color;
+        glm::vec4 color = {1, 1, 1, 1};
+        GUIAnchor anchor = GUIAnchor::upper_left_corner;
+        TextAlignment horizontal_alignment = TextAlignment::start_at_pos;
+        // Position of the text relative to its anchor.
+        // Uses normalized coordinates between 0 (left, top) and 1 (right, bottom)
+        glm::vec2 pos;
+
+        bool operator==(Label const& other) const { return id == other.id; }
+    };
+
+    struct LabelWrapper {
+        std::size_t id;
+
+        LabelWrapper() : id(-1){};
+        explicit LabelWrapper(std::nullptr_t) : id(-1){};
+        explicit LabelWrapper(Label& l) : id(l.id){};
+
+        Label& get();
+
+        std::string get_text() { return get().text; }
+        void set_text(std::string const& str) { get().text = str; }
+
+        glm::vec4 get_color() { return get().color; }
+        void set_color(glm::vec4 const& c) { get().color = c; }
+
+        GUIAnchor get_anchor() { return get().anchor; }
+        void set_anchor(GUIAnchor anchor) { get().anchor = anchor; }
+
+        TextAlignment get_horizontal_alignment() { return get().horizontal_alignment; }
+        void set_horizontal_alignment(TextAlignment align) { get().horizontal_alignment = align; }
+
+        glm::vec2 get_pos() { return get().pos; }
+        void set_pos(glm::vec2 const& pos) { get().pos = pos; }
+
+        bool operator==(LabelWrapper const& b) const { return id == b.id; }
+        [[nodiscard]] bool exists() const;
+
+        friend class GameGUIRenderer;
     };
 
     // API
     ButtonWrapper
     create_button(sol::this_state const&, std::string const& text, sol::function const& callback);
     void delete_button(ButtonWrapper button);
+    LabelWrapper create_label(sol::this_state const&, std::string const& text);
+    void delete_label(LabelWrapper label);
 
 private:
     RenderWrapper* wrapper;
     std::unordered_map<std::size_t, Button> buttons;
+    std::unordered_map<std::size_t, Label> labels;
     std::size_t last_button_id;
+    std::size_t last_label_id;
 
     assets::Handle<renderer::Shader> solid_shader;
     assets::Handle<renderer::Font> gui_font;

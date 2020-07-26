@@ -15,6 +15,7 @@ public:
 
     void set_window_size(size_t w, size_t h);
     void set_size(glm::vec2 size);
+    // Uses normalized coordinates between 0 (left, top) and 1 (right, bottom)
     void set_position(glm::vec2 position);
     void set_color(glm::vec4 color);
     void set_shader(assets::Handle<Shader> sh);

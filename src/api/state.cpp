@@ -6,6 +6,9 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+
 namespace munchkin {
 
 State::State(size_t player_count, std::string gamerule_path) {
@@ -19,7 +22,8 @@ State::State(size_t player_count, std::string gamerule_path) {
                                         {"card_discarded", FlowEvent::EventType::card_discarded},
                                         {"card_clicked", FlowEvent::EventType::card_clicked}});
 
-    // register types in lua api
+    // Register types in lua api
+    // TODO: Change types to PascalCase
     lua.new_usertype<FlowEvent>("flow_event",
         "type", &FlowEvent::type,
         "card_involved", &FlowEvent::card_involved,
@@ -131,6 +135,18 @@ State::State(size_t player_count, std::string gamerule_path) {
         sol::meta_function::index, &Card::get_data_variable,
         sol::meta_function::new_index, &Card::set_data_variable);
 
+    lua.new_usertype<glm::vec2>("vec2",
+        "x", &glm::vec2::x,
+        "y", &glm::vec2::y);
+    lua.new_usertype<glm::vec4>("vec4",
+        "x", &glm::vec4::x,
+        "r", &glm::vec4::r,
+        "y", &glm::vec4::y,
+        "g", &glm::vec4::g,
+        "z", &glm::vec4::z,
+        "b", &glm::vec4::b,
+        "w", &glm::vec4::w,
+        "a", &glm::vec4::a);
     /* clang-format on */
 
     lua.open_libraries(sol::lib::coroutine);
