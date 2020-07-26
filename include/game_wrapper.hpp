@@ -36,8 +36,8 @@ public:
 
     // Systems
 
-    RenderWrapper renderer;
     Game game;
+    RenderWrapper renderer;
     systems::InputBinder input_binder;
     systems::StateDebugger state_debugger;
     systems::DebugTerminal debug_terminal;
