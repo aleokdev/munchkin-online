@@ -16,7 +16,7 @@ public:
     void set_window_size(size_t w, size_t h);
     void set_size(glm::vec2 size);
     void set_position(glm::vec2 position);
-    void set_color(glm::vec3 color);
+    void set_color(glm::vec4 color);
     void set_shader(assets::Handle<Shader> sh);
 
     void render_char(Font::glyph_data const& data,
@@ -40,7 +40,7 @@ private:
 
     glm::vec2 text_size = glm::vec2(1.0f, 1.0f);
     glm::vec2 text_position;
-    glm::vec3 text_color = glm::vec3(1, 1, 1);
+    glm::vec4 text_color = glm::vec4(1, 1, 1, 1);
     size_t window_w = 0;
     size_t window_h = 0;
 

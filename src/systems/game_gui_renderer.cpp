@@ -58,15 +58,6 @@ void GameGUIRenderer::delete_button(ButtonWrapper button) {
 }
 
 void GameGUIRenderer::render(float delta_time) {
-    auto& shader_manager = assets::get_manager<renderer::Shader>();
-
-    renderer::SpriteRenderer spr;
-    // Bind sprite shader
-    auto& shader = shader_manager.get_asset(solid_shader);
-    glUseProgram(shader.handle);
-
-    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
-
     renderer::FontRenderer fnt;
     const auto window_w = wrapper->wrapper->game.window_w;
     const auto window_h = wrapper->wrapper->game.window_h;
@@ -82,7 +73,7 @@ void GameGUIRenderer::render(float delta_time) {
                                     math::Vec2D{font.calculate_width(button.text), 48.f}};
         button.hovered = btn_pixel_rect.contains(input::get_mouse_pos());
         fnt.set_position(btn_pos);
-        fnt.set_color((button.hovered ? 1.f : 0.8f) * glm::vec3{1, 1, 1});
+        fnt.set_color({1, 1, 1, button.hovered ? 1.f : 0.8f});
         fnt.render_text(gui_font, button.text);
 
         if (button.hovered && input::is_mousebutton_pressed(input::MouseButton::left)) {

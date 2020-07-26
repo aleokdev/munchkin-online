@@ -4,6 +4,7 @@
   "vignette": "generic/vignette.png",
   "table": "generic/table.png",
   "game_background": "generic/bg.png",
+
   "title_song": "generic/title_song.mp3",
   "game_song": "generic/game_song.mp3",
   "ui_click_sfx": "generic/ui_click.wav",
@@ -21,5 +22,9 @@
   "solid_shader": {
     "vert": "shaders/solid.vert",
     "frag": "shaders/solid.frag"
+  },
+  "text_shader": {
+    "vert": "shaders/text.vert",
+    "frag": "shaders/text.frag"
   }
 }

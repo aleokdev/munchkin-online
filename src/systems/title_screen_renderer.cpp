@@ -363,7 +363,7 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
         mouse_pos.y /= target->get_height();
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
             auto& option = options[opt_index];
-            option.color = glm::vec3(1, 1, 1);
+            option.color = glm::vec4(1, 1, 1, 1);
             option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
             if (!option.selected)
                 audeo::play_sound(

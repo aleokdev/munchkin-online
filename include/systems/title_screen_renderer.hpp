@@ -55,7 +55,7 @@ private:
     struct MenuOption {
         std::string name;
         OptionCallbackT callback;
-        glm::vec3 color;
+        glm::vec4 color;
         // When selected, a menu option is assigned a scale offset so it appears selected
         float scale = 1.0f;
         bool selected = false;
@@ -68,7 +68,7 @@ private:
 public:
     std::vector<MenuOption> options;
 
-    static constexpr glm::vec3 default_option_color = glm::vec3(0.53, 0.53, 0.53);
+    static constexpr glm::vec4 default_option_color = glm::vec4(0.53, 0.53, 0.53, 1);
 
     bool game_settings_opened = false;
 

@@ -224,7 +224,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
         renderer::FontRenderer fnt;
         fnt.set_window_size(game.window_w, game.window_h);
         fnt.set_size(glm::vec2{1, 1});
-        fnt.set_color({1, 1, 1});
+        fnt.set_color({1, 1, 1, 1});
         const auto& font(assets::get_manager<renderer::Font>().get_asset(monster_power_font));
         const math::Vec2D rel_pos(game.camera.pixel_world_to_screen(
             get_rect().pos * math::Vec2D{1, -1} + get_rect().size * math::Vec2D{.5f, 0}));

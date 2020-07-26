@@ -75,9 +75,17 @@ public:
         void set_hovered(bool b) { get().hovered = b; }
 
         bool operator==(ButtonWrapper const& b) const { return id == b.id; }
-        bool exists() const;
+        [[nodiscard]] bool exists() const;
 
         friend class GameGUIRenderer;
+    };
+
+    struct TextWrapper;
+    struct Text;
+    struct Text {
+        std::size_t id;
+        std::string text;
+        glm::vec4 color;
     };
 
     // API
