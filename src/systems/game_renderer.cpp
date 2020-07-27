@@ -25,20 +25,15 @@ namespace systems {
 
 GameRenderer::GameRenderer(RenderWrapper& r) :
     wrapper(&r), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW),
-    background(assets::get_manager<renderer::Texture>().load_asset("game_background")) {
+    background(assets::AssetManager::load_asset<renderer::Texture>("game_background")) {
 
-    auto& texture_manager = assets::get_manager<renderer::Texture>();
-    auto& shader_manager = assets::get_manager<renderer::Shader>();
-    auto& font_manager = assets::get_manager<renderer::Font>();
-    auto& music_manager = assets::get_manager<sound::Music>();
+    sprite_shader = assets::AssetManager::load_asset<renderer::Shader>("sprite_shader");
+    solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
 
-    sprite_shader = shader_manager.load_asset("sprite_shader");
-    solid_shader = shader_manager.load_asset("solid_shader");
-
-    infobar_title_font = font_manager.load_asset("title_font");
-    infobar_normal_font = font_manager.load_asset("normal_medium_font");
-    table_texture = texture_manager.load_asset("table");
-    game_music = music_manager.load_asset("game_song");
+    infobar_title_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
+    infobar_normal_font = assets::AssetManager::load_asset<renderer::Font>("normal_medium_font");
+    table_texture = assets::AssetManager::load_asset<renderer::Texture>("table");
+    game_music = assets::AssetManager::load_asset<sound::Music>("game_song");
 
     // Update camera data
     renderer::UniformBuffer::bind(camera_buffer);
@@ -97,21 +92,18 @@ void GameRenderer::game_playing_frame() {
         first_time = false;
     }
 
-    auto& texture_manager = assets::get_manager<renderer::Texture>();
-    auto& shader_manager = assets::get_manager<renderer::Shader>();
-
     // Render sprites. Inside block for structure + limiting scope of sprite_renderer
     {
         renderer::SpriteRenderer sprite_renderer;
         // Bind sprite shader
-        auto& shader = shader_manager.get_asset(sprite_shader);
+        auto& shader = sprite_shader.get();
         glUseProgram(shader.handle);
 
         glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
 
         // Set draw data
         sprite_renderer.set_camera_drag(true);
-        auto& tex = texture_manager.get_asset(table_texture);
+        auto& tex = table_texture.get();
         sprite_renderer.set_texture(tex.handle);
         constexpr float table_size = renderer::table_radius * 2.f;
         // Calculate position for lower left corner for the table to be centered
@@ -138,7 +130,7 @@ void GameRenderer::game_playing_frame() {
             last_frame_hovered_sprite = nullptr;
 
         // Bind solid shader
-        auto& s_shader = shader_manager.get_asset(solid_shader);
+        auto& s_shader = solid_shader.get();
         glUseProgram(s_shader.handle);
         glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
 

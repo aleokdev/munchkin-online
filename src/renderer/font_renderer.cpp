@@ -69,8 +69,7 @@ void FontRenderer::init() {
     glBindVertexBuffer(1, vbo, 0, 4 * sizeof(float));
     glVertexAttribBinding(1, 1);
 
-    auto& shader_manager = assets::get_manager<Shader>();
-    shader = shader_manager.load_asset("text_shader");
+    shader = assets::AssetManager::load_asset<Shader>("text_shader");
 }
 
 void FontRenderer::set_window_size(size_t w, size_t h) {
@@ -108,11 +107,9 @@ void FontRenderer::render_char(Font::glyph_data const& data,
 }
 
 void FontRenderer::render_text(assets::Handle<Font> font, std::string const& text) {
-    auto& shader_manager = assets::get_manager<Shader>();
-    auto& font_manager = assets::get_manager<Font>();
     // If the optional shader was set, use that one. Otherwise, use default shader
-    auto& shader_program = shader_manager.get_asset(opt_shader.id ? opt_shader : shader);
-    auto& font_data = font_manager.get_asset(font);
+    auto& shader_program = (opt_shader ? opt_shader : shader).get();
+    auto& font_data = font.get();
     glUseProgram(shader_program.handle);
 
     glUniform4fv(3, 1, glm::value_ptr(text_color));
@@ -145,11 +142,9 @@ void FontRenderer::render_text(assets::Handle<Font> font, std::string const& tex
 void FontRenderer::render_wrapped_text(assets::Handle<Font> font,
                                        float max_text_width,
                                        std::string const& text) {
-    auto& shader_manager = assets::get_manager<Shader>();
-    auto& font_manager = assets::get_manager<Font>();
     // If the optional shader was set, use that one. Otherwise, use default shader
-    auto& shader_program = shader_manager.get_asset(opt_shader.id ? opt_shader : shader);
-    auto& font_data = font_manager.get_asset(font);
+    auto& shader_program = (opt_shader.id ? opt_shader : shader).get();
+    auto& font_data = font.get();
     glUseProgram(shader_program.handle);
 
     glUniform3fv(3, 1, glm::value_ptr(text_color));

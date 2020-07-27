@@ -50,7 +50,7 @@ void Background::create_buffers() {
     glVertexAttribBinding(1, 1);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, assets::get_manager<Texture>().get_asset(texture).handle);
+    glBindTexture(GL_TEXTURE_2D, texture.get().handle);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
@@ -76,7 +76,7 @@ void Background::render() const {
     glBindVertexArray(vao);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, assets::get_manager<Texture>().get_asset(texture).handle);
+    glBindTexture(GL_TEXTURE_2D, texture.get().handle);
     glUniform1i(0, 0);
 
     glUniform1f(1, scroll);

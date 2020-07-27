@@ -30,17 +30,16 @@ TitleScreenRenderer::Status TitleScreenRenderer::local_game() {
 TitleScreenRenderer::Status TitleScreenRenderer::credits() {
     // Prepare option list for credits menu
     options.clear();
-    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
     options.emplace_back(
         "Back", [this]() { return exit_credits(); }, default_option_color,
-        fnt.calculate_width("Back"));
+        font.get().calculate_width("Back"));
     return TitleScreenRenderer::Status::Credits;
 }
 
 TitleScreenRenderer::Status TitleScreenRenderer::exit_credits() {
     // Prepare option list for main menu
     options.clear();
-    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
+    auto& fnt = font.get();
     options.emplace_back(
         "Local Game", [this]() { return local_game(); }, default_option_color,
         fnt.calculate_width("Local Game"));
@@ -53,33 +52,27 @@ TitleScreenRenderer::Status TitleScreenRenderer::exit_credits() {
 }
 
 TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
-    wrapper(&_wrapper), static_bg(assets::get_manager<renderer::Texture>().load_asset("vignette")),
-    dynamic_bg(assets::get_manager<renderer::Texture>().load_asset("noise"), true) {
+    wrapper(&_wrapper), static_bg(assets::AssetManager::load_asset<renderer::Texture>("vignette")),
+    dynamic_bg(assets::AssetManager::load_asset<renderer::Texture>("noise"), true) {
 
     // Load assets
 
-    auto& shader_manager = assets::get_manager<renderer::Shader>();
-    auto& texture_manager = assets::get_manager<renderer::Texture>();
-    auto& font_manager = assets::get_manager<renderer::Font>();
-    auto& music_manager = assets::get_manager<sound::Music>();
-    auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
+    sprite_shader = assets::AssetManager::load_asset<renderer::Shader>("sprite_shader");
+    logo_texture = assets::AssetManager::load_asset<renderer::Texture>("logo");
 
-    sprite_shader = shader_manager.load_asset("sprite_shader");
-    logo_texture = texture_manager.load_asset("logo");
+    hover_sfx = assets::AssetManager::load_asset<sound::SoundEffect>("ui_hover_sfx");
+    click_sfx = assets::AssetManager::load_asset<sound::SoundEffect>("ui_click_sfx");
 
-    hover_sfx = sfx_manager.load_asset("ui_hover_sfx");
-    click_sfx = sfx_manager.load_asset("ui_click_sfx");
-
-    font = font_manager.load_asset("title_font");
+    font = assets::AssetManager::load_asset<renderer::Font>("title_font");
 
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.5f, 0.4f);
 
     // Start the title music
-    sound::play_music(music_manager.load_asset("title_song"));
+    sound::play_music(assets::AssetManager::load_asset<sound::Music>("title_song"));
 
     // We're in the main menu state by default
-    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
+    auto& fnt = font.get();
     options.emplace_back(
         "Local Game", [this]() { return local_game(); }, default_option_color,
         fnt.calculate_width("Local Game"));
@@ -103,11 +96,11 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
 
     renderer::SpriteRenderer sprite_renderer;
     // Bind sprite shader
-    glUseProgram(assets::get_manager<renderer::Shader>().get_asset(sprite_shader).handle);
+    glUseProgram(sprite_shader.get().handle);
 
     glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
 
-    const auto& logo_tex = assets::get_manager<renderer::Texture>().get_asset(logo_texture);
+    const auto& logo_tex = logo_texture.get();
     const float window_w = wrapper->wrapper->game.window_w;
     const float window_h = wrapper->wrapper->game.window_h;
     sprite_renderer.set_camera_drag(false);
@@ -368,11 +361,11 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
             option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
             if (!option.selected)
                 audeo::play_sound(
-                    assets::get_manager<sound::SoundEffect>().get_asset(hover_sfx).source);
+                    hover_sfx.get().source);
             option.selected = true;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
                 audeo::play_sound(
-                    assets::get_manager<sound::SoundEffect>().get_asset(click_sfx).source);
+                    click_sfx.get().source);
                 status = options[opt_index].callback();
                 return status;
             }

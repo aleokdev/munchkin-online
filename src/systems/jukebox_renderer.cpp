@@ -11,9 +11,9 @@ namespace munchkin {
 namespace systems {
 
 JukeboxRenderer::JukeboxRenderer(RenderWrapper& w) : wrapper(&w) {
-    solid_shader = assets::get_manager<renderer::Shader>().load_asset("solid_shader");
-    song_title_font = assets::get_manager<renderer::Font>().load_asset("title_font");
-    song_artist_font = assets::get_manager<renderer::Font>().load_asset("normal_light_font");
+    solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
+    song_title_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
+    song_artist_font = assets::AssetManager::load_asset<renderer::Font>("normal_light_font");
 }
 
 void JukeboxRenderer::render() {
@@ -25,7 +25,7 @@ void JukeboxRenderer::render() {
 
     renderer::SpriteRenderer spr;
 
-    auto& shader = assets::get_manager<renderer::Shader>().get_asset(solid_shader);
+    auto& shader = solid_shader.get();
     glUseProgram(shader.handle);
     glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
 
@@ -48,14 +48,12 @@ void JukeboxRenderer::render() {
     fnt.set_position({(float)(window_w - 390) / (float)window_w,
                       (float)(window_h - current_y_pos) / (float)window_h});
     fnt.set_size({.7f, .7f});
-    fnt.render_text(song_title_font, assets::get_manager<sound::Music>()
-                                         .get_asset(sound::get_current_music_handle_being_played())
+    fnt.render_text(song_title_font, sound::get_current_music_handle_being_played().get()
                                          .title);
     fnt.set_size({.5f, .5f});
     fnt.set_position({(float)(window_w - 390) / (float)window_w,
                       (float)(window_h + 35 - current_y_pos) / (float)window_h});
-    fnt.render_text(song_artist_font, assets::get_manager<sound::Music>()
-                                          .get_asset(sound::get_current_music_handle_being_played())
+    fnt.render_text(song_artist_font, sound::get_current_music_handle_being_played().get()
                                           .artist);
 }
 

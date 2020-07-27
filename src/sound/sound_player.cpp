@@ -14,7 +14,7 @@ namespace sound {
 void play_music(assets::Handle<Music> m) {
     current_music_handle_playing = m;
     current_music_playing =
-        audeo::play_sound(assets::get_manager<Music>().get_asset(m).source,
+        audeo::play_sound(m.get().source,
                           audeo::loop_forever, music_crossfade_seconds);
     audeo::set_volume(current_music_playing, music_volume);
 }
@@ -25,7 +25,7 @@ void stop_music() {
 }
 
 void play_sfx(assets::Handle<SoundEffect> s) {
-    audeo::play_sound(assets::get_manager<SoundEffect>().get_asset(s).source);
+    audeo::play_sound(s.get().source);
 }
 
 audeo::Sound get_current_music_being_played() { return current_music_playing; }

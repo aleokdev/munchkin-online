@@ -22,6 +22,7 @@
 
 #include <audeo/audeo.hpp>
 
+#include <chrono>
 #include <string_view>
 
 #define DEFAULT_WINDOW_WIDTH 1280
@@ -175,7 +176,15 @@ int main(int argc, char* argv[]) try {
         return -1;
     }
 
-    munchkin::assets::PathDatabase::load_paths_from_json_file("data/assets.json");
+    auto asset_load_start = std::chrono::system_clock::now();
+    auto assets = munchkin::assets::AssetManager::enumerate_assets("data/assets.json");
+    for (auto asset_category : assets) {
+        for (auto asset : asset_category) { asset.load(); }
+    }
+    auto asset_load_end = std::chrono::system_clock::now();
+    auto asset_load_elapsed = std::chrono::duration_cast<std::chrono::duration<double>>(
+        (asset_load_end - asset_load_start)).count();
+    std::cout << "Loaded all assets in " << asset_load_elapsed << "s.\n";
     munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 3, 2);
 
     std::vector<std::string_view> args;

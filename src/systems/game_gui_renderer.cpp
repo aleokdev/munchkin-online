@@ -46,10 +46,8 @@ GameGUIRenderer::GameGUIRenderer(RenderWrapper& w) : wrapper(&w) {
         "delete_label", &GameGUIRenderer::delete_label);
     /* clang-format on */
 
-    auto& shader_manager = assets::get_manager<renderer::Shader>();
-    auto& font_manager = assets::get_manager<renderer::Font>();
-    solid_shader = shader_manager.load_asset("solid_shader");
-    gui_font = font_manager.load_asset("title_font");
+    solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
+    gui_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
 }
 
 GameGUIRenderer::Button& GameGUIRenderer::ButtonWrapper::get() {
@@ -96,7 +94,7 @@ void GameGUIRenderer::render(float delta_time) {
     renderer::FontRenderer fnt;
     const auto window_w = wrapper->wrapper->game.window_w;
     const auto window_h = wrapper->wrapper->game.window_h;
-    const auto& font = assets::get_manager<renderer::Font>().get_const_asset(gui_font);
+    const auto& font = gui_font.get();
     fnt.set_window_size(window_w, window_h);
 
     int index = 1;

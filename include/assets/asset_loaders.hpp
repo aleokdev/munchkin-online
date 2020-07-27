@@ -7,6 +7,7 @@
 #include "sound/sound_assets.hpp"
 
 #include <filesystem>
+#include <string_view>
 
 #include <audeo/audeo.hpp>
 #include <nlohmann/json.hpp>
@@ -45,20 +46,27 @@ struct ShaderLoadParams {
 } // namespace impl
 
 template<typename T> struct LoadParams;
+template<typename T> struct MetaInfo;
 
+// TODO: Please codegen this
 template<> struct LoadParams<renderer::Texture> : public impl::SinglePathLoadParams {};
+template<> struct MetaInfo<renderer::Texture> { static constexpr std::string_view json_category_name = "textures"; };
 void load(renderer::Texture& texture, LoadParams<renderer::Texture> const& params);
 
 template<> struct LoadParams<renderer::Shader> : public impl::ShaderLoadParams {};
+template<> struct MetaInfo<renderer::Shader> { static constexpr std::string_view json_category_name = "shaders"; };
 void load(renderer::Shader& shader, LoadParams<renderer::Shader> const& params);
 
 template<> struct LoadParams<renderer::Font> : public impl::SinglePathLoadParams {};
+template<> struct MetaInfo<renderer::Font> { static constexpr std::string_view json_category_name = "fonts"; };
 void load(renderer::Font& font, LoadParams<renderer::Font> const& params);
 
 template<> struct LoadParams<sound::SoundEffect> : public impl::SinglePathLoadParams {};
+template<> struct MetaInfo<sound::SoundEffect> { static constexpr std::string_view json_category_name = "sounds"; };
 void load(sound::SoundEffect& sound, LoadParams<sound::SoundEffect> const& params);
 
 template<> struct LoadParams<sound::Music> : public impl::SinglePathLoadParams {};
+template<> struct MetaInfo<sound::Music> { static constexpr std::string_view json_category_name = "music"; };
 void load(sound::Music& music, LoadParams<sound::Music> const& params);
 
 void free(renderer::Texture& texture);

@@ -1,30 +1,43 @@
 {
-  "noise": "generic/noise.png",
-  "logo": "generic/logo.png",
-  "vignette": "generic/vignette.png",
-  "table": "generic/table.png",
-  "game_background": "generic/bg.png",
+  "textures": {
+    "noise": "generic/noise.png",
+    "logo": "generic/logo.png",
+    "vignette": "generic/vignette.png",
+    "table": "generic/table.png",
+    "game_background": "generic/bg.png"
+  },
 
-  "title_song": "generic/title_song.mp3",
-  "game_song": "generic/game_song.mp3",
-  "ui_click_sfx": "generic/ui_click.wav",
-  "ui_hover_sfx": "generic/ui_hover.wav",
-  "card_deal_sfx": "generic/card_deal.ogg",
-  "card_flip_sfx": "generic/card_flip.ogg",
-  "title_font": "generic/quasimodo_regular.ttf",
-  "normal_medium_font": "generic/Raleway-Medium.ttf",
-  "normal_regular_font": "generic/Raleway-Regular.ttf",
-  "normal_light_font": "generic/Raleway-Light.ttf",
-  "sprite_shader": {
-    "vert": "shaders/sprite.vert",
-    "frag": "shaders/sprite.frag"
+  "music": {
+    "title_song": "generic/title_song.mp3",
+    "game_song": "generic/game_song.mp3"
   },
-  "solid_shader": {
-    "vert": "shaders/solid.vert",
-    "frag": "shaders/solid.frag"
+
+  "sounds": {
+    "ui_click_sfx": "generic/ui_click.wav",
+    "ui_hover_sfx": "generic/ui_hover.wav",
+    "card_deal_sfx": "generic/card_deal.ogg",
+    "card_flip_sfx": "generic/card_flip.ogg"
   },
-  "text_shader": {
-    "vert": "shaders/text.vert",
-    "frag": "shaders/text.frag"
+
+  "fonts": {
+    "title_font": "generic/quasimodo_regular.ttf",
+    "normal_medium_font": "generic/Raleway-Medium.ttf",
+    "normal_regular_font": "generic/Raleway-Regular.ttf",
+    "normal_light_font": "generic/Raleway-Light.ttf"
+  },
+
+  "shaders": {
+    "sprite_shader": {
+      "vert": "shaders/sprite.vert",
+      "frag": "shaders/sprite.frag"
+    },
+    "solid_shader": {
+      "vert": "shaders/solid.vert",
+      "frag": "shaders/solid.frag"
+    },
+    "text_shader": {
+      "vert": "shaders/text.vert",
+      "frag": "shaders/text.frag"
+    }
   }
 }
