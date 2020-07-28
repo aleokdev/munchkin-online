@@ -73,8 +73,10 @@ TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
     }
 
     // Start the title music if we're not loading assets
-    if (status == Status::None && !sound::get_current_music_handle_being_played())
+    if (status == Status::None && !sound::get_current_music_handle_being_played()) {
         sound::play_music(assets::AssetManager::load_asset<sound::Music>("title_song"));
+        sound::set_music_volume(0.4f);
+    }
 
     if (status == Status::ExitLoadingAssets &&
         time_since_last_status_change > exit_loading_screen_transition_time) {
