@@ -38,6 +38,10 @@
     "text_shader": {
       "vert": "shaders/text.vert",
       "frag": "shaders/text.frag"
+    },
+    "background_shader": {
+      "vert": "shaders/background.vert",
+      "frag": "shaders/background.frag"
     }
   }
 }

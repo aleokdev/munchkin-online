@@ -27,6 +27,9 @@ class GameRenderer {
 public:
     GameRenderer(RenderWrapper&);
 
+    [[call_after_load(renderer)]]
+    void load_content();
+
     void render();
 
     void update_sprite_vector();

@@ -24,16 +24,7 @@ namespace munchkin {
 namespace systems {
 
 GameRenderer::GameRenderer(RenderWrapper& r) :
-    wrapper(&r), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW),
-    background(assets::AssetManager::load_asset<renderer::Texture>("game_background")) {
-
-    sprite_shader = assets::AssetManager::load_asset<renderer::Shader>("sprite_shader");
-    solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
-
-    infobar_title_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
-    infobar_normal_font = assets::AssetManager::load_asset<renderer::Font>("normal_medium_font");
-    table_texture = assets::AssetManager::load_asset<renderer::Texture>("table");
-    game_music = assets::AssetManager::load_asset<sound::Music>("game_song");
+    wrapper(&r), camera_buffer(0, 2 * sizeof(float), GL_DYNAMIC_DRAW) {
 
     // Update camera data
     renderer::UniformBuffer::bind(camera_buffer);
@@ -46,6 +37,17 @@ GameRenderer::GameRenderer(RenderWrapper& r) :
                                     (float)wrapper->wrapper->game.window_h / 2.f};
 
     update_sprite_vector();
+}
+
+void GameRenderer::load_content() {
+    background.texture = assets::AssetManager::load_asset<renderer::Texture>("game_background");
+    sprite_shader = assets::AssetManager::load_asset<renderer::Shader>("sprite_shader");
+    solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
+
+    infobar_title_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
+    infobar_normal_font = assets::AssetManager::load_asset<renderer::Font>("normal_medium_font");
+    table_texture = assets::AssetManager::load_asset<renderer::Texture>("table");
+    game_music = assets::AssetManager::load_asset<sound::Music>("game_song");
 }
 
 void GameRenderer::render() {

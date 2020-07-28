@@ -30,6 +30,19 @@ GameWrapper::GameWrapper(size_t window_w,
 void GameWrapper::main_loop(SDL_Window* window) {
     ImGuiIO& io = ImGui::GetIO();
 
+    renderer.title_screen_renderer.show_loading_screen();
+    renderer.title_screen_renderer.on_load_assets_finish = [this]() {
+        // TODO: Use codegen and call load_content for each function that has the load_content attribute
+        // [[load_content(static)]] for a static call
+        // [[load_content(system)]] for an instanced call from a member of this object
+        // [[load_content(renderer)]] for an instanced call from a member of `renderer`
+        renderer::Background::load_content();
+        renderer.game_gui_renderer.load_content();
+        renderer.game_renderer.load_content();
+        renderer.title_screen_renderer.load_content();
+        renderer.jukebox_renderer.load_content();
+    };
+
     do {
         // From imgui/examples/example_sdl_opengl3/main.cpp:
         // Poll and handle events (inputs, window resize, etc.)

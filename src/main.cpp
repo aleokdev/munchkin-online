@@ -117,6 +117,8 @@ static SDL_GLContext init_opengl(SDL_Window* window) {
     }
     std::cout << glGetString(GL_VERSION) << std::endl;
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return gl_context;
 }
 
@@ -176,15 +178,6 @@ int main(int argc, char* argv[]) try {
         return -1;
     }
 
-    auto asset_load_start = std::chrono::system_clock::now();
-    auto assets = munchkin::assets::AssetManager::enumerate_assets("data/assets.json");
-    for (auto asset_category : assets) {
-        for (auto asset : asset_category) { asset.load(); }
-    }
-    auto asset_load_end = std::chrono::system_clock::now();
-    auto asset_load_elapsed = std::chrono::duration_cast<std::chrono::duration<double>>(
-        (asset_load_end - asset_load_start)).count();
-    std::cout << "Loaded all assets in " << asset_load_elapsed << "s.\n";
     munchkin::GameWrapper wrapper(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, 3, 2);
 
     std::vector<std::string_view> args;

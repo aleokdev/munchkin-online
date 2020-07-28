@@ -16,13 +16,14 @@ namespace munchkin {
 namespace assets {
 
 constexpr std::string_view assets_relative_path = "data";
-class AssetCategoryEnumerator;
+class AssetRef;
+using AssetReferenceContainer = std::vector<AssetRef>;
 template<typename T> struct Handle;
 
 class AssetManager {
 public:
     // Returns an enumerator that allows loading the assets present in a JSON file.
-    static inline AssetCategoryEnumerator enumerate_assets(fs::path const& json_file);
+    static inline AssetReferenceContainer enumerate_assets(fs::path const& json_file);
 
     // Gets an already loaded asset from the database, or loads it by manually inputting its
     // parameters and ID if it doesn't exist.
@@ -34,6 +35,9 @@ public:
     template<typename AssetT> static inline Handle<AssetT> load_asset(std::string const& str_id);
 
     template<typename AssetT> static inline void delete_asset(Handle<AssetT> handle);
+
+    // The file that is used to index an asset if it doesn't exist when calling load_asset(str_id).
+    static inline const fs::path backup_asset_database = "data/assets.json";
 
 private:
     template<typename AssetT> using AssetContainer = std::unordered_map<std::size_t, AssetT>;
@@ -57,196 +61,130 @@ namespace detail {
 
 class TypelessAssetLoader {
 public:
-    inline TypelessAssetLoader() = default;
     template<typename AssetT> static inline TypelessAssetLoader create() {
         TypelessAssetLoader result;
         result.loader = std::make_unique<TypedAssetLoader<AssetT>>();
         return result;
     }
 
-    inline void load(nlohmann::json::iterator const& asset_it) const { loader->load(asset_it); }
+    inline void load(std::string const& str_id, nlohmann::json const& asset_obj) const {
+        if (!loader)
+            throw std::runtime_error("what!!!!!!!!");
+        loader->load(str_id, asset_obj);
+    }
+
+    static TypelessAssetLoader from_category_name(std::string const& json_category_name) {
+        // TODO: Codegen this
+        if (json_category_name == loaders::MetaInfo<renderer::Texture>::json_category_name) {
+            return TypelessAssetLoader::create<renderer::Texture>();
+        } else if (json_category_name == loaders::MetaInfo<renderer::Shader>::json_category_name) {
+            return TypelessAssetLoader::create<renderer::Shader>();
+        } else if (json_category_name == loaders::MetaInfo<renderer::Font>::json_category_name) {
+            return TypelessAssetLoader::create<renderer::Font>();
+        } else if (json_category_name ==
+                   loaders::MetaInfo<sound::SoundEffect>::json_category_name) {
+            return TypelessAssetLoader::create<sound::SoundEffect>();
+        } else if (json_category_name == loaders::MetaInfo<sound::Music>::json_category_name) {
+            return TypelessAssetLoader::create<sound::Music>();
+        } else {
+            throw std::runtime_error("Unknown asset category found");
+        }
+    }
+
+    inline TypelessAssetLoader() : loader(nullptr) {}
 
 private:
     class BaseAssetLoader {
     public:
         inline virtual ~BaseAssetLoader() = default;
-        inline virtual void load(nlohmann::json::iterator const& asset_it) const = 0;
+        inline virtual void load(std::string const& str_id, nlohmann::json const& asset_obj) const {
+            throw std::runtime_error("bruh");
+        };
     };
     template<typename AssetT> class TypedAssetLoader : public BaseAssetLoader {
     public:
-        inline ~TypedAssetLoader() override = default;
-        inline void load(nlohmann::json::iterator const& asset_it) const override {
+        inline void load(std::string const& str_id,
+                         nlohmann::json const& asset_obj) const override {
             AssetManager::load_asset(
-                asset_it.key(), loaders::LoadParams<AssetT>{loaders::LoadParams<AssetT>::from_json(
-                                    asset_it.value(), assets_relative_path)});
+                str_id, loaders::LoadParams<AssetT>{loaders::LoadParams<AssetT>::from_json(
+                            asset_obj, assets_relative_path)});
         }
     };
     std::unique_ptr<BaseAssetLoader> loader;
 };
 
-}
+} // namespace detail
 
-class AssetEnumerator {
+class AssetRef {
 public:
-    class AssetIterator;
-    class Asset {
-    public:
-        inline void load() const { loader->load(asset_iterator); }
+    inline AssetRef(std::string const& str_id,
+                    std::string const& json_category_name,
+                    nlohmann::json const& asset_object) :
+        str_id(str_id),
+        category_name(json_category_name), asset_object(asset_object),
+        loader(detail::TypelessAssetLoader::from_category_name(json_category_name)) {}
 
-    private:
-        inline Asset(nlohmann::json::iterator const& asset_iterator,
-                     detail::TypelessAssetLoader const& loader) :
-            asset_iterator(asset_iterator),
-            loader(&loader) {}
+    inline AssetRef(AssetRef const& other) :
+        str_id(other.str_id), category_name(other.category_name), asset_object(other.asset_object),
+        loader(detail::TypelessAssetLoader::from_category_name(category_name)) {}
 
-        nlohmann::json::iterator asset_iterator;
-        detail::TypelessAssetLoader const* loader;
-        friend class AssetIterator;
-    };
-
-    class AssetIterator {
-    public:
-        AssetIterator(nlohmann::json::iterator assets_begin, nlohmann::json::iterator assets_end, std::string const& json_category_name) :
-            json_iterator(assets_begin), json_end_iterator(assets_end), type_loader(get_type_loader(json_category_name)) {}
-
-        Asset operator*() const {
-            if (json_iterator == json_end_iterator)
-                throw std::runtime_error("Tried to dereference out-of-bounds asset iterator");
-            return Asset(json_iterator, type_loader);
-        }
-
-        AssetIterator& operator++() {
-            if (json_iterator == json_end_iterator) {
-                throw std::runtime_error("Tried to overflow asset iteration");
-            } else {
-                json_iterator++;
-            }
-            return *this;
-        }
-
-        bool operator==(AssetIterator const& other) const noexcept {
-            return other.json_iterator == json_iterator;
-        }
-        bool operator!=(AssetIterator const& other) const noexcept { return other.json_iterator != json_iterator; }
-
-    private:
-        static detail::TypelessAssetLoader get_type_loader(std::string const& json_category_name) {
-            // TODO: Codegen this
-            detail::TypelessAssetLoader result;
-            if (json_category_name ==
-                loaders::MetaInfo<renderer::Texture>::json_category_name) {
-                result = detail::TypelessAssetLoader::create<renderer::Texture>();
-            } else if (json_category_name ==
-                       loaders::MetaInfo<renderer::Shader>::json_category_name) {
-                result = detail::TypelessAssetLoader::create<renderer::Shader>();
-            } else if (json_category_name ==
-                       loaders::MetaInfo<renderer::Font>::json_category_name) {
-                result = detail::TypelessAssetLoader::create<renderer::Font>();
-            } else if (json_category_name ==
-                       loaders::MetaInfo<sound::SoundEffect>::json_category_name) {
-                result = detail::TypelessAssetLoader::create<sound::SoundEffect>();
-            } else if (json_category_name ==
-                       loaders::MetaInfo<sound::Music>::json_category_name) {
-                result = detail::TypelessAssetLoader::create<sound::Music>();
-            } else {
-                throw std::runtime_error("Unknown asset category found");
-            }
-            return result;
-        }
-        nlohmann::json::iterator json_iterator;
-        nlohmann::json::iterator json_end_iterator;
-        detail::TypelessAssetLoader type_loader;
-    };
-
-    AssetEnumerator(nlohmann::json category_object, std::string const& category_name) : json(category_object), _category_name(category_name) {}
-
-    inline AssetIterator begin() { return AssetIterator(json.begin(), json.end(), _category_name); }
-    inline AssetIterator end() { return AssetIterator(json.end(), json.end(), _category_name); }
-
-    inline std::string category_name() const noexcept { return _category_name; }
+    inline void load() const { loader.load(str_id, asset_object); }
 
 private:
-    nlohmann::json json;
-    std::string const _category_name;
+    AssetRef() = default;
+    std::string str_id;
+    std::string category_name;
+    nlohmann::json asset_object;
+    detail::TypelessAssetLoader loader;
 };
 
-class AssetCategoryEnumerator {
-public:
-    class AssetCategoryIterator;
-
-    AssetCategoryEnumerator(nlohmann::json json_root) : json(json_root) {}
-
-    inline AssetCategoryIterator begin() { return AssetCategoryIterator(json.begin(), json.end()); }
-    inline AssetCategoryIterator end() { return AssetCategoryIterator(json.end(), json.end()); }
-
-    class AssetCategoryIterator {
-    public:
-        AssetCategoryIterator(nlohmann::json::iterator const& categories_begin,
-                 nlohmann::json::iterator const& categories_end) :
-            category_iterator(categories_begin),
-        categories_end(categories_end) {
-        }
-
-        AssetEnumerator operator*() const {
-            if (category_iterator == categories_end)
-                throw std::runtime_error("Tried to dereference out-of-bounds asset category iterator");
-            return AssetEnumerator(category_iterator.value(), category_iterator.key());
-        }
-
-        AssetCategoryIterator& operator++() {
-            if (category_iterator == categories_end) {
-                    throw std::runtime_error("Tried to overflow asset iteration");
-            } else {
-                category_iterator++;
-            }
-            return *this;
-        }
-
-        bool operator==(AssetCategoryIterator const& other) const noexcept {
-            return other.category_iterator == category_iterator;
-        }
-        bool operator!=(AssetCategoryIterator const& other) const noexcept { return other.category_iterator != category_iterator; }
-
-    private:
-        nlohmann::json::iterator category_iterator;
-        nlohmann::json::iterator categories_end;
-    };
-
-private:
-    nlohmann::json json;
-};
-
-AssetCategoryEnumerator AssetManager::enumerate_assets(fs::path const& json_file) {
+AssetReferenceContainer AssetManager::enumerate_assets(fs::path const& json_file) {
     std::ifstream json_file_handle(json_file);
     auto json = nlohmann::json::parse(json_file_handle);
-    return AssetCategoryEnumerator(json);
+    AssetReferenceContainer asset_container;
+    for (const auto& [category_name, category_obj] : json.items()) {
+        for (const auto& [asset_str_id, asset_obj] : category_obj.items()) {
+            asset_container.emplace_back(asset_str_id, (std::string)category_name, asset_obj);
+        }
+    }
+    return asset_container;
 }
 
 template<typename AssetT>
 Handle<AssetT> AssetManager::load_asset(std::string const& str_id,
                                         loaders::LoadParams<AssetT> const& params) {
-    // Return the asset if it is already loaded
     if (auto it = id_map.find(str_id); it != id_map.end()) {
+        // Return the asset if it is already loaded
         return {it->second};
+    } else {
+        // Otherwise, create new value
+        auto id = generate_id();
+        id_map[str_id] = id;
+        AssetT& a = container<AssetT>()[id];
+        loaders::load(a, params);
+        return {id};
     }
-
-    auto& assets = container<AssetT>();
-
-    // Otherwise, create new value
-    auto id = generate_id();
-    id_map[str_id] = id;
-    AssetT& a = assets[id];
-    loaders::load(a, params);
-    return {id};
 }
 
 template<typename AssetT> Handle<AssetT> AssetManager::load_asset(std::string const& str_id) {
-    // Return the asset if it is already loaded
     if (auto it = id_map.find(str_id); it != id_map.end()) {
+        // Return the asset if it is already loaded
         return {it->second};
-    }
+    } else {
+        // Otherwise return a placeholder if it doesn't exist
+        std::cout << "Warning: Loading asset \"" << str_id << "\" from backup database.\n";
+        auto id = generate_id();
+        id_map[str_id] = id;
 
-    throw std::runtime_error("Could not find asset");
+        std::ifstream json_file_handle(backup_asset_database);
+        auto json = nlohmann::json::parse(json_file_handle);
+        AssetT& a = container<AssetT>()[id];
+        loaders::load(a,
+                      loaders::LoadParams<AssetT>{loaders::LoadParams<AssetT>::from_json(
+                          json[(std::string)loaders::MetaInfo<AssetT>::json_category_name][str_id],
+                          assets_relative_path)});
+        return {id};
+    }
 }
 
 template<typename AssetT> void AssetManager::delete_asset(Handle<AssetT> handle) {
@@ -260,9 +198,18 @@ template<typename AssetT> void AssetManager::delete_asset(Handle<AssetT> handle)
 }
 
 template<typename AssetT> struct Handle {
-    std::size_t id;
+    std::size_t id = 0;
 
-    AssetT& get() const { return AssetManager::container<AssetT>()[id]; }
+    Handle() = default;
+    Handle(Handle const&) = default;
+    Handle& operator=(Handle const&) = default;
+    Handle(std::size_t id) : id(id) {}
+    Handle& operator=(std::nullptr_t) {
+        id = 0;
+        return *this;
+    }
+
+    [[nodiscard]] AssetT& get() const { return AssetManager::container<AssetT>()[id]; }
 
     operator bool() const noexcept { return id; }
 };

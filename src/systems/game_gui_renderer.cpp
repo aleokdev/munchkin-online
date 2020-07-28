@@ -45,7 +45,9 @@ GameGUIRenderer::GameGUIRenderer(RenderWrapper& w) : wrapper(&w) {
         "create_label", &GameGUIRenderer::create_label,
         "delete_label", &GameGUIRenderer::delete_label);
     /* clang-format on */
+}
 
+void GameGUIRenderer::load_content() {
     solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
     gui_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
 }

@@ -30,7 +30,7 @@ namespace renderer {
 
 CardSprite::CardSprite(RenderWrapper& g, CardPtr _card) : wrapper(&g), card(_card) {
     back_texture_handle = assets::AssetManager::load_asset<renderer::Texture>(card->get_def().back_texture_path,
-                                                     {(fs::path)card->get_def().back_texture_path});
+                                                     {{(fs::path)card->get_def().back_texture_path}});
     front_texture_handle = assets::AssetManager::load_asset<renderer::Texture>(
         card->get_def().front_texture_path, {(fs::path)card->get_def().front_texture_path});
     if (!initialized_assets) {

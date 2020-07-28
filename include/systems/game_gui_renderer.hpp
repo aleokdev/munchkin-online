@@ -20,6 +20,9 @@ class GameGUIRenderer {
 public:
     GameGUIRenderer(RenderWrapper& wrapper);
 
+    [[call_after_load(renderer)]]
+    void load_content();
+
     void render(float delta_time);
 
     enum class GUIAnchor {

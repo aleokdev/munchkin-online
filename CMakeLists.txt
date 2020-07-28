@@ -40,8 +40,8 @@ set_property(TARGET munchkin-online PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CM
 target_compile_features(munchkin-online PUBLIC "cxx_std_17")
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(munchkin-online PUBLIC "-Wno-deprecated-declarations" "-Wall" "-Wno-unused-private-field"
-            "-Wno-reorder")
+    target_compile_options(munchkin-online PUBLIC "-Wall" "-Wno-deprecated-declarations" "-Wno-unused-private-field"
+            "-Wno-reorder" "-Wno-unknown-attributes")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
 endif ()

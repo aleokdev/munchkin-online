@@ -11,6 +11,9 @@ namespace munchkin {
 namespace systems {
 
 JukeboxRenderer::JukeboxRenderer(RenderWrapper& w) : wrapper(&w) {
+}
+
+void JukeboxRenderer::load_content() {
     solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
     song_title_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
     song_artist_font = assets::AssetManager::load_asset<renderer::Font>("normal_light_font");

@@ -3,10 +3,9 @@
 #include "renderer/util.hpp"
 
 #include <glad/glad.h>
-#include <stb/stb_image.h>
+#include <glm/glm/gtc/type_ptr.hpp>
 
-#include <fstream>
-#include <string>
+// TODO: Refactor this, this is very old code that doesn't use any of the new internal API
 
 namespace munchkin {
 namespace renderer {
@@ -55,16 +54,24 @@ void Background::create_buffers() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
+Background::Background() :
+    texture(), scrolling(false) {
+    create_buffers();
+}
+
 Background::Background(assets::Handle<Texture> tex, bool _scrolling) :
     texture(tex), scrolling(_scrolling) {
     create_buffers();
-    shader = load_shader("data/shaders/background.vert", "data/shaders/background.frag");
+}
+
+void Background::load_content() {
+    shader = assets::AssetManager::load_asset<renderer::Shader>("background_shader");
 }
 
 void Background::update_scroll(float delta_time) {
     scroll += scroll_speed * delta_time;
 
-    // prevent eventual overflow. We only do this after scroll > 100 so we don't have to reset too
+    // Prevent eventual overflow. We only do this after scroll > 100 so we don't have to reset too
     // often
     if (scroll > 100.f) {
         scroll -= 100.f;
@@ -72,7 +79,7 @@ void Background::update_scroll(float delta_time) {
 }
 
 void Background::render() const {
-    glUseProgram(shader);
+    glUseProgram(shader.get().handle);
     glBindVertexArray(vao);
 
     glActiveTexture(GL_TEXTURE0);
@@ -80,6 +87,7 @@ void Background::render() const {
     glUniform1i(0, 0);
 
     glUniform1f(1, scroll);
+    glUniform4fv(4, 1, glm::value_ptr(color));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
@@ -88,7 +96,6 @@ Background::~Background() {
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &texcoords_buffer);
-    glDeleteProgram(shader);
 }
 
 } // namespace renderer

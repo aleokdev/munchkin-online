@@ -19,7 +19,7 @@ void play_music(assets::Handle<Music> m) {
     audeo::set_volume(current_music_playing, music_volume);
 }
 void stop_music() {
-    current_music_handle_playing.id = -1;
+    current_music_handle_playing = nullptr;
     audeo::stop_sound(current_music_playing, music_crossfade_seconds);
     current_music_playing = audeo::Sound(-1);
 }
