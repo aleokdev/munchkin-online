@@ -1,1 +1,1 @@
-game:get_current_player().level = game:get_current_player().level - args.levels
+game:get_current_player().level = math.max(1, game:get_current_player().level - args.levels)

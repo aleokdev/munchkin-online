@@ -7,17 +7,6 @@ namespace munchkin {
 
 namespace renderer {
 
-/*
-Example usage of this class:
-renderer::SpriteRenderer r([&]() {
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, my_texture);
-    r.do_draw();
-
-    glBindTexture(GL_TEXTURE_2D, my_other_texture);
-    r.do_draw();
-});
-*/
 class SpriteRenderer {
 public:
     SpriteRenderer();

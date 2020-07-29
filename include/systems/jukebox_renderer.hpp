@@ -11,6 +11,10 @@ namespace systems {
 class JukeboxRenderer {
 public:
     JukeboxRenderer(RenderWrapper& wrapper);
+
+    [[call_after_load(renderer)]]
+    void load_content();
+
     void render();
 
 private:

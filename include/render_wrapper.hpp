@@ -24,6 +24,7 @@ public:
     void on_resize(size_t w, size_t h);
 
     State get_state() { return renderer_state; }
+    void set_state(State s) { renderer_state = s; }
 
     // Rendering data
     GameWrapper* wrapper;

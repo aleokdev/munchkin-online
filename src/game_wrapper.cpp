@@ -22,13 +22,26 @@ GameWrapper::GameWrapper(size_t window_w,
                          size_t ai_count,
                          std::string gamerules_path) :
     game(players_count, window_w, window_h, gamerules_path),
-    renderer(*this), input_binder(game), state_debugger(game), debug_terminal(game),
+    renderer(*this), input_binder(*this), state_debugger(game), debug_terminal(game),
     ai_manager(create_ai_manager(players_count, ai_count)), logger(game) {
     logger.log("Welcome to Munchkin Online!");
 }
 
 void GameWrapper::main_loop(SDL_Window* window) {
     ImGuiIO& io = ImGui::GetIO();
+
+    renderer.title_screen_renderer.show_loading_screen();
+    renderer.title_screen_renderer.on_load_assets_finish = [this]() {
+        // TODO: Use codegen and call load_content for each function that has the load_content attribute
+        // [[load_content(static)]] for a static call
+        // [[load_content(system)]] for an instanced call from a member of this object
+        // [[load_content(renderer)]] for an instanced call from a member of `renderer`
+        renderer::Background::load_content();
+        renderer.game_gui_renderer.load_content();
+        renderer.game_renderer.load_content();
+        renderer.title_screen_renderer.load_content();
+        renderer.jukebox_renderer.load_content();
+    };
 
     do {
         // From imgui/examples/example_sdl_opengl3/main.cpp:

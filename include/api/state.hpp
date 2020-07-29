@@ -33,6 +33,24 @@ struct FlowEvent {
     size_t player_id_involved = 0;
 };
 
+class EventQueue {
+public:
+    using EventCallback = std::function<void(FlowEvent const& event)>;
+    void push(FlowEvent const& obj);
+    void pop();
+
+    FlowEvent& front();
+
+    bool empty() const;
+    std::size_t size() const;
+
+    // Triggers a callback when an event with a certain type is pushed.
+    void add_callback(FlowEvent::EventType type, EventCallback&& callback);
+private:
+    std::queue<FlowEvent> internal_queue;
+    std::unordered_map<FlowEvent::EventType, std::vector<EventCallback>> callbacks;
+};
+
 class State;
 class State {
 public:
@@ -107,7 +125,8 @@ public:
     int get_treasure_discard_deck_size() { return treasure_discard_deck.size(); }
     void treasure_discard_deck_pop() { return treasure_discard_deck.pop_back(); }
 
-    std::queue<FlowEvent> event_queue;
+    EventQueue event_queue;
+    // TODO: replace with coroutine yield return result (event = coroutine.yield())
     FlowEvent last_event;
     std::vector<sol::coroutine> active_coroutines;
 

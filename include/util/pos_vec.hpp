@@ -39,6 +39,12 @@ struct Vec2D {
         return lhs;
     }
 
+    friend Vec2D operator-(Vec2D lhs) {
+        lhs.x *= -1.f;
+        lhs.y *= -1.f;
+        return lhs;
+    }
+
     operator ImVec2() const { return ImVec2{(float)x, (float)y}; }
     operator glm::vec2() const { return glm::vec2((float)x, (float)y); }
 

@@ -1,6 +1,9 @@
 #include "renderer/card_sprite.hpp"
 #include "api/state.hpp"
 #include "game.hpp"
+#include "game_wrapper.hpp"
+#include "render_wrapper.hpp"
+#include "renderer/font_renderer.hpp"
 #include "renderer/sprite_renderer.hpp"
 #include "renderer/util.hpp"
 #include "sound/sound_assets.hpp"
@@ -25,16 +28,15 @@ namespace fs = std::filesystem;
 namespace munchkin {
 namespace renderer {
 
-CardSprite::CardSprite(Game& g, CardPtr _card) : game(&g), card(_card) {
-    auto& texture_manager = assets::get_manager<Texture>();
-    back_texture_handle = texture_manager.load_asset(card->get_def().back_texture_path,
-                                                     {card->get_def().back_texture_path});
-    front_texture_handle = texture_manager.load_asset(card->get_def().front_texture_path,
-                                                      {card->get_def().front_texture_path});
-    if (!initialized_sfx) {
-        auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
-        move_sfx = sfx_manager.load_asset("card_deal", {"data/generic/card_deal.ogg"});
-        flip_sfx = sfx_manager.load_asset("card_flip", {"data/generic/card_flip.ogg"});
+CardSprite::CardSprite(RenderWrapper& g, CardPtr _card) : wrapper(&g), card(_card) {
+    back_texture_handle = assets::AssetManager::load_asset<renderer::Texture>(card->get_def().back_texture_path,
+                                                     {{(fs::path)card->get_def().back_texture_path}});
+    front_texture_handle = assets::AssetManager::load_asset<renderer::Texture>(
+        card->get_def().front_texture_path, {(fs::path)card->get_def().front_texture_path});
+    if (!initialized_assets) {
+        move_sfx = assets::AssetManager::load_asset<sound::SoundEffect>("card_deal_sfx");
+        flip_sfx = assets::AssetManager::load_asset<sound::SoundEffect>("card_flip_sfx");
+        monster_power_font = assets::AssetManager::load_asset<renderer::Font>("title_font");
     }
 }
 
@@ -116,9 +118,10 @@ void CardSprite::calculate_target_from_location() {
 
         case munchkin::Card::CardLocation::table_center:
             if (card->is_on_current_battle()) {
-                const int battle_cards = game->state.current_battle->played_cards.size();
+                const int battle_cards =
+                    wrapper->wrapper->game.state.current_battle->played_cards.size();
                 int card_index = 0;
-                for (auto& [k, v] : game->state.current_battle->played_cards) {
+                for (auto& [k, v] : wrapper->wrapper->game.state.current_battle->played_cards) {
                     if (k == card)
                         break;
                     card_index++;
@@ -138,24 +141,24 @@ void CardSprite::calculate_target_from_location() {
     }
 }
 
-void CardSprite::draw(SpriteRenderer& spr) {
+void CardSprite::draw(SpriteRenderer& spr, bool render_darker_default) {
+    const auto& game = wrapper->wrapper->game;
     if (last_card_location != card->get_location() ||
         card.state->players[card->owner_id].hand.size() != last_cards_in_owner) {
         calculate_target_from_location();
         if (!first_sfx_play && last_card_location != card->get_location()) {
-            auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
-            audeo::Sound s = audeo::play_sound(sfx_manager.get_asset(CardSprite::move_sfx).source);
+            audeo::Sound s = audeo::play_sound(CardSprite::move_sfx.get().source);
             audeo::set_volume(s, .5f);
         }
         last_card_location = card->get_location();
         last_cards_in_owner = card.state->players[card->owner_id].hand.size();
     }
 
-    bool render_darker = false;
+    bool render_darker = render_darker_default;
     if (card->is_being_owned_by_player() &&
         card.state->get_game_stage() != card.state->get_last_game_stage()) {
-        render_darker =
-            card->owner_id == game->local_player_id &&
+        render_darker |=
+            card->owner_id == game.local_player_id &&
             std::find(card->get_def().play_stages.begin(), card->get_def().play_stages.end(),
                       card.state->get_game_stage()) == card->get_def().play_stages.end();
     }
@@ -164,7 +167,7 @@ void CardSprite::draw(SpriteRenderer& spr) {
     // anyone
     bool render_highlighted =
         is_being_hovered &&
-        ((card->is_being_owned_by_player() && card->owner_id == game->local_player_id) ||
+        ((card->is_being_owned_by_player() && card->owner_id == game.local_player_id) ||
          !card->is_being_owned_by_player());
 
     current_pos += (target_pos - current_pos) / movement_slowness;
@@ -172,11 +175,10 @@ void CardSprite::draw(SpriteRenderer& spr) {
     const bool is_card_visible =
         card->visibility == Card::CardVisibility::front_visible ||
         (card->visibility == Card::CardVisibility::front_visible_to_owner &&
-         card->owner_id == game->local_player_id);
+         card->owner_id == game.local_player_id);
 
     if (!first_sfx_play && (is_card_visible ^ last_visible)) {
-        auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
-        audeo::Sound s = audeo::play_sound(sfx_manager.get_asset(CardSprite::flip_sfx).source);
+        audeo::Sound s = audeo::play_sound(CardSprite::flip_sfx.get().source);
         audeo::set_volume(s, .5f);
     }
     last_visible = is_card_visible;
@@ -189,13 +191,12 @@ void CardSprite::draw(SpriteRenderer& spr) {
          current_scale) /
         scale_slowness;
 
-    auto& texture_manager = assets::get_manager<Texture>();
     // Set draw data
     if (current_size.x > 0) {
-        auto& back_texture = texture_manager.get_asset(back_texture_handle);
+        auto& back_texture = back_texture_handle.get();
         spr.set_texture(back_texture.handle);
     } else {
-        auto& front_texture = texture_manager.get_asset(front_texture_handle);
+        auto& front_texture = front_texture_handle.get();
         spr.set_texture(front_texture.handle);
     }
     spr.set_position(glm::vec2(current_pos.x, current_pos.y));
@@ -208,6 +209,30 @@ void CardSprite::draw(SpriteRenderer& spr) {
         spr.set_color(1.1f, 1.1f, 1.1f, 1);
 
     spr.do_draw();
+
+    if (last_card_location == Card::CardLocation::table_center && card->get_def().is_monster &&
+        game.state.current_battle && game.state.current_battle->is_card_played(card)) {
+        // draw cardpower below
+        std::string power_str = std::to_string(game.state.current_battle->get_card_power(card));
+
+        renderer::FontRenderer fnt;
+        fnt.set_window_size(game.window_w, game.window_h);
+        fnt.set_size(glm::vec2{1, 1});
+        fnt.set_color({1, 1, 1, 1});
+        const auto& font(monster_power_font.get());
+        const math::Vec2D rel_pos(game.camera.pixel_world_to_screen(
+            get_rect().pos * math::Vec2D{1, -1} + get_rect().size * math::Vec2D{.5f, 0}));
+        const float textWidth = font.calculate_width(power_str);
+        const math::Vec2D final_pos((rel_pos - math::Vec2D{textWidth / 2.f, 0}) /
+                                    math::Vec2D{(float)game.window_w, (float)game.window_h});
+
+        fnt.set_position(final_pos);
+        fnt.render_text(monster_power_font, power_str);
+
+        // Set up everything again for rendering sprites
+        glUseProgram(assets::AssetManager::load_asset<renderer::Shader>("sprite_shader").get().handle);
+        glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
+    }
 
     first_sfx_play = false;
 }

@@ -15,87 +15,35 @@
 #include "render_wrapper.hpp"
 #include "sound/sound_assets.hpp"
 
+/// Smoothly interpolates between 0 and 1 given a linear t between 0 and 1 inclusive.
+static float sigmoid(float t) { return 1.f / (1.f + std::pow(M_E, -(t * 12.f - 6.f))); }
+
 namespace munchkin {
 namespace systems {
 
-TitleScreenRenderer::Status TitleScreenRenderer::quit() {
-    return TitleScreenRenderer::Status::QuitApp;
-}
-
-TitleScreenRenderer::Status TitleScreenRenderer::local_game() {
-    game_settings_opened = true;
-    return TitleScreenRenderer::Status::None;
-}
-
-TitleScreenRenderer::Status TitleScreenRenderer::credits() {
-    // Prepare option list for credits menu
-    options.clear();
-    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
-    options.emplace_back(
-        "Back", [this]() { return exit_credits(); }, default_option_color,
-        fnt.calculate_width("Back"));
-    return TitleScreenRenderer::Status::Credits;
-}
-
-TitleScreenRenderer::Status TitleScreenRenderer::exit_credits() {
-    // Prepare option list for main menu
-    options.clear();
-    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
-    options.emplace_back(
-        "Local Game", [this]() { return local_game(); }, default_option_color,
-        fnt.calculate_width("Local Game"));
-    options.emplace_back(
-        "Credits", [this]() { return credits(); }, default_option_color,
-        fnt.calculate_width("Credits"));
-    options.emplace_back(
-        "Exit", [this]() { return quit(); }, default_option_color, fnt.calculate_width("Exit"));
-    return TitleScreenRenderer::Status::None;
-}
-
+// TODO: Separate loading screen from title screen
 TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
-    wrapper(&_wrapper), static_bg(assets::get_manager<renderer::Texture>().load_asset(
-                            "vignette", {"data/generic/vignette.png"})),
-    dynamic_bg(
-        assets::get_manager<renderer::Texture>().load_asset("noise", {"data/generic/noise.png"}),
-        true) {
+    wrapper(&_wrapper), static_bg(assets::AssetManager::load_asset<renderer::Texture>("vignette")),
+    dynamic_bg(assets::AssetManager::load_asset<renderer::Texture>("noise"), true) {
 
     // Load assets
 
-    auto& shader_manager = assets::get_manager<renderer::Shader>();
-    auto& texture_manager = assets::get_manager<renderer::Texture>();
-    auto& font_manager = assets::get_manager<renderer::Font>();
-    auto& music_manager = assets::get_manager<sound::Music>();
-    auto& sfx_manager = assets::get_manager<sound::SoundEffect>();
+    sprite_shader = assets::AssetManager::load_asset<renderer::Shader>("sprite_shader");
+    solid_shader = assets::AssetManager::load_asset<renderer::Shader>("solid_shader");
+    logo_texture = assets::AssetManager::load_asset<renderer::Texture>("logo");
 
-    assets::loaders::LoadParams<renderer::Shader> sprite_shader_params{"data/shaders/sprite.vert",
-                                                                       "data/shaders/sprite.frag"};
-    sprite_shader = shader_manager.load_asset("sprite_shader", sprite_shader_params);
-    logo_texture = texture_manager.load_asset("logo", {"data/generic/logo.png"});
+    hover_sfx = assets::AssetManager::load_asset<sound::SoundEffect>("ui_hover_sfx");
+    click_sfx = assets::AssetManager::load_asset<sound::SoundEffect>("ui_click_sfx");
 
-    hover_sfx = sfx_manager.load_asset("ui_hover", {"data/generic/ui_hover.wav"});
-    click_sfx = sfx_manager.load_asset("ui_click", {"data/generic/ui_click.wav"});
-
-    assets::loaders::LoadParams<renderer::Font> font_params;
-    font_params.path = "data/generic/quasimodo_regular.ttf";
-    font = font_manager.load_asset("main_font", font_params);
+    font = assets::AssetManager::load_asset<renderer::Font>("title_font");
 
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.5f, 0.4f);
 
-    // Start the title music
-    sound::play_music(music_manager.load_asset("title_song", {"data/generic/title_song.mp3"}));
-
-    // We're in the main menu state by default
-    auto& fnt = assets::get_manager<renderer::Font>().get_asset(font);
-    options.emplace_back(
-        "Local Game", [this]() { return local_game(); }, default_option_color,
-        fnt.calculate_width("Local Game"));
-    options.emplace_back(
-        "Credits", [this]() { return credits(); }, default_option_color,
-        fnt.calculate_width("Credits"));
-    options.emplace_back(
-        "Exit", [this]() { return quit(); }, default_option_color, fnt.calculate_width("Exit"));
+    add_main_menu_options();
 }
+
+void TitleScreenRenderer::load_content() {}
 
 void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
     target = tg;
@@ -103,31 +51,41 @@ void TitleScreenRenderer::set_render_target(renderer::RenderTarget* tg) {
 }
 
 TitleScreenRenderer::Status TitleScreenRenderer::frame(float delta_time) {
-    dynamic_bg.render();
-    dynamic_bg.update_scroll(delta_time);
-    static_bg.render();
+    time_since_last_status_change += delta_time;
 
-    renderer::SpriteRenderer sprite_renderer;
-    // Bind sprite shader
-    glUseProgram(assets::get_manager<renderer::Shader>().get_asset(sprite_shader).handle);
+    render_background(delta_time);
+    render_logo(delta_time);
+    render_loading_bar(delta_time);
 
-    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
+    if (status == Status::LoadingAssets) {
+        auto* next_asset_to_load = loading_screen_data.value().next_asset_to_load();
 
-    const auto& logo_tex = assets::get_manager<renderer::Texture>().get_asset(logo_texture);
-    const float window_w = wrapper->wrapper->game.window_w;
-    const float window_h = wrapper->wrapper->game.window_h;
-    sprite_renderer.set_camera_drag(false);
-    sprite_renderer.set_position({window_w / 2.f, window_h / 5.f * 4.f});
-    sprite_renderer.set_scale({logo_tex.w / 2.f, logo_tex.h / 2.f});
-    sprite_renderer.set_texture(logo_tex.handle);
-
-    sprite_renderer.do_draw();
-
-    if (status == Status::None) {
-        render_menu_options();
-    } else if (status == Status::Credits) {
-        render_credits();
+        if (next_asset_to_load) {
+            next_asset_to_load->load();
+        } else {
+            // Done loading all assets!
+            add_main_menu_options();
+            on_load_assets_finish();
+            loading_screen_data.reset();
+            status = Status::ExitLoadingAssets;
+            time_since_last_status_change = 0;
+        }
     }
+
+    // Start the title music if we're not loading assets
+    if (status == Status::None && !sound::get_current_music_handle_being_played()) {
+        sound::play_music(assets::AssetManager::load_asset<sound::Music>("title_song"));
+        sound::set_music_volume(0.4f);
+    }
+
+    if (status == Status::ExitLoadingAssets &&
+        time_since_last_status_change > exit_loading_screen_transition_time) {
+        // Transition to main menu
+        status = Status::None;
+        time_since_last_status_change = 0;
+    }
+
+    render_options(delta_time);
 
     if (game_settings_opened) // OpenPopup needs to be used before the popup window and there can't
                               // be a new frame in between both
@@ -315,7 +273,68 @@ float TitleScreenRenderer::get_menu_option_y_offset(size_t opt_index) {
     return opt_index * text_spacing;
 }
 
-void TitleScreenRenderer::render_menu_options() {
+#pragma region Render Functions
+void TitleScreenRenderer::render_background(float delta_time) {
+    switch (status) {
+        case (Status::LoadingAssets): break;
+
+        case Status::ExitLoadingAssets: {
+            // Linear transition between transparent and opaque
+            float alpha = time_since_last_status_change / exit_loading_screen_transition_time;
+            dynamic_bg.color.a = alpha;
+            static_bg.color.a = alpha;
+
+            dynamic_bg.render();
+            dynamic_bg.update_scroll(delta_time);
+            static_bg.render();
+            break;
+        }
+
+        default:
+            dynamic_bg.render();
+            dynamic_bg.update_scroll(delta_time);
+            static_bg.render();
+            break;
+    }
+}
+
+void TitleScreenRenderer::render_logo(float delta_time) {
+    renderer::SpriteRenderer sprite_renderer;
+    // Bind sprite shader
+    glUseProgram(sprite_shader.get().handle);
+
+    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
+
+    const auto& logo_tex = logo_texture.get();
+    const float window_w = wrapper->wrapper->game.window_w;
+    const float window_h = wrapper->wrapper->game.window_h;
+    sprite_renderer.set_camera_drag(false);
+    sprite_renderer.set_scale({logo_tex.w / 2.f, logo_tex.h / 2.f});
+    sprite_renderer.set_texture(logo_tex.handle);
+    switch (status) {
+        // Display at center if on loading screen
+        case Status::LoadingAssets:
+            sprite_renderer.set_position({window_w / 2.f, window_h / 2.f});
+            break;
+
+        // Transition smoothly between both states
+        case Status::ExitLoadingAssets: {
+            float lower_bound = window_h / 2.f;
+            float upper_bound = window_h / 5.f * 4.f;
+            float y_pos =
+                lower_bound + (upper_bound - lower_bound) *
+                                  sigmoid(time_since_last_status_change / logo_translation_time);
+            sprite_renderer.set_position({window_w / 2.f, y_pos});
+            break;
+        }
+
+        // Display at top if on any other screen
+        default: sprite_renderer.set_position({window_w / 2.f, window_h / 5.f * 4.f}); break;
+    }
+    sprite_renderer.do_draw();
+}
+
+void TitleScreenRenderer::render_options(float delta_time) {
     renderer::FontRenderer renderer;
     float yoffset = 0.0f;
 
@@ -324,7 +343,17 @@ void TitleScreenRenderer::render_menu_options() {
 
     for (auto& option : options) {
         std::string const& text = option.name;
-        renderer.set_color(option.color);
+        float alpha;
+        switch (status) {
+            case (Status::ExitLoadingAssets):
+                alpha = sigmoid((time_since_last_status_change - options_appear_time) /
+                                (exit_loading_screen_transition_time - options_appear_time)) *
+                        option.color.a;
+                break;
+
+            default: alpha = option.color.a; break;
+        }
+        renderer.set_color({option.color.r, option.color.g, option.color.b, alpha});
         renderer.set_position(
             glm::vec2((-option.text_width / (float)target->get_width() / 2.f) * option.scale +
                           text_base_position.x,
@@ -334,25 +363,46 @@ void TitleScreenRenderer::render_menu_options() {
         yoffset += text_spacing;
     }
 }
-void TitleScreenRenderer::render_credits() {
-    renderer::FontRenderer renderer;
-    float yoffset = 0.0f;
 
-    renderer.set_size(text_scale);
-    renderer.set_window_size(target->get_width(), target->get_height());
-
-    for (auto& option : options) {
-        std::string const& text = option.name;
-        renderer.set_color(option.color);
-        renderer.set_position(
-            glm::vec2((-option.text_width / (float)target->get_width() / 2.f) * option.scale +
-                          text_base_position.x,
-                      yoffset + text_base_position.y));
-        renderer.set_size(glm::vec2{1, 1} * option.scale);
-        renderer.render_text(font, text);
-        yoffset += text_spacing;
+void TitleScreenRenderer::render_loading_bar(float delta_time) {
+    float alpha;
+    switch(status) {
+        case Status::LoadingAssets: alpha = 1; break;
+        case Status::ExitLoadingAssets: alpha = 1.f - time_since_last_status_change / loading_bar_fade_time; break;
+        default: return;
     }
+
+    renderer::SpriteRenderer spr;
+
+    auto& shader = solid_shader.get();
+    glUseProgram(shader.handle);
+    glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(wrapper->projection));
+
+    const auto& window_w = wrapper->wrapper->game.window_w;
+    const auto& window_h = wrapper->wrapper->game.window_h;
+    // Draw white box as a border.
+    spr.set_camera_drag(false);
+    spr.set_color(1, 1, 1, alpha);
+    spr.set_position({window_w / 2.f, window_h / 2.f - 150});
+    spr.set_scale(glm::vec2(loading_bar_width, loading_bar_height));
+    spr.do_draw();
+
+    // Draw black box that fills the white box made previously.
+    spr.set_color(0, 0, 0, alpha);
+    spr.set_position({window_w / 2.f, window_h / 2.f - 150});
+    spr.set_scale(glm::vec2(loading_bar_width - loading_bar_border_size * 2,
+                            loading_bar_height - loading_bar_border_size * 2));
+    spr.do_draw();
+
+    // Draw white box that depicts loading progress.
+    spr.set_color(1, 1, 1, alpha);
+    spr.set_position({window_w / 2.f, window_h / 2.f - 150});
+    spr.set_scale(glm::vec2((loading_bar_width - loading_bar_border_size * 2) *
+                                loading_screen_data->load_progress(),
+                            loading_bar_height - loading_bar_border_size * 2));
+    spr.do_draw();
 }
+#pragma endregion
 
 TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time) {
     for (size_t opt_index = 0; opt_index < options.size(); ++opt_index) {
@@ -370,15 +420,13 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
         mouse_pos.y /= target->get_height();
         if (inside_bounding_box(bbox, glm::vec2(mouse_pos.x, mouse_pos.y))) {
             auto& option = options[opt_index];
-            option.color = glm::vec3(1, 1, 1);
+            option.color = glm::vec4(1, 1, 1, 1);
             option.scale += (selected_option_scale - option.scale) / offset_animate_slowness;
             if (!option.selected)
-                audeo::play_sound(
-                    assets::get_manager<sound::SoundEffect>().get_asset(hover_sfx).source);
+                audeo::play_sound(hover_sfx.get().source);
             option.selected = true;
             if (input::has_mousebutton_been_clicked(input::MouseButton::left)) {
-                audeo::play_sound(
-                    assets::get_manager<sound::SoundEffect>().get_asset(click_sfx).source);
+                audeo::play_sound(click_sfx.get().source);
                 status = options[opt_index].callback();
                 return status;
             }
@@ -392,6 +440,54 @@ TitleScreenRenderer::Status TitleScreenRenderer::update_status(float delta_time)
 
     return Status::None;
 }
+
+void TitleScreenRenderer::add_main_menu_options() {
+    options.clear();
+    auto& fnt = font.get();
+    options.emplace_back(
+        "Local Game", [this]() { return local_game(); }, default_option_color,
+        fnt.calculate_width("Local Game"));
+    options.emplace_back(
+        "Credits", [this]() { return credits(); }, default_option_color,
+        fnt.calculate_width("Credits"));
+    options.emplace_back(
+        "Exit", [this]() { return quit(); }, default_option_color, fnt.calculate_width("Exit"));
+}
+
+void TitleScreenRenderer::show_loading_screen() {
+    status = Status::LoadingAssets;
+    time_since_last_status_change = 0;
+    loading_screen_data =
+        LoadingScreenData(assets::AssetManager::enumerate_assets("data/assets.json"));
+    sound::stop_music();
+    options.clear();
+}
+
+#pragma region Button Callbacks
+TitleScreenRenderer::Status TitleScreenRenderer::quit() {
+    return TitleScreenRenderer::Status::QuitApp;
+}
+
+TitleScreenRenderer::Status TitleScreenRenderer::local_game() {
+    game_settings_opened = true;
+    return TitleScreenRenderer::Status::None;
+}
+
+TitleScreenRenderer::Status TitleScreenRenderer::credits() {
+    // Prepare option list for credits menu
+    options.clear();
+    options.emplace_back(
+        "Back", [this]() { return exit_credits(); }, default_option_color,
+        font.get().calculate_width("Back"));
+    return TitleScreenRenderer::Status::Credits;
+}
+
+TitleScreenRenderer::Status TitleScreenRenderer::exit_credits() {
+    // Prepare option list for main menu
+    add_main_menu_options();
+    return TitleScreenRenderer::Status::None;
+}
+#pragma endregion
 
 } // namespace systems
 } // namespace munchkin

@@ -39,4 +39,9 @@ std::vector<CardPtr> Battle::get_cards_played() {
     for (auto& [card, power] : played_cards) ret.emplace_back(card);
     return ret;
 }
+
+bool Battle::is_card_played(CardPtr card) {
+    auto iter = played_cards.find(card);
+    return iter != played_cards.end();
+}
 } // namespace munchkin

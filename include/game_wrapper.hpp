@@ -34,10 +34,9 @@ public:
 
     bool show_debugger = false;
 
-    Game game;
-
     // Systems
 
+    Game game;
     RenderWrapper renderer;
     systems::InputBinder input_binder;
     systems::StateDebugger state_debugger;

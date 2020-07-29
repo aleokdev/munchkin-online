@@ -9,13 +9,18 @@
 #include "renderer/uniform_buffer.hpp"
 #include "sound/sound_assets.hpp"
 #include "util/pos_vec.hpp"
+#include "sol/sol.hpp"
+#include <unordered_set>
+#include <stack>
 
+#include <api/card.hpp>
 #include <glm/mat4x4.hpp>
 
 namespace munchkin {
 
 class Game;
 class RenderWrapper;
+struct FlowEvent;
 
 namespace renderer {
 class CardSprite;
@@ -27,9 +32,19 @@ class GameRenderer {
 public:
     GameRenderer(RenderWrapper&);
 
+    [[call_after_load(renderer)]]
+    void load_content();
+
     void render();
 
     void update_sprite_vector();
+
+    // Yield callbacks
+
+    // Syntax: `coroutine.yield("choose_card", filter)`
+    // Where `filter` is a function that returns true/false for a given card.
+    // Must return true if the card should be choosable, false otherwise.
+    void on_choose_card_yield(sol::coroutine const&, sol::protected_function_result const& yield_return_result);
 
 private:
     RenderWrapper* wrapper;
@@ -68,6 +83,14 @@ private:
     void update_input();
     void game_playing_frame();
     void draw_cards(renderer::SpriteRenderer&);
+
+    // choose_card yield callback
+    struct ChooseCardPopup {
+        sol::coroutine caller;
+        std::unordered_set<CardPtr> choosable_cards;
+    };
+
+    std::stack<ChooseCardPopup> choose_card_popups;
 };
 
 } // namespace systems

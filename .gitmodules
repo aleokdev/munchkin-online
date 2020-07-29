@@ -19,3 +19,6 @@
 [submodule "lib/audeo"]
 	path = lib/audeo
 	url = https://github.com/NotAPenguin0/audeo
+[submodule "lib/glad"]
+	path = lib/glad
+	url = https://github.com/alexdevteam/glad

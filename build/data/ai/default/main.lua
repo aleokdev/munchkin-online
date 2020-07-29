@@ -25,8 +25,8 @@ function ai.on_turn(self)
 			-- Simulate clicking a random hand card, then click the battle monster
 			-- @todo: [AI] This won't work with multiple monsters in one battle
 			game:push_event(event_type.card_clicked, self.hand[math.random(1, #self.hand)], self)
+			wait_for_ticks_or_turn(1) -- Wait for game_flow to process the event
 			game:push_event(event_type.card_clicked, game.current_battle.source_card, self)
-
 			wait_for_ticks_or_turn(1) -- Wait for game_flow to process the event
 
 			if game.current_battle:get_total_player_power() > game.current_battle:get_total_monster_power() then

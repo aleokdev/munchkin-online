@@ -12,7 +12,7 @@ print = function(obj)
     internal_print(tostring(name and name or "anonymous"), tostring(obj))
 end
 
-function munchkin_state.iter_players(self)
+function munchkin_game:iter_players()
     local i = -1
     return function()
         i = i + 1
@@ -21,7 +21,7 @@ function munchkin_state.iter_players(self)
     end
 end
 
-function munchkin_state.next_player_turn(self)
+function munchkin_game:next_player_turn()
     self:set_current_player((self:get_current_player().id + 1) % self:get_player_count())
     self.turn_number = self.turn_number + 1
 end
@@ -33,9 +33,13 @@ selection = {}
 function selection.choose_card(filter)
     filter = filter or function() return true end
 
-    repeat
+    if(game:get_current_player().id == client.local_player_id) then
+        coroutine.yield("choose_card", filter)
+    end
+    while game.last_event.type ~= event_type.card_clicked do
+        -- Discard any data that we do not want
         coroutine.yield()
-    until game.last_event.type == event_type.card_clicked and filter(game.last_event.card_involved)
+    end
 
     return game.last_event.card_involved
 end
