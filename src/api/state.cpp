@@ -11,6 +11,34 @@
 
 namespace munchkin {
 
+void EventQueue::push(FlowEvent const& obj) {
+    auto callbacks_for_type = callbacks[obj.type];
+
+    for(const auto& callback : callbacks_for_type) {
+        callback(obj);
+    }
+
+    return internal_queue.push(obj);
+}
+void EventQueue::pop() {
+    internal_queue.pop();
+}
+
+FlowEvent& EventQueue::front() {
+    return internal_queue.front();
+}
+
+bool EventQueue::empty() const {
+    return internal_queue.empty();
+}
+std::size_t EventQueue::size() const {
+    return internal_queue.size();
+}
+
+void EventQueue::add_callback(FlowEvent::EventType type, EventCallback&& callback) {
+    callbacks[type].emplace_back(std::move(callback));
+}
+
 State::State(size_t player_count, std::string gamerule_path) {
     // create players
     for (int i = 0; i < player_count; ++i) { players.emplace_back(*this, i); }

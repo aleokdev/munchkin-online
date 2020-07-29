@@ -141,7 +141,7 @@ void CardSprite::calculate_target_from_location() {
     }
 }
 
-void CardSprite::draw(SpriteRenderer& spr) {
+void CardSprite::draw(SpriteRenderer& spr, bool render_darker_default) {
     const auto& game = wrapper->wrapper->game;
     if (last_card_location != card->get_location() ||
         card.state->players[card->owner_id].hand.size() != last_cards_in_owner) {
@@ -154,10 +154,10 @@ void CardSprite::draw(SpriteRenderer& spr) {
         last_cards_in_owner = card.state->players[card->owner_id].hand.size();
     }
 
-    bool render_darker = false;
+    bool render_darker = render_darker_default;
     if (card->is_being_owned_by_player() &&
         card.state->get_game_stage() != card.state->get_last_game_stage()) {
-        render_darker =
+        render_darker |=
             card->owner_id == game.local_player_id &&
             std::find(card->get_def().play_stages.begin(), card->get_def().play_stages.end(),
                       card.state->get_game_stage()) == card->get_def().play_stages.end();

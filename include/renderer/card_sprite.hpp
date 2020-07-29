@@ -39,7 +39,7 @@ public:
     void instantly_set_pos(math::Vec2D target);
     void calculate_target_from_location();
 
-    void draw(SpriteRenderer&);
+    void draw(SpriteRenderer&, bool render_darker_default = false);
 
     math::Rect2D get_rect();
 

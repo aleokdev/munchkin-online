@@ -7,11 +7,14 @@
 
 #include "assets/assets.hpp"
 #include <cstddef>
+#include <set>
 #include <sol/sol.hpp>
+#include <stack>
 #include <vector>
 
 namespace munchkin {
 class RenderWrapper;
+struct CardPtr;
 
 namespace systems {
 

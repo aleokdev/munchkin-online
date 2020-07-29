@@ -5,19 +5,19 @@
 
 namespace munchkin {
 
-class Game;
+class GameWrapper;
 
 namespace systems {
 
 // Binds input from the user to Game and its state
 class InputBinder {
 public:
-    InputBinder(Game&);
+    InputBinder(GameWrapper&);
 
     void tick();
 
 private:
-    Game* const game;
+    GameWrapper* const wrapper;
 
     float last_frame_time;
     input::MouseState last_mouse_state;

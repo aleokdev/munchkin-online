@@ -22,7 +22,7 @@ GameWrapper::GameWrapper(size_t window_w,
                          size_t ai_count,
                          std::string gamerules_path) :
     game(players_count, window_w, window_h, gamerules_path),
-    renderer(*this), input_binder(game), state_debugger(game), debug_terminal(game),
+    renderer(*this), input_binder(*this), state_debugger(game), debug_terminal(game),
     ai_manager(create_ai_manager(players_count, ai_count)), logger(game) {
     logger.log("Welcome to Munchkin Online!");
 }

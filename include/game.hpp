@@ -6,6 +6,7 @@
 #include "renderer/card_sprite.hpp"
 
 #include "util/pos_vec.hpp"
+#include <functional>
 
 namespace munchkin {
 
@@ -30,6 +31,13 @@ public:
     void push_event(FlowEvent e);
 
     bool ended();
+
+    using YieldReturnFunction =
+        std::function<void(sol::coroutine const&, sol::protected_function_result const&)>;
+    // Binds a yield result string (i.e. coroutine.yield("do_thing", ...)) with a callback, which
+    // must accept the coroutine that called it and the yield parameters (as a
+    // protected_function_result).
+    void bind_yield_result(std::string const& key, YieldReturnFunction callback);
 
     State& get_state() { return state; }
 
@@ -61,6 +69,8 @@ public:
     renderer::CardSprite* current_hovered_sprite = nullptr;
 
     size_t local_player_id = 0;
+
+    std::unordered_map<std::string, YieldReturnFunction> yield_result_map;
 };
 
 } // namespace munchkin
