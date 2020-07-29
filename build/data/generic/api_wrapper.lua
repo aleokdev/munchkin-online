@@ -33,9 +33,13 @@ selection = {}
 function selection.choose_card(filter)
     filter = filter or function() return true end
 
-    repeat
+    if(game:get_current_player().id == client.local_player_id) then
+        coroutine.yield("choose_card", filter)
+    end
+    while game.last_event.type ~= event_type.card_clicked do
+        -- Discard any data that we do not want
         coroutine.yield()
-    until game.last_event.type == event_type.card_clicked and filter(game.last_event.card_involved)
+    end
 
     return game.last_event.card_involved
 end

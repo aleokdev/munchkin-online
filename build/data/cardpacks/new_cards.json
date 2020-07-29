@@ -1,0 +1,76 @@
+[
+{
+"name": "Invisibility Potion",
+"description": "Discard when an escape roll is failed.\nYou escape automatically.\nCan only be used once.",
+"category": "treasure",
+"play_stages": [ "FLEE_MONSTER" ],
+"style": "OriginalStyle",
+"script": "scripts/card/00_nil.lua",
+"front_texture": "textures/cache/127_invisibility_potion.png",
+"properties": {}
+},
+{
+"name": "Potion of Idiotic Bravery",
+"description": "Use during any combat.\n+2 to any party.\nCan only be used once.",
+"category": "treasure",
+"play_stages": [ "FIGHT_MONSTER" ],
+"style": "OriginalStyle",
+"script": "scripts/card/modify_party.lua",
+"front_texture": "textures/cache/145_potion_of_idiotic_bravery.png",
+"properties": {}
+},
+{
+"name": "Bow with Ribbons",
+"description": "Can only be used by elves",
+"category": "treasure",
+"style": "OriginalStyle",
+"script": "scripts/card/00_nil.lua",
+"front_texture": "textures/cache/101_bow_with_ribbons.png",
+"properties": {}
+},
+{
+"name": "Mithril Armor",
+"description": "Cannot be used by wizards",
+"category": "treasure",
+"style": "OriginalStyle",
+"script": "scripts/card/00_nil.lua",
+"front_texture": "textures/cache/137_mithril_armor.png",
+"properties": {}
+},
+{
+"name": "Yuppie Water",
+"description": "Use during any combat.\nCan only be used once, and only to help Elves.\n+2 to each Elf in combat.",
+"category": "treasure",
+"style": "OriginalStyle",
+"script": "scripts/card/00_nil.lua",
+"front_texture": "textures/cache/168_yuppie_water.png",
+"properties": {}
+},
+{
+"name": "Spiky Knees",
+"description": "",
+"category": "treasure",
+"style": "OriginalStyle",
+"script": "scripts/card/00_nil.lua",
+"front_texture": "textures/cache/157_spiky_knees.png",
+"properties": {}
+},
+{
+"name": "Sleep Potion",
+"description": "Use during any combat.\n+2 to any party.\nCan only be used once.",
+"category": "treasure",
+"style": "OriginalStyle",
+"script": "scripts/card/00_nil.lua",
+"front_texture": "textures/cache/154_sleep_potion.png",
+"properties": {}
+},
+{
+"name": "Potion of Halitosis",
+"description": "Use during any combat. +2 to any party, or kill the Floating Nose instantly. Can only be used once.",
+"category": "treasure",
+"style": "OriginalStyle",
+"script": "scripts/card/00_nil.lua",
+"front_texture": "textures/cache/144_potion_of_halitosis.png",
+"properties": {}
+}
+  ]
