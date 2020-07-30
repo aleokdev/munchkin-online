@@ -19,11 +19,10 @@ struct CardPtr;
 namespace systems {
 
 class GameGUIRenderer;
-class GameGUIRenderer {
+class [[system_codegen::renderer_instance("game_gui_renderer")]] GameGUIRenderer {
 public:
     GameGUIRenderer(RenderWrapper& wrapper);
 
-    [[call_after_load(renderer)]]
     void load_content();
 
     void render(float delta_time);

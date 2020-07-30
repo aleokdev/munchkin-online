@@ -1,4 +1,5 @@
 #include "systems/game_logger.hpp"
+#include "game_wrapper.hpp"
 #include "game.hpp"
 
 #include <imgui.h>
@@ -6,13 +7,13 @@
 namespace munchkin {
 namespace systems {
 
-GameLogger::GameLogger(Game& _game) : game(&_game) {
+GameLogger::GameLogger(GameWrapper& g) : wrapper(&g) {
     /* clang-format off */
-    game->state.lua.new_usertype<GameLogger>("game_logger",
+    wrapper->game.state.lua.new_usertype<GameLogger>("game_logger",
         "log", &GameLogger::log);
     /* clang-format on */
 
-    game->state.lua["logger"] = this;
+    wrapper->game.state.lua["logger"] = this;
 }
 
 void GameLogger::log(std::string&& str) { logs.emplace_back(std::forward<std::string>(str)); }

@@ -40,6 +40,8 @@ TitleScreenRenderer::TitleScreenRenderer(::munchkin::RenderWrapper& _wrapper) :
     text_scale = glm::vec2(1, 1);
     text_base_position = glm::vec2(0.5f, 0.4f);
 
+    set_render_target(&wrapper->framebuf);
+
     add_main_menu_options();
 }
 

@@ -29,12 +29,14 @@ set(MUNCHKIN_VERSION 0.0.0)
 project("munchkin-online" VERSION ${MUNCHKIN_VERSION}
         DESCRIPTION "Collab project that tries to bring the fun of table Munchkin to a worldwide experience")
 
+add_subdirectory(codegen)
 add_subdirectory(src)
-
-add_executable(munchkin-online ${MUNCHKIN_SOURCES})
-
 add_subdirectory(lib)
 
+add_executable(munchkin-online ${MUNCHKIN_SOURCES})
+add_dependencies(munchkin-online run-munchkin-codegen)
+
+target_link_libraries(munchkin-online PRIVATE extlibs)
 set_property(TARGET munchkin-online PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
 target_compile_features(munchkin-online PUBLIC "cxx_std_17")
@@ -46,9 +48,9 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
 endif ()
 
-target_include_directories(munchkin-online PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES})
+target_include_directories(munchkin-online PUBLIC ${MUNCHKIN_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_BINARY_DIR}/include)
 target_link_libraries(munchkin-online PUBLIC ${MUNCHKIN_LINK_LIBRARIES})
-target_compile_definitions(munchkin-online PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD MUNCHKIN_VERSION=${MUNCHKIN_VERSION}, SOL_ALL_SAFETIES_ON=1)
+target_compile_definitions(munchkin-online PUBLIC MUNCHKIN_VERSION=${MUNCHKIN_VERSION}, SOL_ALL_SAFETIES_ON=1)
 
 # Data
 if (NOT (${PROJECT_BINARY_DIR} STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/build/"))

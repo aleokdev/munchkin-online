@@ -4,18 +4,20 @@
 
 namespace munchkin {
 
-class Game;
+class GameWrapper;
 
 namespace systems {
 
-class StateDebugger {
+class [[system_codegen::wrapper_instance("state_debugger")]] StateDebugger {
 public:
-    StateDebugger(Game&);
+    StateDebugger(GameWrapper&);
+
+    void load_content() {}
 
     void render();
 
 private:
-    Game* game;
+    GameWrapper* wrapper;
     bool show_demo = false;
     bool show_stateviewer = false;
     int current_selected_event = 0;

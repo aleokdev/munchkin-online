@@ -1,4 +1,6 @@
 #include "game_wrapper.hpp"
+#include "renderer/sprite_renderer.hpp"
+#include "renderer/font_renderer.hpp"
 
 #include <memory>
 #include <optional>
@@ -14,34 +16,15 @@
 
 #include <glad/glad.h>
 
-namespace munchkin {
+#include "game_wrapper_defs_cg.hpp"
 
-GameWrapper::GameWrapper(size_t window_w,
-                         size_t window_h,
-                         size_t players_count,
-                         size_t ai_count,
-                         std::string gamerules_path) :
-    game(players_count, window_w, window_h, gamerules_path),
-    renderer(*this), input_binder(*this), state_debugger(game), debug_terminal(game),
-    ai_manager(create_ai_manager(players_count, ai_count)), logger(game) {
-    logger.log("Welcome to Munchkin Online!");
-}
+namespace munchkin {
 
 void GameWrapper::main_loop(SDL_Window* window) {
     ImGuiIO& io = ImGui::GetIO();
 
     renderer.title_screen_renderer.show_loading_screen();
-    renderer.title_screen_renderer.on_load_assets_finish = [this]() {
-        // TODO: Use codegen and call load_content for each function that has the load_content attribute
-        // [[load_content(static)]] for a static call
-        // [[load_content(system)]] for an instanced call from a member of this object
-        // [[load_content(renderer)]] for an instanced call from a member of `renderer`
-        renderer::Background::load_content();
-        renderer.game_gui_renderer.load_content();
-        renderer.game_renderer.load_content();
-        renderer.title_screen_renderer.load_content();
-        renderer.jukebox_renderer.load_content();
-    };
+    renderer.title_screen_renderer.on_load_assets_finish = [this]() { load_all_systems_content(); };
 
     do {
         // From imgui/examples/example_sdl_opengl3/main.cpp:

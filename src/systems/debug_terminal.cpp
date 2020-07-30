@@ -1,5 +1,6 @@
 #include "systems/debug_terminal.hpp"
 #include "game.hpp"
+#include "game_wrapper.hpp"
 #include <imgui.h>
 #include <lua.hpp>
 
@@ -8,8 +9,8 @@
 namespace munchkin {
 namespace systems {
 
-DebugTerminal::DebugTerminal(Game& g) : game(&g) {
-    g.state.lua.set_function("internal_print", &DebugTerminal::log_lua, this);
+DebugTerminal::DebugTerminal(GameWrapper& g) : wrapper(&g) {
+    wrapper->game.state.lua.set_function("internal_print", &DebugTerminal::log_lua, this);
 }
 
 void DebugTerminal::log_lua(std::string func_name, sol::object obj) {

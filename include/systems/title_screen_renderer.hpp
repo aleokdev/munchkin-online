@@ -17,7 +17,7 @@ class RenderWrapper;
 
 namespace systems {
 
-class TitleScreenRenderer {
+class [[system_codegen::renderer_instance("title_screen_renderer")]] TitleScreenRenderer {
 public:
     enum class Status {
         // Regular title screen
@@ -38,7 +38,7 @@ public:
 
     TitleScreenRenderer(::munchkin::RenderWrapper& wrapper);
 
-    [[call_after_load(renderer)]] void load_content();
+    void load_content();
 
     void set_render_target(renderer::RenderTarget* tg);
 

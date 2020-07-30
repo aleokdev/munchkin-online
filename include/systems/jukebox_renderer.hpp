@@ -8,11 +8,10 @@ class RenderWrapper;
 
 namespace systems {
 
-class JukeboxRenderer {
+class [[system_codegen::renderer_instance("jukebox_renderer")]] JukeboxRenderer {
 public:
     JukeboxRenderer(RenderWrapper& wrapper);
 
-    [[call_after_load(renderer)]]
     void load_content();
 
     void render();

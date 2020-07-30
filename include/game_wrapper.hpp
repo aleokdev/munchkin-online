@@ -5,17 +5,13 @@
 #include "game.hpp"
 #include "input/input.hpp"
 #include "render_wrapper.hpp"
-#include "renderer/font_renderer.hpp"
-#include "renderer/sprite_renderer.hpp"
 #include "systems/ai_manager.hpp"
-#include "systems/debug_terminal.hpp"
-#include "systems/game_logger.hpp"
-#include "systems/input_binder.hpp"
-#include "systems/state_debugger.hpp"
 
 #include <iostream>
 #include <numeric>
 #include <stdexcept>
+
+#include "game_systems_cg.hpp"
 
 struct SDL_Window;
 
@@ -23,6 +19,7 @@ namespace munchkin {
 
 class GameWrapper {
 public:
+    // Defined in codegen'd systems_cg.hpp
     GameWrapper(size_t window_w,
                 size_t window_h,
                 size_t players_count,
@@ -34,19 +31,18 @@ public:
 
     bool show_debugger = false;
 
-    // Systems
-
     Game game;
-    RenderWrapper renderer;
-    systems::InputBinder input_binder;
-    systems::StateDebugger state_debugger;
-    systems::DebugTerminal debug_terminal;
-    systems::GameLogger logger;
-
     AIManager ai_manager;
+    RenderWrapper renderer;
+
+    // Systems (codegen'd)
+    MUNCHKIN_GAME_WRAPPER_SYSTEMS
 
     bool do_tick = false;
     bool done = false;
+
+private:
+    void load_all_systems_content();
 };
 
 } // namespace munchkin

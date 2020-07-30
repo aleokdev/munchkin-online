@@ -6,20 +6,22 @@
 
 namespace munchkin {
 
-class Game;
+class GameWrapper;
 
 namespace systems {
 
-class GameLogger {
+class [[system_codegen::wrapper_instance("logger")]] GameLogger {
 public:
-    GameLogger(Game&);
+    GameLogger(GameWrapper&);
+    
+    void load_content() {}
 
     void log(std::string&&);
 
     void render();
 
 private:
-    Game* game;
+    GameWrapper* wrapper;
     std::vector<std::string> logs;
 
     inline static constexpr float window_height = 200;

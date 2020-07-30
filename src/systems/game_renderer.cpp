@@ -4,6 +4,7 @@
 #include "game_wrapper.hpp"
 #include "render_wrapper.hpp"
 #include "renderer/sprite_renderer.hpp"
+#include "renderer/font_renderer.hpp"
 #include "renderer/util.hpp"
 #include "sound/sound_assets.hpp"
 #include "sound/sound_player.hpp"

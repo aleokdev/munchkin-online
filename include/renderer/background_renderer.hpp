@@ -14,7 +14,6 @@ public:
     Background(assets::Handle<Texture> texture, bool scrolling = false);
     ~Background();
 
-    [[call_after_load(static)]]
     static void load_content();
 
     assets::Handle<Texture> texture;

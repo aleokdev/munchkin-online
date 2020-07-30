@@ -7,13 +7,15 @@
 
 namespace munchkin {
 
-class Game;
+class GameWrapper;
 
 namespace systems {
 
-class DebugTerminal {
+class  [[system_codegen::wrapper_instance("debug_terminal")]] DebugTerminal {
 public:
-    DebugTerminal(Game&);
+    DebugTerminal(GameWrapper&);
+
+    void load_content() {}
 
     void render();
     void log(std::string);
@@ -21,7 +23,7 @@ public:
 private:
     void log_lua(std::string, sol::object);
 
-    Game* game;
+    GameWrapper* wrapper;
     std::vector<std::string> terminal_log;
 };
 

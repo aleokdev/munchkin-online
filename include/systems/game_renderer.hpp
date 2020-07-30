@@ -28,11 +28,10 @@ class CardSprite;
 
 namespace systems {
 
-class GameRenderer {
+class [[system_codegen::renderer_instance("game_renderer")]] GameRenderer {
 public:
     GameRenderer(RenderWrapper&);
 
-    [[call_after_load(renderer)]]
     void load_content();
 
     void render();

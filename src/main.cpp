@@ -118,6 +118,7 @@ static SDL_GLContext init_opengl(SDL_Window* window) {
     std::cout << glGetString(GL_VERSION) << std::endl;
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     return gl_context;
 }

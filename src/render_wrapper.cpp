@@ -2,22 +2,9 @@
 #include "assets/assets.hpp"
 #include "game_wrapper.hpp"
 
+#include "render_wrapper_defs_cg.hpp"
+
 namespace munchkin {
-
-RenderWrapper::RenderWrapper(GameWrapper& w) :
-    wrapper(&w),
-    framebuf(renderer::RenderTarget::CreateInfo{wrapper->game.window_w, wrapper->game.window_h}),
-    projection(
-        glm::ortho(0.0f, (float)wrapper->game.window_w, 0.0f, (float)wrapper->game.window_h)),
-    game_renderer(*this), title_screen_renderer(*this), jukebox_renderer(*this),
-    game_gui_renderer(*this) {
-
-    title_screen_renderer.set_render_target(&framebuf);
-
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-}
 
 RenderWrapper::~RenderWrapper() {}
 

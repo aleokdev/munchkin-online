@@ -10,9 +10,11 @@ class GameWrapper;
 namespace systems {
 
 // Binds input from the user to Game and its state
-class InputBinder {
+class [[system_codegen::wrapper_instance("input_binder")]] InputBinder {
 public:
     InputBinder(GameWrapper&);
+
+    void load_content() {}
 
     void tick();
 

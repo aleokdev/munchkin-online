@@ -1,6 +1,7 @@
 #include "systems/state_debugger.hpp"
 #include "api/state.hpp"
 #include "game.hpp"
+#include "game_wrapper.hpp"
 #include "imgui.h"
 #include <array>
 
@@ -85,9 +86,10 @@ void DrawLuaStateInspector(lua_State* state, bool* p_open) {
 namespace munchkin {
 namespace systems {
 
-StateDebugger::StateDebugger(Game& g) : game(&g) {}
+StateDebugger::StateDebugger(GameWrapper& g) : wrapper(&g) {}
 
 void StateDebugger::render() {
+    auto* game = &wrapper->game;
     ImGui::Begin("Debug");
     {
         if (ImGui::Button("Open Lua State Viewer"))

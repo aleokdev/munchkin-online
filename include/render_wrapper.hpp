@@ -1,13 +1,11 @@
 #ifndef MUNCHKIN_RENDER_WRAPPER_HPP__
 #define MUNCHKIN_RENDER_WRAPPER_HPP__
 
-#include "systems/game_renderer.hpp"
-#include "systems/title_screen_renderer.hpp"
-#include "renderer/background_renderer.hpp"
-#include "systems/jukebox_renderer.hpp"
-#include "systems/game_gui_renderer.hpp"
+#include "renderer/render_target.hpp"
 
 #include <glm/mat4x4.hpp>
+
+#include "render_systems_cg.hpp"
 
 namespace munchkin {
 
@@ -17,6 +15,7 @@ class RenderWrapper {
 public:
     enum class State { TitleScreen, GamePlaying };
 
+    // Defined in codegen'd systems_cg.hpp
     RenderWrapper(GameWrapper&);
     ~RenderWrapper();
 
@@ -33,10 +32,7 @@ public:
     glm::mat4 projection;
 
     // Systems
-    systems::GameRenderer game_renderer;
-    systems::TitleScreenRenderer title_screen_renderer;
-    systems::GameGUIRenderer game_gui_renderer;
-    systems::JukeboxRenderer jukebox_renderer;
+    MUNCHKIN_RENDER_WRAPPER_SYSTEMS
 
 private:
     State renderer_state = State::TitleScreen;
